@@ -30,7 +30,7 @@ parentPort.onerror = function (e) {
 parentPort.onmessage = function (messageEvent) {
   Log.info(TAG, 'parent port on message enter');
   let message = parseMessage(messageEvent);
-  if (!message.hasOwnProperty('requestCode')) {
+  if (!Object.prototype.hasOwnProperty.call(message, "requestCode")) {
     Log.error(TAG, 'requestCode is not in message');
     return;
   }

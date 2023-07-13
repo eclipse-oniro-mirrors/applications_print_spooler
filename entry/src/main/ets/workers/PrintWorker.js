@@ -32,7 +32,7 @@ parentPort.onmessage = function (messageEvent) {
   let message = parseMessage(messageEvent);
   let requestCode = message.requestCode;
   let requestData = undefined;
-  if (message !== undefined && message !== null && message.hasOwnProperty('data')) {
+  if (message !== undefined && message !== null && Object.prototype.hasOwnProperty.call(message, "data")) {
     requestData = message.data;
   }
   let responseMessage = undefined;
