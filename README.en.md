@@ -1,36 +1,30 @@
-# applications_print_spooler
+# Spooler<a name="EN-US_TOPIC_0000001103330836"></a>
 
-#### Description
-{**When you're done, you can delete the content in this README and update the file with details for others getting started with your repository**}
+-   [Introduction](#section11660541593)
+    -   [Architecture](#section125101832114213)
 
-#### Software Architecture
-Software architecture description
+-   [Directory Structure](#section161941989596)
+-   [Repositories Involved](#section1371113476307)
 
-#### Installation
+## Introduction<a name="section11660541593"></a>
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+Spooler is a system app preinstalled in OpenHarmony. It provides users with functions such as print preview, discovering and connecting printers, setting print parameters, issuing print tasks, and managing print tasks.
 
-#### Instructions
+### Architecture<a name="section125101832114213"></a>
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+![](figures/spooler_01.png)
 
-#### Contribution
+## Directory Structure<a name="section161941989596"></a>
 
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
+```
+/applications/standard/print_spooler
+©À©¤©¤ figures                     # Architecture figures
+©À©¤©¤ entry                       # Main entry module code
+©À©¤©¤ signature                   # Certificate files
+©À©¤©¤ LICENSE                     # License files
+©À©¤©¤ features
+©¦   ©À©¤©¤ ippPrint                # ipp print
+```
 
 
-#### Gitee Feature
 
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
