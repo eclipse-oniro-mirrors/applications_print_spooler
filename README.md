@@ -79,13 +79,15 @@ PrintSpooler应用是OpenHarmony中预置的系统应用，为用户提供打印
 ### 签名
 #### 签名文件的获取
 1. 拷贝OpenHarmony标准版 工程的 OpenHarmony\signcenter_tool 目录到操作目录
-2. 拷贝SystemUI 工程的 signature\spooler.p7b 到该目录下
+2. 标准版的签名文件下载路径：https://gitee.com/openharmony/signcenter_tool?_from=gitee_search。
+3. PrintSpooler 工程的 signature\spooler.p7b 到该目录下
 #### 签名文件的配置
 打开项目工程，选择 File → Project Structure
 
 ![](figures/signature_1.png)
 
-选择 Project → Signing Configs，将对应的签名文件配置如下，完成后点击Apply，再点击OK。
+选择Project → Signing Configs，将对应的签名文件配置如下，完成后点击Apply，再点击OK。
+密码为生成签名文件时的密码，如果使用默认的签名文件，则使用默认密码123456。
 
 ![](figures/signature_2.png)
 
@@ -176,7 +178,7 @@ hilog │ grep Label
 ```
 ## 贡献代码
 ### Fork 代码仓库
-1. 在码云上打开 SystemUI 代码仓库（[仓库地址](https://gitee.com/openharmony/applications_print_spooler)）。
+1. 在码云上打开 PrintSpooler 代码仓库（[仓库地址](https://gitee.com/openharmony/applications_print_spooler)）。
 
 2. 点击仓库右上角的 Forked 按钮，在弹出的画面中，选择将仓库 fork 到哪里，点击确认。
 
@@ -185,7 +187,7 @@ hilog │ grep Label
 ### 提交代码
 1. 访问我们自己在码云账号上 fork 的代码仓库，点击“克隆/下载”按钮，选择 SSH/HTTPS，点击“复制”按钮。
 
-2. 在本地新建 SystemUI 目录，在 SystemUI 目录中执行如下命令
+2. 在本地新建 PrintSpooler 目录，在 PrintSpooler 目录中执行如下命令
    ```
    git clone 步骤1中复制的地址
    ```
