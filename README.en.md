@@ -1,4 +1,4 @@
-# Spooler<a name="EN-US_TOPIC_0000001103330836"></a>
+# PrintSpooler<a name="EN-US_TOPIC_0000001103330836"></a>
 
 -   [Introduction](#section11660541593)
     -   [Architecture](#section125101832114213)
@@ -8,7 +8,7 @@
 
 ## Introduction<a name="section11660541593"></a>
 
-Spooler is a system app preinstalled in OpenHarmony. It provides users with functions such as print preview, discovering and connecting printers, setting print parameters, issuing print tasks, and managing print tasks.
+PrintSpooler is a system app preinstalled in OpenHarmony. It provides users with functions such as print preview, discovering and connecting printers, setting print parameters, issuing print tasks, and managing print tasks.
 
 ### Architecture<a name="section125101832114213"></a>
 
@@ -18,12 +18,12 @@ Spooler is a system app preinstalled in OpenHarmony. It provides users with func
 
 ```
 /applications/standard/print_spooler
-©À©¤©¤ figures                     # Architecture figures
-©À©¤©¤ entry                       # Main entry module code
-©À©¤©¤ signature                   # Certificate files
-©À©¤©¤ LICENSE                     # License files
-©À©¤©¤ features
-©¦   ©À©¤©¤ ippPrint                # ipp print
+â”œâ”€â”€ figures                     # Architecture figures
+â”œâ”€â”€ entry                       # Main entry module code
+â”œâ”€â”€ signature                   # Certificate files
+â”œâ”€â”€ LICENSE                     # License files
+â”œâ”€â”€ features
+    â”œâ”€â”€ ippPrint                # ipp print
 ```
 
 
