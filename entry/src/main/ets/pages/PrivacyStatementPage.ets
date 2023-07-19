@@ -143,7 +143,7 @@ struct PrivacyStatementPage {
           Button($r('app.string.Agree'))
             .onClick(() => {
               this.agreePrivacyStatement();
-              router.replaceUrl({url: 'pages/index'});
+              router.replaceUrl({url: 'pages/PrintPage'});
             })
             .width($r('app.float.privacy_statement_button_width'))
             .height($r('app.float.privacy_statement_button_height'))
