@@ -71,7 +71,7 @@ export default class MainAbility extends UIAbility {
       if (flag) {
         windowStage.setUIContent(this.context, 'pages/PrivacyStatementPage', null);
       } else {
-        windowStage.setUIContent(this.context, 'pages/index', null);
+        windowStage.setUIContent(this.context, 'pages/PrintPage', null);
       }
     });
 

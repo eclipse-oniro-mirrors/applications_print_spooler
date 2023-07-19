@@ -1,6 +1,6 @@
 {
   "src": [
-    "pages/index",
+    "pages/PrintPage",
     "pages/JobManagerPage",
     "pages/PrivacyStatementPage",
     "pages/AboutPage",
