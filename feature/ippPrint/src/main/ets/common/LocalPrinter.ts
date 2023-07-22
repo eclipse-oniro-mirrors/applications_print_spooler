@@ -36,7 +36,7 @@ export default class LocalPrinter implements ConnectionListener, OnLocalPrinterC
   private readonly mPrinterId: string; // number类型
 
   private mTracking: boolean = false; //是否正在执行连接
-  private mCapabilities: LocalPrinterCapabilities;
+  private mCapabilities: PrinterCapability;
   private mDiscoveredPrinter: DiscoveredPrinter;
   private mP2pPrinterConnection: P2PPrinterConnection;
 
@@ -166,12 +166,11 @@ export default class LocalPrinter implements ConnectionListener, OnLocalPrinterC
    *
    * @param printerCaps
    */
-  onCapabilities(printerCaps: LocalPrinterCapabilities): void {
+  onCapabilities(printerCaps: PrinterCapability): void {
     if (!CheckEmptyUtils.isEmpty(printerCaps)) {
       this.mCapabilities = printerCaps;
       // 上报打印机获取能力成功的回调
       let printerInfo: PrinterInfo = this.createPrinterInfo();
-      this.mPrintServiceAdapter.capabilitiesCache.addCapsToCache(this.mDiscoveredPrinter, printerCaps);
       print.updatePrinters([printerInfo]).then((result) => {
         Log.info(TAG, 'update success result: ' + result);
       }).catch((error) => {

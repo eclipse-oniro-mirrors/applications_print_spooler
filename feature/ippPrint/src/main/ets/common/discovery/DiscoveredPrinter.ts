@@ -93,12 +93,7 @@ export default class DiscoveredPrinter {
     let pathIt = path === undefined ? IPP_PATH : path;
     Log.debug(TAG, 'portIt 2: ' + portIt);
     Log.debug(TAG, 'pathIt 2: ' + pathIt);
-    if (this.deviceName !== undefined && this.deviceName.indexOf(EPSON_PRINTER) >= 0) {
-      Log.info(TAG, 'epson printer');
-      this.uri = new uri.URI(`${SCHEME_IPPS}://${ip}:${portIt}/${pathIt}`);
-    } else {
-      this.uri = new uri.URI(`${SCHEME_IPP}://${ip}:${portIt}/${pathIt}`);
-    }
+    this.uri = new uri.URI(`${SCHEME_IPP}://${ip}:${portIt}/${pathIt}`);
     Log.debug(TAG, 'uri: ' + this.uri.toString());
   }
 

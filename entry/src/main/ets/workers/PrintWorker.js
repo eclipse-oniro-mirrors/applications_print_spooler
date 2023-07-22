@@ -55,7 +55,7 @@ function getCapabilities(data) {
     } else {
       Log.info(TAG, 'getCapabilities success');
       response = new WorkerResponse(RequestCode.GET_CAPS, ResponseCode.OK);
-      response.data = result.caps;
+      response.data = result;
     }
     postMessageToMainThread(parentPort, response);
   });

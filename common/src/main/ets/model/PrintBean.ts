@@ -52,6 +52,7 @@ export class PrinterCapability {
   pageSize: Array<PrintPageSize>;
   resolution?: Array<PrintResolution>;
   minMargin?: PrintMargin;
+  option?: string;
 }
 
 export class PrinterInfo {
