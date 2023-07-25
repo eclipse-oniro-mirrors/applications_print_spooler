@@ -1,12 +1,16 @@
 {
-  "license": "ISC",
-  "devDependencies": {},
   "name": "@ohos/ippprint",
   "description": "a npm package which contains arkUI2.0 page",
-  "main": "index.ets",
-  "repository": {},
+  "ohos": {
+    "org": ""
+  },
   "version": "1.0.0",
+  "types": "",
+  "repository": {},
+  "license": "ISC",
+  "main": "index.ets",
   "dependencies": {
     "@ohos/common": "file:../../common"
-  }
+  },
+  "type": "module"
 }
