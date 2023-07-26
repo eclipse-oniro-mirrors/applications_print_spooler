@@ -28,7 +28,7 @@ import { WorkerUtil } from '../utils/WorkerUtil';
 import type { WorkerResponse } from '../model/WorkerData';
 import { RequestCode, ResponseCode, WorkerRequest } from '../model/WorkerData';
 import worker from '@ohos.worker';
-import { PrinterCapability } from '@ohos/common/src/main/ets/model/printBean';
+import { PrinterCapability } from '@ohos/common';
 
 const TAG = 'Backend';
 

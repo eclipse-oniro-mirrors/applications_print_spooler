@@ -20,7 +20,7 @@ import type { PrintServiceAdapter } from '../PrintServiceAdapter';
 import type DiscoveredPrinter from '../discovery/DiscoveredPrinter';
 import type { Backend } from '../ipp/Backend';
 import type uri from '@ohos.uri';
-import { PrinterCapability } from '@ohos/common/src/main/ets/model/printBean';
+import { PrinterCapability } from '@ohos/common';
 
 const TAG = 'CapabilitiesCache';
 
@@ -33,7 +33,6 @@ export class CapabilitiesCache {
   constructor(printServiceAdapter: PrintServiceAdapter) {
     this.mPrintServiceAdapter = printServiceAdapter;
     this.mBackend = this.mPrintServiceAdapter.backend;
-    this.mPrintServiceAdapter.wifiModel.addListener(this);
   }
 
   /**
