@@ -13,7 +13,8 @@
  * limitations under the License.
  */
 
-import type { PrinterCapability, MediaSizeUtil } from '@ohos/common';
+import type { PrinterCapability } from '@ohos/common';
+import { MediaSizeUtil } from '@ohos/common';
 
 export default class LocalPrinterCapabilities {
   /**
