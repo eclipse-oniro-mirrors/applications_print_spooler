@@ -14,13 +14,12 @@
  */
 
 import Vector from '@ohos.util.Vector';
-import { Log } from '@ohos/common';
+import { Log, PrinterCapability } from '@ohos/common';
 import CheckEmptyUtils from '@ohos/common';
 import type { PrintServiceAdapter } from '../PrintServiceAdapter';
 import type DiscoveredPrinter from '../discovery/DiscoveredPrinter';
 import type { Backend } from '../ipp/Backend';
 import type uri from '@ohos.uri';
-import { PrinterCapability } from '@ohos/common';
 
 const TAG = 'CapabilitiesCache';
 
