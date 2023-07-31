@@ -14,7 +14,10 @@
  */
 
 import type { PrinterCapability } from '@ohos/common';
-import { MediaSizeUtil } from '@ohos/common';
+import { MediaSizeUtil, Log, PrinterCapsOptions } from '@ohos/common';
+import CheckEmptyUtils from '@ohos/common';
+
+const TAG = 'LocalPrinterCapabilities';
 
 export default class LocalPrinterCapabilities {
   /**
@@ -26,7 +29,10 @@ export default class LocalPrinterCapabilities {
     printerCapability.colorMode = caps.colorMode;
     printerCapability.duplexMode = caps.duplexMode;
     //set printPageSize
-    let option = JSON.parse(caps.option);
+    let option: PrinterCapsOptions = LocalPrinterCapabilities.parseOption(caps.option);
+    if (option === undefined) {
+      return;
+    }
     const codes: number[] = MediaSizeUtil.getCodesBySizes(option.supportedMediaSizes);
     printerCapability.pageSize = MediaSizeUtil.getMediaSizeArrayByCodes(LocalPrinterCapabilities.removeDuplicates(codes));
   }
@@ -35,7 +41,10 @@ export default class LocalPrinterCapabilities {
    * 构造额外的参数, 传递给UI
    */
   static buildExtraCaps(caps: PrinterCapability, printerUri: string): string {
-    let optionObject = JSON.parse(caps.option);
+    let optionObject: PrinterCapsOptions = LocalPrinterCapabilities.parseOption(caps.option);
+    if (optionObject === undefined) {
+      return '';
+    }
     let options: object = {
       supportedMediaTypes: optionObject.supportedMediaTypes,
       supportedQuality: optionObject.supportedQualities,
@@ -43,6 +52,19 @@ export default class LocalPrinterCapabilities {
       printerUri: printerUri
     };
     return JSON.stringify(options);
+  }
+
+  private static parseOption(option: string): PrinterCapsOptions {
+    if (CheckEmptyUtils.checkStrIsEmpty(option)) {
+      return undefined;
+    }
+    let result: PrinterCapsOptions = undefined;
+    try {
+      result = JSON.parse(option);
+    } catch (error) {
+      Log.error(TAG, 'json parse error: ' + error);
+    }
+    return result;
   }
 
   /**

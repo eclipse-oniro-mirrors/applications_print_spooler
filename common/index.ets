@@ -39,6 +39,7 @@ export { PrintMargin,
   PrintJobState,
   PrintJobSubState,
   MessageEvent,
+  PrinterCapsOptions,
   PrintJobOptions,
   PrinterFoundType,
   DateTimeFormat } from './src/main/ets/model/PrintBean'

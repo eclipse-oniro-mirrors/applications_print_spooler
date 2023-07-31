@@ -68,11 +68,11 @@ export default class MainAbility extends UIAbility {
       });
 
       Log.info(TAG, 'onWindowStageCreate flag: ' + JSON.stringify(flag));
-      // if (false) {
-      //   windowStage.setUIContent(this.context, 'pages/PrivacyStatementPage', null);
-      // } else {
+      if (flag) {
+        windowStage.setUIContent(this.context, 'pages/PrivacyStatementPage', null);
+      } else {
         windowStage.setUIContent(this.context, 'pages/PrintPage', null);
-      // }
+      }
     });
 
     GlobalThisHelper.createValue(windowStage, GlobalThisStorageKey.KEY_MAIN_ABILITY_WINDOW_STAGE, true);

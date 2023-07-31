@@ -148,6 +148,13 @@ export class MessageEvent<T> {
   data: T;
 }
 
+export class PrinterCapsOptions {
+  supportedMediaSizes: string[];
+  supportedMediaTypes: number[];
+  supportedQualities: number[];
+  make: string;
+}
+
 export class PrintJobOptions {
   jobName: string;
   jobNum: number;
