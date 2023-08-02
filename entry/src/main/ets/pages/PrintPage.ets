@@ -1172,6 +1172,7 @@ struct Index {
     if (this.jobFileList) {
       this.imageSources = await FileUtil.initImageData(this.checkMaxPages(this.jobFileList));
     } else {
+      // @ts-ignore
       await print.queryPrintJobById(this.jobId).then(async (printJob) => {
         Log.debug(TAG, 'queryPrintJobById printJob: ', JSON.stringify(printJob));
         this.imageSources = await FileUtil.initFdImageData(printJob.fdList);

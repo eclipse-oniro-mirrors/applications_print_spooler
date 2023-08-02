@@ -15,7 +15,7 @@
 
 import wifi from '@ohos.wifi';
 import P2PUtils from './utils/P2pUtils';
-import CheckEmptyUtils, { Log, PrinterCapability, PrinterInfo, PrinterState } from '@ohos/common';
+import CheckEmptyUtils, { Log, PrinterCapability, PrinterInfo, PrinterState, IPP_CONNECT_ERROR } from '@ohos/common';
 import type { PrintServiceAdapter } from './PrintServiceAdapter';
 import type { LocalDiscoverySession } from './LocalDiscoverySession';
 import type DiscoveredPrinter from './discovery/DiscoveredPrinter';
@@ -178,6 +178,7 @@ export default class LocalPrinter implements ConnectionListener, OnLocalPrinterC
       });
     } else {
       Log.error(TAG, 'printerCaps is null');
+      print.updateExtensionInfo(JSON.stringify(IPP_CONNECT_ERROR));
     }
   }
 
@@ -196,6 +197,7 @@ export default class LocalPrinter implements ConnectionListener, OnLocalPrinterC
     this.mDiscoveredPrinter = printer;
     this.mSession.updateLocalPrinter(printer);
     // 上报打印机机连接成功的状态
+    // @ts-ignore
     print.updatePrinterState(this.mPrinterId, PrinterState.PRINTER_CONNECTED);
     this.mSession.removeConnectedId(this.mPrinterId);
 
@@ -216,6 +218,7 @@ export default class LocalPrinter implements ConnectionListener, OnLocalPrinterC
     this.mP2pPrinterConnection = undefined;
     // 通知打印框架连接失败
     Log.error(TAG, 'connect delay');
+    // @ts-ignore
     print.updatePrinterState(this.mPrinterId, PrinterState.PRINTER_DISCONNECTED);
     this.mSession.removeConnectedId(this.mPrinterId);
   }

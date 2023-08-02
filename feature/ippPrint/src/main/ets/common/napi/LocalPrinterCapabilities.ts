@@ -29,11 +29,10 @@ export default class LocalPrinterCapabilities {
     printerCapability.colorMode = caps.colorMode;
     printerCapability.duplexMode = caps.duplexMode;
     //set printPageSize
-    let option: PrinterCapsOptions = LocalPrinterCapabilities.parseOption(caps.option);
-    if (option === undefined) {
-      return;
-    }
-    const codes: number[] = MediaSizeUtil.getCodesBySizes(option.supportedMediaSizes);
+    let sizeList: string[] = caps.pageSize.map((size) => {
+      return size.name;
+    });
+    const codes: number[] = MediaSizeUtil.getCodesBySizes(sizeList);
     printerCapability.pageSize = MediaSizeUtil.getMediaSizeArrayByCodes(LocalPrinterCapabilities.removeDuplicates(codes));
   }
 

@@ -55,6 +55,7 @@ export { ErrorCode,
   CONNECTION_POP,
   INIT_ERROR,
   GET_CAPS_ERROR,
+  IPP_CONNECT_ERROR,
   P2P_SERVICE_ERROR } from './src/main/ets/model/ErrorMessage'
 
 export { uuidGenerator } from './src/main/ets/utils/UuidGenerator'

@@ -39,12 +39,13 @@ export class NativeApi {
       return;
     }
     Log.debug(TAG, 'getCapabilities start');
-    print.nativeGetPrinterCapabilities(uri).then((result) => {
-      Log.debug(TAG, 'nativeGetCapabilities result: ' + JSON.stringify(result));
+    // @ts-ignore
+    print.queryPrinterCapabilityByUri(uri).then((result) => {
+      Log.debug(TAG, 'queryPrinterCapabilityByUri result: ' + JSON.stringify(result));
       this.setCupsPrinter(uri, this.removeSpaces(printerName));
       getCapsCallback(result);
     }).catch((error) => {
-      Log.error(TAG, 'nativeGetCapabilities error: ' + JSON.stringify(error));
+      Log.error(TAG, 'queryPrinterCapabilityByUri error: ' + JSON.stringify(error));
       getCapsCallback(ERROR);
     });
     Log.debug(TAG, 'getCapabilities end');
@@ -56,10 +57,11 @@ export class NativeApi {
       Log.error(TAG, 'print is undefined');
       return;
     }
-    print.nativeSetCupsPrinter(uri, name).then((result) => {
-      Log.debug(TAG, 'nativeSetCupsPrinter result: ' + JSON.stringify(result));
+    // @ts-ignore
+    print.addPrinterToCups(uri, name).then((result) => {
+      Log.debug(TAG, 'addPrinterToCups result: ' + JSON.stringify(result));
     }).catch((error) => {
-      Log.error(TAG, 'nativeSetCupsPrinter error: ' + JSON.stringify(error));
+      Log.error(TAG, 'addPrinterToCups error: ' + JSON.stringify(error));
     });
   }
 
