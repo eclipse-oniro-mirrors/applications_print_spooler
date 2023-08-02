@@ -149,7 +149,7 @@ export class MessageEvent<T> {
 }
 
 export class PrinterCapsOptions {
-  supportedMediaSizes: string[];
+  supportedMediaTypes: number[];
   supportedQualities: number[];
   make: string;
 }
