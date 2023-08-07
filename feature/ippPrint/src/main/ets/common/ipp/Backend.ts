@@ -28,6 +28,7 @@ import { WorkerUtil } from '../utils/WorkerUtil';
 import type { WorkerResponse } from '../model/WorkerData';
 import { RequestCode, ResponseCode, WorkerRequest } from '../model/WorkerData';
 import worker from '@ohos.worker';
+import { PrinterCapability } from '@ohos/common';
 
 const TAG = 'Backend';
 
@@ -74,7 +75,7 @@ export class Backend {
     this.mWorker.terminate();
   }
 
-  private handleGetCapsResult(responseCode: ResponseCode, result: LocalPrinterCapabilities): void {
+  private handleGetCapsResult(responseCode: ResponseCode, result: PrinterCapability): void {
     Log.debug(TAG, 'handleGetCapsResult enter');
     if (ResponseCode.ERROR === responseCode) {
       //获取打印机能力失败，上报错误
@@ -146,7 +147,7 @@ export class Backend {
     Log.info(TAG, `requestCode: ${WorkerUtil.getStringByWorkerCode(requestCode)}, responseCode: ${responseCode}`);
     switch (requestCode) {
       case RequestCode.GET_CAPS:
-        this.handleGetCapsResult(<ResponseCode> responseCode, <LocalPrinterCapabilities> workerResponse.data);
+        this.handleGetCapsResult(<ResponseCode> responseCode, <PrinterCapability> workerResponse.data);
         break;
       default:
         Log.error(TAG, 'onMessage response. error code');

@@ -14,47 +14,56 @@
  */
 
 import type { PrinterCapability } from '@ohos/common';
-import { MediaSizeUtil } from '@ohos/common';
+import { MediaSizeUtil, Log, PrinterCapsOptions } from '@ohos/common';
+import CheckEmptyUtils from '@ohos/common';
+
+const TAG = 'LocalPrinterCapabilities';
 
 export default class LocalPrinterCapabilities {
-  duplex: number;
-  borderless: number;
-  color: number;
-  canCopy: number;
-  make: string;
-  name: string;
-  uuid: string;
-  printerUri: string;
-  supportedQuality: number[];
-  supportedResolutions: number[];
-  supportedMediaSizes: string[];
-  supportedDocumentFormat: string[];
-  supportedMediaTypes: number[];
-
   /**
    * 构造PrinterCapability对象
    *
    * @param printerCapability
    */
-  static buildPrinterCapability(printerCapability: PrinterCapability, caps: LocalPrinterCapabilities): void {
-    printerCapability.colorMode = caps.color;
-    printerCapability.duplexMode = caps.duplex;
+  static buildPrinterCapability(printerCapability: PrinterCapability, caps: PrinterCapability): void {
+    printerCapability.colorMode = caps.colorMode;
+    printerCapability.duplexMode = caps.duplexMode;
     //set printPageSize
-    const codes: number[] = MediaSizeUtil.getCodesBySizes(caps.supportedMediaSizes);
+    let sizeList: string[] = caps.pageSize.map((size) => {
+      return size.name;
+    });
+    const codes: number[] = MediaSizeUtil.getCodesBySizes(sizeList);
     printerCapability.pageSize = MediaSizeUtil.getMediaSizeArrayByCodes(LocalPrinterCapabilities.removeDuplicates(codes));
   }
 
   /**
    * 构造额外的参数, 传递给UI
    */
-  static buildExtraCaps(caps: LocalPrinterCapabilities, printerUri: string): string {
+  static buildExtraCaps(caps: PrinterCapability, printerUri: string): string {
+    let optionObject: PrinterCapsOptions = LocalPrinterCapabilities.parseOption(caps.option);
+    if (optionObject === undefined) {
+      return '';
+    }
     let options: object = {
-      supportedMediaTypes: caps.supportedMediaTypes,
-      supportedQuality: caps.supportedQuality,
-      make: caps.make,
+      supportedMediaTypes: optionObject.supportedMediaTypes,
+      supportedQuality: optionObject.supportedQualities,
+      make: optionObject.make,
       printerUri: printerUri
     };
     return JSON.stringify(options);
+  }
+
+  private static parseOption(option: string): PrinterCapsOptions {
+    if (CheckEmptyUtils.checkStrIsEmpty(option)) {
+      return undefined;
+    }
+    let result: PrinterCapsOptions = undefined;
+    try {
+      result = JSON.parse(option);
+    } catch (error) {
+      Log.error(TAG, 'json parse error: ' + error);
+    }
+    return result;
   }
 
   /**

@@ -180,6 +180,7 @@ export class PrinterDiscController {
     newPrinter.printerIcon = info.printerIcon;
     newPrinter.description = info.description;
     newPrinter.capability = info.capability;
+    // @ts-ignore
     newPrinter.option = info.options;
     let added = this.mPrinterDiscModel.addPrinter(newPrinter);
     Log.info(TAG, 'foundPrinter = ' + StringUtil.encodeCommonString(<string> info.printerName));
@@ -222,6 +223,7 @@ export class PrinterDiscController {
       return;
     }
     this.mPrinterDiscModel.printerUpdateCapability(<string> info.printerId, <PrinterCapability> info.capability,
+// @ts-ignore
       <string> info.option, <string> info.description);
   }
 

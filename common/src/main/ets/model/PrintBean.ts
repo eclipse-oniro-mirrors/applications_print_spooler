@@ -52,6 +52,7 @@ export class PrinterCapability {
   pageSize: Array<PrintPageSize>;
   resolution?: Array<PrintResolution>;
   minMargin?: PrintMargin;
+  option?: string;
 }
 
 export class PrinterInfo {
@@ -145,6 +146,12 @@ export enum PrintJobSubState {
 
 export class MessageEvent<T> {
   data: T;
+}
+
+export class PrinterCapsOptions {
+  supportedMediaTypes: number[];
+  supportedQualities: number[];
+  make: string;
 }
 
 export class PrintJobOptions {
