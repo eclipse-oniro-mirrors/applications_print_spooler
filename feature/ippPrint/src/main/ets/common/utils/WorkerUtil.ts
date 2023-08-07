@@ -35,7 +35,7 @@ export class WorkerUtil {
    * @param printWorker: worker object
    * @param request: request
    */
-  public static postMessageToWorkerThread(worker: worker.Worker, request: WorkerRequest): void {
+  public static postMessageToWorkerThread(worker: worker.ThreadWorker, request: WorkerRequest): void {
     if (CheckEmptyUtils.isEmpty(worker)) {
       Log.error(TAG, 'worker is undefined');
       return;
