@@ -19,7 +19,7 @@ import { Log } from '@ohos/common';
 import {WorkerResponse, RequestCode, ResponseCode } from '@ohos/ippprint';
 import {P2PDiscoveryChannel} from '@ohos/ippprint';
 
-const parentPort = worker.parentPort;
+const parentPort = worker.workerPort;
 const p2pDiscoveryChannel = P2PDiscoveryChannel.getInstance();
 const TAG = 'DiscoveryWorker';
 

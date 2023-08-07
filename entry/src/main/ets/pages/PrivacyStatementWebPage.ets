@@ -16,10 +16,10 @@
 import webview from '@ohos.web.webview';
 import window from '@ohos.window';
 import { Log } from '@ohos/common';
-import { WindowErrorCode } from '../../../../../common/src/main/ets/model/Constants';
+import { WindowErrorCode } from '@ohos/common';
 import router from '@ohos.router';
 import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
-import { AppStorageKeyName} from '../../../../../common/src/main/ets/model/Constants';
+import { AppStorageKeyName} from '@ohos/common';
 import common from '@ohos.app.ability.common';
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper';
 import {CancelButton, ClickableImage} from './component/BaseComponent';

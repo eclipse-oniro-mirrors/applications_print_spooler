@@ -17,7 +17,7 @@ import { MediaType } from '../model/Constants';
 import { MediaSize } from '../model/MediaSize';
 import { PrintPageSize } from '../model/PrintBean';
 import { Log } from './Log';
-import StringUtil from './StringUtil';
+import { StringUtil } from './StringUtil';
 
 export class MediaSizeUtil {
   public static readonly defaultSizeCode = 26;

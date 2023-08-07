@@ -19,11 +19,11 @@ import type common from '@ohos.app.ability.common';
 import { Log } from '@ohos/common';
 import CheckEmptyUtils from '@ohos/common';
 import FileModel from '../../Model/FileModel';
-import { AppStorageKeyName, Constants } from '../../../../../../common/src/main/ets/model/Constants';
+import { AppStorageKeyName, Constants } from '@ohos/common';
 import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
 import FileAccess from '@ohos.file.fileAccess';
 import AppStorageHelper from '../Adapter/AppStorageHelper';
-import StringUtil from '../../../../../../common/src/main/ets/utils/StringUtil';
+import { StringUtil } from '@ohos/common';
 
 
 const FILE_SEPARATOR = '/';

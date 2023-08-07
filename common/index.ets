@@ -79,3 +79,21 @@ export { MediaTypes, MediaTypeCode } from './src/main/ets/model/MediaType'
 export { default } from './src/main/ets/utils/CheckEmptyUtils';
 
 export { CopyUtil } from './src/main/ets/utils/CopyUtil'
+
+export { RequestCode,
+  PrintErrorCode,
+  WindowErrorCode,
+  PrintRangeType,
+  PageDirection,
+  PrintQuality,
+  Constants,
+  AppStorageKeyName,
+  AppCommonEvent,
+  PreferencesKey,
+  MouseState,
+  MediaType,
+  Duplex,
+  ColorCode
+} from './src/main/ets/model/Constants'
+
+export {StringUtil} from './src/main/ets/utils/StringUtil'

@@ -14,7 +14,7 @@
  */
 
 // @ts-nocheck
-import { Constants, AppStorageKeyName } from '../../../../../common/src/main/ets/model/Constants'
+import { Constants, AppStorageKeyName } from '@ohos/common'
 import { Log } from '@ohos/common';
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper'
 import { PrinterExtensionInfo } from '@ohos/common';

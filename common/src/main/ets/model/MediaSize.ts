@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import StringUtil from '../utils/StringUtil';
+import { StringUtil } from '../utils/StringUtil';
 const ISO_A3_WIDTH: number = 11690;
 const ISO_A3_HEIGHT: number = 16540;
 const ISO_A4_WIDTH: number = 8268;

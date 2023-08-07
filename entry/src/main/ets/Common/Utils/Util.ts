@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { Constants } from '../../../../../../common/src/main/ets/model/Constants';
+import { Constants } from '@ohos/common';
 import FileUtil from './FileUtil';
 import type common from '@ohos.app.ability.common';
 import CheckEmptyUtils, { Log, PrinterInfo } from '@ohos/common';

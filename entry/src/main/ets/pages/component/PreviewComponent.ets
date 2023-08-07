@@ -15,7 +15,7 @@
 
 import FileModel from '../../Model/FileModel';
 import { Log, MediaSize } from '@ohos/common';
-import { Constants, PageDirection, ColorMode } from '../../../../../../common/src/main/ets/model/Constants';
+import { Constants, PageDirection, ColorCode } from '@ohos/common';
 import { GlobalThisHelper, GlobalThisStorageKey } from '@ohos/common';
 import CheckEmptyUtils from '@ohos/common';
 import image from '@ohos.multimedia.image';
@@ -190,7 +190,7 @@ export struct PreviewComponent {
             .width(this.canvasWidth).height(this.canvasHeight)
             .backgroundColor($r('app.color.white'))
             .objectFit(this.isBorderless?ImageFit.Cover:ImageFit.Contain)
-            .renderMode(this.colorMode === ColorMode.COLOR ? ImageRenderMode.Original : ImageRenderMode.Template)
+            .renderMode(this.colorMode === ColorCode.COLOR ? ImageRenderMode.Original : ImageRenderMode.Template)
             .shadow(ShadowStyle.OUTER_DEFAULT_MD)
         }else{
           Flex({ direction: FlexDirection.Column, alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center }) {

@@ -15,7 +15,7 @@
 
 // @ts-nocheck
 import print from '@ohos.print';
-import { Constants, AppCommonEvent, AppStorageKeyName} from '../../../../../common/src/main/ets/model/Constants';
+import { Constants, AppCommonEvent, AppStorageKeyName} from '@ohos/common';
 import { PrintJobState, PrintJobSubState } from '@ohos/common';
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper';
 import { Log } from '@ohos/common';

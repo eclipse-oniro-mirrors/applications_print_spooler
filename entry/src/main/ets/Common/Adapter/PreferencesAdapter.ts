@@ -17,7 +17,7 @@ import { Log } from '@ohos/common';
 import data_preferences from '@ohos.data.preferences';
 import type common from '@ohos.app.ability.common';
 import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
-import { PreferencesKey } from '../../../../../../common/src/main/ets/model/Constants';
+import { PreferencesKey } from '@ohos/common';
 
 const TAG = '[PreferencesAdapter]:';
 type ValueType = number | string | boolean | Array<number> | Array<string> | Array<boolean>;

@@ -18,7 +18,7 @@ import {
   Constants,
   AppCommonEvent,
   AppStorageKeyName
-} from '../../../../../common/src/main/ets/model/Constants';
+} from '@ohos/common';
 import { PrintJob, PrintJobState } from '@ohos/common';
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper';
 import { Log } from '@ohos/common';

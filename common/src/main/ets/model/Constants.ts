@@ -68,13 +68,13 @@ export enum PrintQuality {
   BEST = 5 //最佳
 }
 
-export enum DuplexMode {
+export enum Duplex {
   SINGLE = 0, //单面
   LONG = 1, //双面沿长边
   SHORT = 2 //双面沿短边
 }
 
-export enum ColorMode {
+export enum ColorCode {
   MONOCHROME = 0, //黑白
   COLOR = 1 //彩色
 }

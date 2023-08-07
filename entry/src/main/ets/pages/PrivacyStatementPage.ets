@@ -18,7 +18,7 @@ import { Log } from '@ohos/common';
 import bundleManager from '@ohos.bundle.bundleManager';
 import common from '@ohos.app.ability.common';
 import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
-import { PreferencesKey} from '../../../../../common/src/main/ets/model/Constants';
+import { PreferencesKey} from '@ohos/common';
 import PreferencesAdapter from '../Common/Adapter/PreferencesAdapter';
 import {PrivacyStatementDialog} from './PrivacyStatementDialog';
 import {CancelButton} from './component/BaseComponent';

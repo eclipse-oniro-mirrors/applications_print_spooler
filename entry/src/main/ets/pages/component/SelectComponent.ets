@@ -17,7 +17,7 @@ import SelectionModel from '../../Model/SelectionModel'
 import { Log } from '@ohos/common';
 import CheckEmptyUtils from '@ohos/common';
 import WifiP2pHelper from '../../Common/Adapter/WifiP2pHelper';
-import { Constants, DuplexMode } from '../../../../../../common/src/main/ets/model/Constants';
+import { Constants, Duplex } from '@ohos/common';
 
 const TAG = 'SelectComponent'
 

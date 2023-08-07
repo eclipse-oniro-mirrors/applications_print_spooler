@@ -21,14 +21,14 @@ import {
   AppCommonEvent,
   PrintErrorCode,
   AppStorageKeyName
-} from '../../../../../common/src/main/ets/model/Constants';
+} from '@ohos/common';
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper';
 import { GlobalThisHelper, GlobalThisStorageKey } from '@ohos/common';
 import WifiP2pHelper from '../Common/Adapter/WifiP2pHelper';
 import { Log } from '@ohos/common';
 import { PrinterDiscModel } from '../Model/PrinterDiscModel';
 import emitter from '@ohos.events.emitter';
-import StringUtil from '../../../../../common/src/main/ets/utils/StringUtil';
+import { StringUtil } from '@ohos/common';
 import { requestPermission, checkPermission } from '@ohos/common';
 import { PrintJob, PrinterCapability, PrinterInfo, PrinterState } from '@ohos/common';
 

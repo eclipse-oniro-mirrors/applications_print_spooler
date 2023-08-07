@@ -16,7 +16,7 @@
 import { PrinterInfo} from '@ohos/common';
 import PrintAdapter from '../../Common/Adapter/PrintAdapter'
 import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
-import {Constants } from '../../../../../../common/src/main/ets/model/Constants'
+import {Constants } from '@ohos/common'
 import { Log } from '@ohos/common';
 import { CopyUtil }from '@ohos/common';
 import promptAction from '@ohos.prompt';

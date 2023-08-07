@@ -19,7 +19,7 @@ import { Log } from '@ohos/common';
 import {WorkerResponse, RequestCode, ResponseCode } from '@ohos/ippprint';
 import { NativeApi } from '@ohos/ippprint';
 
-const parentPort = worker.parentPort;
+const parentPort = worker.workerPort;
 const nativeApi = NativeApi.getInstance();
 const TAG = 'PrintWorker';
 

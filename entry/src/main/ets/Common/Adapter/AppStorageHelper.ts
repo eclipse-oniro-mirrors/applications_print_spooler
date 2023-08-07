@@ -14,7 +14,7 @@
  */
 
 import { Log } from '@ohos/common';
-import { AppStorageKeyName } from '../../../../../../common/src/main/ets/model/Constants'
+import { AppStorageKeyName } from '@ohos/common'
 
 const TAG = '[AppStorageHelper]:'
 
