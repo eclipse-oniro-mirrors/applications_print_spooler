@@ -96,4 +96,4 @@ export { RequestCode,
   ColorCode
 } from './src/main/ets/model/Constants'
 
-export {StringUtil} from './src/main/ets/utils/StringUtil'
+export { StringUtil } from './src/main/ets/utils/StringUtil'
