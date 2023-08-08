@@ -19,7 +19,7 @@ import window from '@ohos.window';
 import router from '@ohos.router';
 import {CancelButton} from './component/BaseComponent';
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper';
-import { AppStorageKeyName } from '../../../../../common/src/main/ets/model/Constants';
+import { AppStorageKeyName } from '@ohos/common';
 
 const TAG = 'AboutPage';
 

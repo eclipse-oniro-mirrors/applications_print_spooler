@@ -14,11 +14,11 @@
  */
 
 import { Log } from '@ohos/common';
-import { Constants, AppCommonEvent, AppStorageKeyName } from '../../../../../common/src/main/ets/model/Constants';
+import { Constants, AppCommonEvent, AppStorageKeyName } from '@ohos/common';
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper';
 import { PrinterCapability, PrinterInfo, PrinterState } from '@ohos/common';
 import emitter from '@ohos.events.emitter';
-import StringUtil from '../../../../../common/src/main/ets/utils/StringUtil';
+import { StringUtil } from '@ohos/common';
 import Util from '../Common/Utils/Util';
 
 const TAG = '[DeviceDiscModel]:';

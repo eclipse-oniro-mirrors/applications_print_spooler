@@ -20,7 +20,7 @@ import type common from '@ohos.app.ability.common';
 import CheckEmptyUtils from './CheckEmptyUtils';
 import { Log } from './Log';
 
-export default class StringUtil {
+export class StringUtil {
   private static readonly DEFAULT_LEN_OF_COMMON_STR: number = 6;
   private static readonly HALF_LEN_OF_COMMON_STR: number = 3;
   private static readonly LINK_OF_COMMON_STR: string = '****';

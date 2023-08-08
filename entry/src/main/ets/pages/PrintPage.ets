@@ -27,7 +27,7 @@ import {
   DuplexSelection
 } from './component/SelectComponent';
 import { MediaSize, MediaSizeUtil } from '@ohos/common';
-import StringUtil from '../../../../../common/src/main/ets/utils/StringUtil';
+import { StringUtil } from '@ohos/common';
 import { PreviewComponent } from './component/PreviewComponent';
 import { ErrorCode, PrintPageSize, PreviewAttribute, PrinterRange, PrintMargin, PrinterCapability, PrinterInfo, PrinterState } from '@ohos/common';
 import { PrintJob } from '../Model/PrintJob'
@@ -42,12 +42,12 @@ import {
   AppStorageKeyName,
   PrintRangeType,
   PrintQuality,
-  DuplexMode,
+  Duplex,
   PageDirection,
-  ColorMode,
+  ColorCode,
   MediaType,
   MouseState
-} from '../../../../../common/src/main/ets/model/Constants';
+} from '@ohos/common';
 import { Log } from '@ohos/common';
 import { uuidGenerator } from '@ohos/common';
 import { BISHENG_PRINTER } from '@ohos/common';
@@ -115,7 +115,7 @@ struct Index {
   @State isMinusPressed: boolean = false //是否按下份数-
   @State mediaSizeList: Array<MediaSize> = undefined; //所有纸张尺寸
   @State printRangeType: number = PrintRangeType.ALL; //打印范围类型 0：全部页面 1：范围打印
-  @State colorMode: number = ColorMode.MONOCHROME;
+  @State colorMode: number = ColorCode.MONOCHROME;
   @State mediaSize: MediaSize = MediaSize.ISO_A4; //纸张尺寸
   @State pageDirection: number = Constants.NUMBER_0; //纸张方向
   @State printerRange: PrinterRange = undefined; //打印框架需要的参数，实际不起效
@@ -337,9 +337,9 @@ struct Index {
                 this.isColored = !isOn
                 Log.info(TAG, 'ColorMode onChange: ' + this.isColored)
                 if (this.isColored) {
-                  this.colorMode = ColorMode.COLOR
+                  this.colorMode = ColorCode.COLOR
                 } else {
-                  this.colorMode = ColorMode.MONOCHROME
+                  this.colorMode = ColorCode.MONOCHROME
                 }
               })
           }
@@ -1043,15 +1043,15 @@ struct Index {
       return
     }
 
-    if (cap.colorMode === ColorMode.MONOCHROME) {
-      this.colorMode = ColorMode.MONOCHROME
+    if (cap.colorMode === ColorCode.MONOCHROME) {
+      this.colorMode = ColorCode.MONOCHROME
       this.isColored = false
       this.isColorEnabled = false
     }else{
       this.isColorEnabled = true
     }
 
-    if (cap.duplexMode === DuplexMode.SINGLE) {
+    if (cap.duplexMode === Duplex.SINGLE) {
       this.isDuplexEnabled = false;
       this.currentDuplex = SelectionModel.DuplexMode_SINGLE;
     } else {
@@ -1532,10 +1532,10 @@ struct Index {
 
     let color = Constants.STRING_NONE
     switch (this.colorMode) {
-      case ColorMode.COLOR:
+      case ColorCode.COLOR:
         color = StringUtil.getString('ColorMode_COLOR') + StringUtil.getString('pauseMark')
         break;
-      case ColorMode.MONOCHROME:
+      case ColorCode.MONOCHROME:
         color = StringUtil.getString('ColorMode_MONOCHROME') + StringUtil.getString('pauseMark')
         break;
     }

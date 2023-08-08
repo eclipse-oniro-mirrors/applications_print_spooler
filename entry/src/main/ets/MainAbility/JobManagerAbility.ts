@@ -18,7 +18,7 @@ import UIAbility from '@ohos.app.ability.UIAbility';
 import { Log } from '@ohos/common';
 import type common from '@ohos.app.ability.common';
 import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
-import { Constants } from '../../../../../common/src/main/ets/model/Constants';
+import { Constants } from '@ohos/common';
 
 const TAG = 'JobManagerAbility';
 

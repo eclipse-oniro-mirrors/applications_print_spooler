@@ -13,15 +13,15 @@
  * limitations under the License.
  */
 
-import {WorkerUtil} from '@ohos/ippprint';
+import { WorkerUtil } from '@ohos/ippprint';
 import worker from '@ohos.worker';
 import { Log } from '@ohos/common';
 import {WorkerResponse, RequestCode, ResponseCode } from '@ohos/ippprint';
-import {P2PDiscoveryChannel} from '@ohos/ippprint';
+import { NativeApi } from '@ohos/ippprint';
 
-const parentPort = worker.parentPort;
-const p2pDiscoveryChannel = P2PDiscoveryChannel.getInstance();
-const TAG = 'DiscoveryWorker';
+const parentPort = worker.workerPort;
+const nativeApi = NativeApi.getInstance();
+const TAG = 'PrintWorker';
 
 parentPort.onerror = function (e) {
   Log.error(TAG, 'worker on error ' + JSON.stringify(e));
@@ -30,39 +30,36 @@ parentPort.onerror = function (e) {
 parentPort.onmessage = function (messageEvent) {
   Log.info(TAG, 'parent port on message enter');
   let message = parseMessage(messageEvent);
-  if (!Object.prototype.hasOwnProperty.call(message, "requestCode")) {
-    Log.error(TAG, 'requestCode is not in message');
-    return;
-  }
   let requestCode = message.requestCode;
+  let requestData = undefined;
+  if (message !== undefined && message !== null && Object.prototype.hasOwnProperty.call(message, "data")) {
+    requestData = message.data;
+  }
+  let responseMessage = undefined;
   Log.info(TAG, `request code is ${WorkerUtil.getStringByWorkerCode(requestCode)}`);
   switch (requestCode) {
-    case RequestCode.P2P_START_DISCOVERY:
-      startP2pDiscovery();
-      break;
-    case RequestCode.P2P_CANCEL_DISCOVERY:
-      stopP2pDiscovery();
+    case RequestCode.GET_CAPS:
+      getCapabilities(requestData);
       break;
     default:
       Log.error(TAG, 'onMessage. error code');
   }
 };
 
-function startP2pDiscovery() {
-  p2pDiscoveryChannel.startDiscovery(p2pDiscoveryResult);
+function getCapabilities(data) {
+  Log.debug(TAG, 'data: ' + JSON.stringify(data));
+  nativeApi.getCapabilities(data.uri, data.printerName, (result) => {
+    let response;
+    if (typeof result === 'number') {
+      response = new WorkerResponse(RequestCode.GET_CAPS, ResponseCode.ERROR);
+    } else {
+      Log.info(TAG, 'getCapabilities success');
+      response = new WorkerResponse(RequestCode.GET_CAPS, ResponseCode.OK);
+      response.data = result;
+    }
+    postMessageToMainThread(parentPort, response);
+  });
 }
-
-function p2pDiscoveryResult(found, p2pDevice) {
-  Log.info(TAG, 'p2pDiscoveryResult enter ');
-  let p2pDiscoveryResponse = new WorkerResponse(RequestCode.P2P_START_DISCOVERY, ResponseCode.OK);
-  p2pDiscoveryResponse.data = { 'found': found, 'p2pDevice': p2pDevice };
-  postMessageToMainThread(parentPort, p2pDiscoveryResponse);
-}
-
-function stopP2pDiscovery() {
-  p2pDiscoveryChannel.cancel();
-}
-
 
 function parseMessage(event) {
   if (event === null || event.data === null) {

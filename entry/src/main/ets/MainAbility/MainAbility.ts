@@ -19,7 +19,7 @@ import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
 import { MediaSizeUtil } from '@ohos/common';
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper';
 import { Log } from '@ohos/common';
-import { Constants, AppStorageKeyName, PreferencesKey, HiTraceEvent } from '../../../../../common/src/main/ets/model/Constants';
+import { Constants, AppStorageKeyName, PreferencesKey, HiTraceEvent } from '@ohos/common';
 import type common from '@ohos.app.ability.common';
 import PreferencesAdapter from '../Common/Adapter/PreferencesAdapter';
 import bundleManager from '@ohos.bundle.bundleManager';

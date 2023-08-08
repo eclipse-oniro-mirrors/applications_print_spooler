@@ -27,7 +27,7 @@ const TAG = 'P2pMonitor';
 
 export class P2PMonitor {
   private readonly _listeners: ArrayList<P2PDiscoveryListener> = new ArrayList<P2PDiscoveryListener>();
-  private _worker: worker.Worker;
+  private _worker: worker.ThreadWorker;
 
   constructor() {
     this.initDiscoveryWorker();
@@ -73,7 +73,7 @@ export class P2PMonitor {
 
   private initDiscoveryWorker(): boolean {
     if (this._worker === undefined) {
-      this._worker = new worker.Worker('entry/ets/workers/DiscoveryWorker.js', { type: 'classic', name: 'DiscoveryWorkerOfExtension' });
+      this._worker = new worker.ThreadWorker('entry/ets/workers/DiscoveryWorker.ts', { type: 'classic', name: 'DiscoveryWorkerOfExtension' });
       if (this._worker === undefined) {
         Log.error(TAG, 'initWorker failed');
         return false;

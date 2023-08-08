@@ -34,7 +34,7 @@ const TAG = 'Backend';
 
 export class Backend {
   private requestCallback: () => void;
-  private mWorker: worker.Worker;
+  private mWorker: worker.ThreadWorker;
   private onCapabilitiesCallback: OnLocalPrinterCapabilities;
 
   constructor() {
@@ -93,7 +93,7 @@ export class Backend {
    */
   private initPrintWorker(): boolean {
     if (this.mWorker === undefined) {
-      this.mWorker = new worker.Worker('entry/ets/workers/PrintWorker.js', {
+      this.mWorker = new worker.ThreadWorker('entry/ets/workers/PrintWorker.ts', {
         type: 'classic',
         name: 'PrintWorkerOfExtension'
       });

@@ -17,7 +17,7 @@
 import print from '@ohos.print';
 import { Log } from '@ohos/common';
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper';
-import {AppStorageKeyName} from '../../../../../common/src/main/ets/model/Constants';
+import {AppStorageKeyName} from '@ohos/common';
 import {PrintExtensionModel} from '../Model/PrintExtensionModel';
 import { PrinterExtensionInfo } from '@ohos/common';
 

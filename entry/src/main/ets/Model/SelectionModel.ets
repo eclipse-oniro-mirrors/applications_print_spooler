@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { PageDirection, PrintQuality, MediaType ,DuplexMode} from '../../../../../common/src/main/ets/model/Constants'
+import { PageDirection, PrintQuality, MediaType ,Duplex} from '@ohos/common'
 import { Log, MediaSize } from '@ohos/common'
 
 const TAG = '[SelectionModel]:'
@@ -64,11 +64,11 @@ export default class SelectionModel {
   public static readonly PrintQuality_ECONOMY : SelectionModel = new SelectionModel('PrintQuality_ECONOMY'
     ,PrintQuality.ECONOMY,$r('app.string.PrintQuality_ECONOMY'))
   public static readonly DuplexMode_SINGLE : SelectionModel = new SelectionModel('DuplexMode_ONESIDE'
-    ,DuplexMode.SINGLE,$r('app.string.DuplexMode_ONESIDE'))
+    ,Duplex.SINGLE,$r('app.string.DuplexMode_ONESIDE'))
   public static readonly DuplexMode_LONG : SelectionModel = new SelectionModel('DuplexMode_LONG'
-    ,DuplexMode.LONG,$r('app.string.DuplexMode_LONG'))
+    ,Duplex.LONG,$r('app.string.DuplexMode_LONG'))
   public static readonly DuplexMode_SHORT : SelectionModel = new SelectionModel('DuplexMode_SHORT'
-    ,DuplexMode.SHORT,$r('app.string.DuplexMode_SHORT'))
+    ,Duplex.SHORT,$r('app.string.DuplexMode_SHORT'))
   public static MediaSizeSelections :Array<SelectionModel> = undefined;
 
   name: string // 选项名称

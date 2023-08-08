@@ -14,7 +14,7 @@
  */
 
 import type image from '@ohos.multimedia.image';
-import StringUtil from '../../../../../common/src/main/ets/utils/StringUtil';
+import { StringUtil } from '@ohos/common';
 
 /**
  * 文件类
