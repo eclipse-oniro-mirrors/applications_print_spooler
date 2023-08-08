@@ -792,7 +792,7 @@ export struct DuplexSelection {
   }
 
   getText(){
-    if(this.currentDuplex.obj === DuplexMode.SINGLE){
+    if(this.currentDuplex.obj === Duplex.SINGLE){
       return $r('app.string.DuplexMode_SINGLE')
     } else {
       return this.currentDuplex.res
@@ -816,7 +816,7 @@ struct DuplexSelectionComponent {
     Row() {
       Image(this.getImage()).width(48).height(48).margin({right:16}).objectFit(ImageFit.Contain)
       Column(){
-        Text(this.selection.obj===DuplexMode.SINGLE?$r('app.string.DuplexMode_SINGLE'):$r('app.string.DuplexMode_DOUBLE'))
+        Text(this.selection.obj===Duplex.SINGLE?$r('app.string.DuplexMode_SINGLE'):$r('app.string.DuplexMode_DOUBLE'))
           .textAlign(TextAlign.Start)
           .fontSize($r('app.float.font_size_body1'))
           .fontColor('#E5000000')
@@ -860,7 +860,7 @@ struct DuplexSelectionComponent {
 
   aboutToAppear() {
     Log.info(TAG,'DuplexSelectionComponent: ',JSON.stringify(this.currentDuplex))
-    this.isSingle = (this.selection.obj === DuplexMode.SINGLE);
+    this.isSingle = (this.selection.obj === Duplex.SINGLE);
     this.checkSelectedColor()
   }
 
@@ -875,10 +875,10 @@ struct DuplexSelectionComponent {
   getImage(){
     Log.info(TAG,'getImage: ',this.selection.obj)
     let res = $r('app.media.ic_single');
-    if (this.selection.obj === DuplexMode.LONG) {
+    if (this.selection.obj === Duplex.LONG) {
       Log.info(TAG,'getImage: app.media.ic_long',this.selection.obj)
       res = $r('app.media.ic_long')
-    } else if(this.selection.obj === DuplexMode.SHORT) {
+    } else if(this.selection.obj === Duplex.SHORT) {
       Log.info(TAG,'getImage: app.media.ic_short',this.selection.obj)
       res = $r('app.media.ic_short')
     }
