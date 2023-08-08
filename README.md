@@ -48,7 +48,7 @@ PrintSpooler应用是OpenHarmony中预置的系统应用，为用户提供打印
   @Provide backgroundColor: Resource = $r('app.color.default_background_color');
   ````
 ## 典型接口的使用
-打印框架启动打印界面
+打印框架启动打印界面:
 
    ```
     std::string jobId = GetPrintJobId();
@@ -78,6 +78,219 @@ PrintSpooler应用是OpenHarmony中预置的系统应用，为用户提供打印
         return E_PRINT_SERVER_FAILURE;
     }
    ```
+
+## 打印能力指南
+### 支持预览界面显示预览图并根据设置动态刷新
+- `entry/src/main/ets/Common/Utils/FileUtil.ts `
+- 打开传入的图片uri，获得fd并生成imageSource
+  ```
+  import Fileio from '@ohos.file.fs';
+  import image from '@ohos.multimedia.image';
+ 
+  file = Fileio.openSync(uri, Constants.READ_WRITE);
+  let imageSource = image.createImageSource(file.fd);
+  imageArray.push(new FileModel(<number> file.fd, <string> file.fd, <string> uri,
+  <number> imageInfo.size.width, <number> imageInfo.size.height, imageSource));
+  ```
+
+- `entry/src/main/ets/pages/component/PreviewComponent.ets`
+- 动态变量imageSorce数组更新时，触发handleImage，调用parseImageSize，
+- fdToPixelMap生成pixelMap更新this.currentPixelMap，Image组件显示图片
+- 彩色、无边距等设置项使用组件属性完成动态刷新；
+- 其他设置项变化事件中调用parseImageSize调整或重新加载图片。
+  ```
+  @Link @Watch('handleImage')  imageSources: Array<FileModel>
+  @State currentPixelMap: PixelMap = undefined;
+  
+    Image(this.currentPixelMap).key('PreviewComponent_Image_currentPixelMap')
+    .width(this.canvasWidth).height(this.canvasHeight)
+    .backgroundColor($r('app.color.white'))
+    .objectFit(this.isBorderless?ImageFit.Cover:ImageFit.Contain)
+    .renderMode(this.colorMode === ColorMode.COLOR ? ImageRenderMode.Original : ImageRenderMode.Template)
+
+    handleImage(){
+    Log.info(TAG,'handleImage'+this.imageSources.length)
+    this.checkCanvasWidth()
+    this.parseImageSize(false);
+  }
+  
+    parseImageSize(isRendered: boolean) {
+    this.originalIndex = this.printRange[this.currentIndex - 1]
+    this.currentImage = this.imageSources[this.originalIndex - 1];
+    if (CheckEmptyUtils.isEmpty(this.currentImage)){
+      return;
+    }
+    if (!isRendered) {
+      this.fdToPixelMap(this.currentImage.fd);
+    }
+    let width = this.currentImage.width
+    let height = this.currentImage.height
+    if(width > height) {
+      this.imageOrientation = PageDirection.LANDSCAPE  //图片横向
+    } else {
+      this.imageOrientation = PageDirection.VERTICAL //图片竖向
+    }
+    this.updateCanvasSize()
+  }
+  ```
+### 支持打印任务管理，显示打印任务状态及错误信息
+-`entry/src/main/ets/pages/JobManagerPage.ets`
+-任务管理界面加载时，根据任务id创建本地任务，用@StorageLink动态监控打印任务队列变化，任务有更新后刷新界面显示；
+
+  ```
+    @StorageLink('JobQueue') jobQueue: Array<PrintJob> = new Array();
+    
+    List() {
+      ForEach(this.jobQueue, (printJob:PrintJob)=>{
+        ListItem(){
+          printJobComponent({ mPrintJob: printJob});
+        }.key(`JobManagerPage_ListItem_${printJob.jobId}`)
+      }, printJob=>printJob.jobId)
+    }
+    
+    aboutToAppear() {
+        this.abilityContext = GlobalThisHelper.getValue<common.UIAbilityContext>(GlobalThisStorageKey.KEY_JOB_MANAGER_ABILITY_CONTEXT)
+        let data = {
+          wantJobId : Constants.STRING_NONE
+        }
+        this.abilityContext.eventHub.emit(Constants.EVENT_GET_ABILITY_DATA, data);
+        this.jobId = data.wantJobId;
+        this.adapter = PrintAdapter.getInstance();
+        this.adapter.getPrintJobCtl().createPrintJob(this.jobId)
+  }
+  ```
+
+- `entry/src/main/ets/Controller/PrintJobController.ets`
+- 初始化时将本地任务队列存入AppStorage，建立和界面@StorageLink的关联；
+- 通过print.on接口，传入回调监听任务状态更新事件；
+- 状态更新时通过更新本地任务队列，@StorageLink动态刷新界面
+  ```
+  public init(): void {
+    AppStorageHelper.createValue<Array<PrintJob>>(this.getModel().mPrintJobs, AppStorageKeyName.JOB_QUEUE_NAME);
+    this.registerPrintJobCallback();
+  }
+  
+  private registerPrintJobCallback(): void {
+    print.on('jobStateChange', this.onJobStateChanged);
+  }
+
+  private onJobStateChanged = (state: print.PrintJobState, job: print.PrintJob): void => {
+    if (state === null || job === null) {
+      Log.error(TAG, 'device state changed null data');
+      return;
+    }
+    this.deleteLocalSource(<number>state, <string>job.jobId);
+    switch (state) {
+      case PrintJobState.PRINT_JOB_PREPARED:
+      case PrintJobState.PRINT_JOB_QUEUED:
+      case PrintJobState.PRINT_JOB_RUNNING:
+      case PrintJobState.PRINT_JOB_BLOCKED:
+      case PrintJobState.PRINT_JOB_COMPLETED:
+        this.onPrintJobStateChange(job);
+        break;
+      default:
+        break;
+    }
+  };
+
+  private onPrintJobStateChange(job: print.PrintJob): void {
+    if (job === null) {
+      return;
+    }
+    this.getModel().printJobStateChange(job.jobId, job.jobState, job.jobSubState);
+  }
+  ```
+### 打印需支持mopria协议，支持p2p连接
+- `feature/ippPrint/src/main/ets/common/discovery/P2pDiscoveryChannel.ts`
+- 调用Wifi-P2p的接口发现周边的p2p打印机
+  ```
+  import wifi from '@ohos.wifi';
+  
+  startDiscovery(callback: (found: boolean, peer: wifi.WifiP2pDevice) => void): void {
+    this.discoveryCallback = callback;
+    wifi.on('p2pPeerDeviceChange', this.updatePeerDevices);
+    this.startP2pDiscovery();
+    this.registerWifiCommonEvent();
+
+    
+    this.discoverySleepTimer = setInterval(()=> {
+      Log.debug(TAG, 'native p2p service is sleep, start discovery');
+      this.startP2pDiscovery();
+    }, DISCOVERY_SLEEP);
+  }
+    
+  private startP2pDiscovery(): void {
+    wifi.startDiscoverDevices();
+    wifi.getP2pPeerDevices().then((peers: wifi.WifiP2pDevice[]) => {
+      this.updatePeerDevices(peers);
+    });
+  }
+  ```
+- `feature/ippPrint/src/main/ets/common/connect/P2pPrinterConnection.ts`
+- 发现p2p打印机之后，执行连接，获取对端打印机的ip信息
+  ```
+  import wifi from '@ohos.wifi';
+  
+  private startConnect(printer: DiscoveredPrinter): void {
+    Log.debug(TAG, 'connect to ' + CommonUtils.getSecurityMac(printer.getDeviceAddress()));
+    let config: wifi.WifiP2PConfig = this.configForPeer(printer);
+    this.mWifiModel.registerWifiP2pEvent(WifiModel.p2pConnectionChange, this.p2pConnectionChangeReceive);
+    this.mWifiModel.registerWifiP2pEvent(WifiModel.p2pPeerDeviceChange, this.p2pPeersChangeReceive);
+    let connectionOperation: boolean = this.mWifiModel.connectToPrinter(config);
+    if (!connectionOperation) {
+      Log.error(TAG, 'connection operation failed');
+      if (this.delayTimer !== undefined) {
+        clearTimeout(this.delayTimer);
+      }
+      this.mWifiModel.unregisterWifiP2pEvent(WifiModel.p2pConnectionChange, this.p2pConnectionChangeReceive);
+      this.mWifiModel.unregisterWifiP2pEvent(WifiModel.p2pPeerDeviceChange, this.p2pPeersChangeReceive);
+      this.mListener.onConnectionDelayed();
+      return;
+    }
+    Log.error(TAG, 'connection operation success');
+  }
+  ```
+- `feature/ippPrint/src/main/ets/common/napi/NativeApi.ts`
+- p2p打印机连接成功之后调用print_print_fwk的接口获取打印机支持的ipp协议能力，并调用print_print_fwk接口向cupsd服务配置一台无驱动打印机（支持Mopria协议）
+  ```
+  import print from '@ohos.print';
+  
+  public getCapabilities(uri: string, printerName: string, getCapsCallback: (result) => void): void {
+    Log.debug(TAG, 'getCapabilities enter');
+    if (print === undefined) {
+      Log.error(TAG, 'print is undefined');
+      getCapsCallback(ERROR);
+      return;
+    }
+    Log.debug(TAG, 'getCapabilities start');
+    // 获取打印机的ipp打印能力
+    print.queryPrinterCapabilityByUri(uri).then((result) => {
+      Log.debug(TAG, 'nativeGetCapabilities result: ' + JSON.stringify(result));
+      this.setCupsPrinter(uri, this.removeSpaces(printerName));
+      getCapsCallback(result);
+    }).catch((error) => {
+      Log.error(TAG, 'nativeGetCapabilities error: ' + JSON.stringify(error));
+      getCapsCallback(ERROR);
+    });
+    Log.debug(TAG, 'getCapabilities end');
+  }
+
+  public setCupsPrinter(uri: string, name: string): void {
+    Log.debug(TAG, 'setCupsPrinter enter');
+    if (print === undefined) {
+      Log.error(TAG, 'print is undefined');
+      return;
+    }
+    // 向cupsd服务配置无驱动打印机
+    print.addPrinterToCups(uri, name).then((result) => {
+      Log.debug(TAG, 'nativeSetCupsPrinter result: ' + JSON.stringify(result));
+    }).catch((error) => {
+      Log.error(TAG, 'nativeSetCupsPrinter error: ' + JSON.stringify(error));
+    });
+  }
+  ```
+- 打印框架代码详见：[print_print_fwk](https://gitee.com/openharmony/print_print_fwk)
+
 ## 签名打包
 ### 签名
 #### 签名文件的获取
