@@ -79,7 +79,6 @@ export class Backend {
     Log.debug(TAG, 'handleGetCapsResult enter');
     if (ResponseCode.ERROR === responseCode) {
       //获取打印机能力失败，上报错误
-      print.updateExtensionInfo(JSON.stringify(GET_CAPS_ERROR));
       this.onCapabilitiesCallback.onCapabilities(null);
       this.requestCallback();
       return;
