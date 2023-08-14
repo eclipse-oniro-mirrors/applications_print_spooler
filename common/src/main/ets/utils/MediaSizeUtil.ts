@@ -88,7 +88,7 @@ export class MediaSizeUtil {
     let codes: number[] = new Array<number>();
     for (let size of sizes) {
       for (let key of MediaSize.sCodeToStringMap.keys()) {
-        if (MediaSize.sCodeToStringMap.get(key).id === size) {
+        if (MediaSize.sCodeToStringMap.get(key).name === size) {
           codes.push(key);
         }
       }

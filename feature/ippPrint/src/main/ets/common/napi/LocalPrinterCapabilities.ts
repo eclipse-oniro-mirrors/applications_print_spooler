@@ -45,7 +45,7 @@ export default class LocalPrinterCapabilities {
       return '';
     }
     let options: object = {
-      supportedMediaTypes: optionObject.supportedMediaTypes,
+      supportedMediaTypes: LocalPrinterCapabilities.removeDuplicates(optionObject.supportedMediaTypes),
       supportedQuality: optionObject.supportedQualities,
       make: optionObject.make,
       printerUri: printerUri
