@@ -31,6 +31,7 @@ const TAG = 'LocalPrinter';
 export default class LocalPrinter implements ConnectionListener, OnLocalPrinterCapabilities {
   private static readonly p2pDiscoveryProtocol: string = 'wifi_direct';
   private static readonly descriptionSplit: string = '&&';
+  private static readonly maxRetryTimes: number = 2;
   private readonly mPrintServiceAdapter: PrintServiceAdapter;
   private readonly mSession: LocalDiscoverySession;
   private readonly mPrinterId: string; // number类型
@@ -39,6 +40,7 @@ export default class LocalPrinter implements ConnectionListener, OnLocalPrinterC
   private mCapabilities: PrinterCapability;
   private mDiscoveredPrinter: DiscoveredPrinter;
   private mP2pPrinterConnection: P2PPrinterConnection;
+  private getCapsFailedTimes: number = 0;
 
   constructor(printServiceAdapter: PrintServiceAdapter, session: LocalDiscoverySession,
               discoveredPrinter: DiscoveredPrinter) {
@@ -169,6 +171,7 @@ export default class LocalPrinter implements ConnectionListener, OnLocalPrinterC
   onCapabilities(printerCaps: PrinterCapability): void {
     if (!CheckEmptyUtils.isEmpty(printerCaps)) {
       this.mCapabilities = printerCaps;
+      this.getCapsFailedTimes = 0;
       // 上报打印机获取能力成功的回调
       let printerInfo: PrinterInfo = this.createPrinterInfo();
       print.updatePrinters([printerInfo]).then((result) => {
@@ -177,8 +180,15 @@ export default class LocalPrinter implements ConnectionListener, OnLocalPrinterC
         Log.error(TAG, 'update error: ' + JSON.stringify(error));
       });
     } else {
-      Log.error(TAG, 'printerCaps is null');
-      print.updateExtensionInfo(JSON.stringify(IPP_CONNECT_ERROR));
+      if (this.getCapsFailedTimes < LocalPrinter.maxRetryTimes) {
+        Log.error(TAG, `getCapabilities failed, retry ${this.getCapsFailedTimes} times`);
+        this.getCapsFailedTimes++;
+        this.getCapabilities();
+      } else {
+        Log.error(TAG, 'printerCaps is null');
+        this.getCapsFailedTimes = 0;
+        print.updateExtensionInfo(JSON.stringify(IPP_CONNECT_ERROR));
+      }
     }
   }
 

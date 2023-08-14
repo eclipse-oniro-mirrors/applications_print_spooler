@@ -117,28 +117,6 @@ export class MdnsDiscovery extends Discovery {
     this._discoveryService.startSearchingMDNS();
   }
 
-  checkIsP2pConnectingPrinter(printer: DiscoveredPrinter): void {
-    if (CheckEmptyUtils.isEmpty<DiscoveredPrinter>(printer)) {
-      Log.error(TAG, 'printer is empty');
-      return;
-    }
-    Log.debug(TAG, 'checkIsP2pConnectingPrinter, printer: ' + CommonUtils.getSecurityPrinterName(printer.getDeviceName()));
-    wifi.getCurrentGroup().then((group) => {
-      Log.debug(TAG, 'printer: ' + CommonUtils.getSecurityPrinterName(printer.getDeviceName()));
-      Log.debug(TAG, 'group:' + CommonUtils.getSecurityPrinterName(group.ownerInfo.deviceName));
-      if (group.ownerInfo.deviceName.includes(printer.getDeviceName()) && (group.goIpAddress === printer.getUri().host || group.goIpAddress === '' )) {
-        Log.info(TAG, 'p2p connecting printer: ignore');
-      } else {
-        this.printerFound(printer);
-      }
-    }).catch((error) => {
-      Log.error(TAG, 'getCurrentGroup error: ' + JSON.stringify(error));
-      this.printerFound(printer);
-    }).finally(() => {
-      Log.debug(TAG, 'getCurrentGroup finally');
-    });
-  }
-
   /**
   * onServiceFound callback
    */
@@ -155,29 +133,10 @@ export class MdnsDiscovery extends Discovery {
     }
     for (let key of this.mCachePrinters.keys()) {
       if (this.mCachePrinters.get(key).getDeviceName() === data.serviceInfo.serviceName) {
-        this.isServiceOnline(this.mCachePrinters.get(key).getUri(), this.mCachePrinters.get(key).getPath());
+        this.printerLost(this.mCachePrinters.get(key)?.getPath());
       }
     }
   };
-
-  private isServiceOnline(uri: uri.URI, path: string): void {
-    Log.info(TAG, `address: ${CommonUtils.getSecurityIp(uri.host)}`);
-    let tcp = socket.constructTCPSocketInstance();
-    tcp.bind({address: 'localhost'}).then(() => {
-      tcp.connect({ address: {address: <string>uri.host, port: parseInt(<string>uri.port), family: 1}, timeout: 2000}).then(() => {
-        Log.info(TAG, 'printer is online, ignore lost event');
-        tcp.close();
-      }).catch((error) => {
-        Log.error(TAG, 'connect printer failed: ' + JSON.stringify(error));
-        this.printerLost(path);
-        tcp.close();
-      });
-    }).catch((error) => {
-      Log.error(TAG, 'bind printer failed: ' + JSON.stringify(error));
-      this.printerLost(path);
-      tcp.close();
-    });
-  }
 
   private resolveService = (eventData: emitter.EventData): void => {
     Log.debug(TAG, 'resolveService enter');
@@ -188,7 +147,7 @@ export class MdnsDiscovery extends Discovery {
         data.serviceName = eventData.data.serviceName;
       }
       let printer = MdnsDiscovery.toMdnsPrinter(data);
-      this.checkIsP2pConnectingPrinter(printer);
+      this.printerFound(printer);
     }).catch((error) => {
       Log.error(TAG, `resolveLocalService, err is ${JSON.stringify(error)}`);
     });
