@@ -62,7 +62,7 @@ export { uuidGenerator } from './src/main/ets/utils/UuidGenerator'
 
 export { PrinterUtils } from './src/main/ets/utils/PrinterUtils'
 
-export { checkWifiEnable, checkPermission, requestPermission } from './src/main/ets/utils/PermissionUtils'
+export { checkWifiEnable } from './src/main/ets/utils/PermissionUtils'
 
 export { MediaSizeUtil } from './src/main/ets/utils/MediaSizeUtil'
 
