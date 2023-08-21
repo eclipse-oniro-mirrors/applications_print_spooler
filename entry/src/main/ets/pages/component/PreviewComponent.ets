@@ -30,7 +30,7 @@ export struct PreviewComponent {
   @Consume('ImageCount') imageCount: number
   @Consume('CurrentIndex') currentIndex: number
   @Consume('IsGlobalDisable') isGlobalDisable: boolean
-  @Consume('PreviewCompHeight') previewCompHeight: number//预览区组件高度
+  @Consume('PreviewCompHeight')@Watch('onHeightLoad') previewCompHeight: number//预览区组件高度
 
   @Consume('IsBorderless')isBorderless: boolean
   @Consume('PrintRange')@Watch('onPrintRangeChange')  printRange: Array<number>
@@ -311,6 +311,15 @@ export struct PreviewComponent {
       this.parseImageSize(true)
     } else {
       this.parseImageSize(false)
+    }
+  }
+
+  /**
+   *界面高度调整
+   */
+  onHeightLoad(){
+    if(this.previewCompHeight){
+      this.handleImage();
     }
   }
 
