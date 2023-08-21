@@ -25,7 +25,6 @@ import LocalPrinter from './LocalPrinter';
 import print from '@ohos.print';
 import type { WifiListener } from './model/WifiModel';
 import CommonEventManager from '@ohos.commonEventManager';
-import { checkPermission } from '@ohos/common';
 import HashSet from '@ohos.util.HashSet';
 
 const TAG = 'LocalDiscoverySession';
