@@ -48,15 +48,9 @@ export class LocalDiscoverySession implements Listener, WifiListener {
   public startPrinterDiscovery(): void {
     Log.info(TAG, 'startPrinterDiscovery() ');
     this.mPrintServiceAdapter.mdnsDiscovery.addListener(this);
-    checkPermission().then((result) => {
-      if (result) {
-        setTimeout(() => {
-          this.mPrintServiceAdapter.p2pDiscovery.addListener(this);
-        }, P2P_DISCOVERY_DELAY);
-      }
-    }).catch((error) => {
-      Log.error(TAG, 'checkPermission error ' + JSON.stringify(error));
-    });
+    setTimeout(() => {
+      this.mPrintServiceAdapter.p2pDiscovery.addListener(this);
+    }, P2P_DISCOVERY_DELAY);
   }
 
   /**

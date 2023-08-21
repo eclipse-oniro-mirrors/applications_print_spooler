@@ -29,7 +29,6 @@ import { Log } from '@ohos/common';
 import { PrinterDiscModel } from '../Model/PrinterDiscModel';
 import emitter from '@ohos.events.emitter';
 import { StringUtil } from '@ohos/common';
-import { requestPermission, checkPermission } from '@ohos/common';
 import { PrintJob, PrinterCapability, PrinterInfo, PrinterState } from '@ohos/common';
 
 const TAG = '[PrinterDiscController]:';
@@ -77,20 +76,6 @@ export class PrinterDiscController {
         Log.info(TAG, 'start Discovery success data : ' + JSON.stringify(data));
       }).catch((err) => {
         Log.error(TAG, 'failed to start Discovery because : ' + JSON.stringify(err));
-      });
-      checkPermission().then((result) => {
-        if (!result) {
-          let context = GlobalThisHelper.getValue(GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT);
-          requestPermission(context, () => {
-            print.startDiscoverPrinter(extensionList).then((data) => {
-              Log.info(TAG, 'requestPermission, start Discovery success data : ' + JSON.stringify(data));
-            }).catch((err) => {
-              Log.error(TAG, 'failed to start Discovery because : ' + JSON.stringify(err));
-            });
-          });
-        } else {
-          Log.error(TAG, 'has permission, ignore');
-        }
       });
     }).catch((error) => {
       Log.error(TAG, 'start discovery fail because :' + JSON.stringify(error));
