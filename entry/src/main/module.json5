@@ -99,26 +99,6 @@
         }
       },
       {
-        "name": "ohos.permission.APPROXIMATELY_LOCATION",
-        "reason": '$string:p2p_require',
-        "usedScene": {
-          "abilities": [
-            "com.ohos.spooler.PrintExtension"
-          ],
-          "when": "inuse"
-        }
-      },
-      {
-        "name": "ohos.permission.LOCATION",
-        "reason": '$string:p2p_require',
-        "usedScene": {
-          "abilities": [
-            "com.ohos.spooler.PrintExtension"
-          ],
-          "when": "inuse"
-        }
-      },
-      {
         "name": "ohos.permission.INTERNET",
         "reason": '$string:http_require',
         "usedScene": {
