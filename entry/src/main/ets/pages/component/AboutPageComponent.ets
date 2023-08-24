@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-import { GlobalThisHelper, GlobalThisStorageKey, Log } from '@ohos/common';
-import window from '@ohos.window';
+import { Log } from '@ohos/common';
+import router from '@ohos.router';
 
 const TAG = 'AboutPageComponent'
 @Component
@@ -25,20 +25,9 @@ export struct AboutPageComponent {
     Image($r('app.media.ic_public_detail')).width($r('app.float.image_comp_width')).height($r('app.float.image_comp_height'))
       .onClick(() => {
         Log.info(TAG, 'PrivacyStatementPage onClick');
-        var windowStage = GlobalThisHelper.getValue<window.WindowStage>(GlobalThisStorageKey.KEY_MAIN_ABILITY_WINDOW_STAGE);
-        windowStage.createSubWindow('AboutPage')
-          .then((windowMode) => {
-            windowMode.setUIContent('pages/AboutPage')
-            // @ts-ignore
-            windowMode.setForbidSplitMove(false);
-            windowMode.showWindow((err) => {
-              if (err.code) {
-                Log.info(TAG, 'Failed to show the window. Cause: ' + JSON.stringify(err))
-                return
-              }
-              Log.info(TAG, 'Succeeded in showing the window.')
-            })
-          })
+        router.pushUrl({
+          url: 'pages/AboutPage'
+        })
       })
       .backgroundColor(this.bckColor)
       .clip(new Circle({width: 24, height: 24})).onTouch((event) => {
