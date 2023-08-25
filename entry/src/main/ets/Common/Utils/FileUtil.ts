@@ -155,6 +155,8 @@ export default class FileUtil {
       return <object[]> imageArray;
     }
     for (let uri of fileList) {
+      let uriArr = uri.split(FILE_SEPARATOR);
+      let fileName = uriArr[uriArr.length-1];
       let file = undefined;
       try {
         file = Fileio.openSync(uri, Constants.READ_WRITE);
@@ -183,7 +185,7 @@ export default class FileUtil {
         errorCount++;
         continue;
       }
-      imageArray.push(new FileModel(<number> file.fd, <string> file.fd, <string> uri,
+      imageArray.push(new FileModel(<number> file.fd, fileName, <string> uri,
         <number> imageInfo.size.width, <number> imageInfo.size.height, imageSource));
       Log.debug(TAG, 'initImageData imageArray: ', JSON.stringify(imageArray));
     }

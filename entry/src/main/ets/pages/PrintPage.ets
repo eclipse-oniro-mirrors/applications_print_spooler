@@ -408,6 +408,9 @@ struct Index {
                   e.stopPropagation()
                 })
               Text($r('app.string.index_from'))
+                .maxLines(Constants.NUMBER_2)
+                .textOverflow({ overflow: TextOverflow.Ellipsis})
+                .textAlign(TextAlign.Start)
                 .fontSize($r('app.float.font_size_body2'))
                 .key('Index_Text_from_pageRange')
               TextInput({ text: this.startPageStr })
@@ -467,7 +470,12 @@ struct Index {
                   e.stopPropagation()
                 })
 
-              Text($r('app.string.index_to')).fontSize($r('app.float.font_size_body2')).key('Index_Text_to_pageRange')
+              Text($r('app.string.index_to'))
+                .maxLines(Constants.NUMBER_2)
+                .textOverflow({ overflow: TextOverflow.Ellipsis})
+                .textAlign(TextAlign.Start)
+                .fontSize($r('app.float.font_size_body2'))
+                .key('Index_Text_to_pageRange')
               TextInput({ text: this.endPageStr })
                 .width($r('app.float.textInput_pageRange_width'))
                 .height($r('app.float.params_comp_height'))
@@ -621,29 +629,31 @@ struct Index {
           MediaTypeSelection().visibility(!this.isPhotoEnabled ? Visibility.None : Visibility.Visible)
           Row() {
             Blank()
-            Checkbox()
-              .select(this.isBorderless)
-              .width($r('app.float.image_comp_width'))
-              .height($r('app.float.image_comp_height'))
-              .enabled(this.currentMediaType.obj === MediaType.PHOTO)
-              .key('Index_Checkbox_borderless')
-              .onChange((value: boolean) => {
-                if (value) {
-                  this.showToast($r('app.string.borderless_enable_toast'))
-                }
-                this.isBorderless = value
-              })
+            Row(){
+              Checkbox()
+                .select(this.isBorderless)
+                .width($r('app.float.image_comp_width'))
+                .height($r('app.float.image_comp_height'))
+                .enabled(this.currentMediaType.obj === MediaType.PHOTO)
+                .key('Index_Checkbox_borderless')
+                .onChange((value: boolean) => {
+                  if (value) {
+                    this.showToast($r('app.string.borderless_enable_toast'))
+                  }
+                  this.isBorderless = value
+                })
+            }
+            .onClick(() => {
+              if (this.currentMediaType.obj !== MediaType.PHOTO) {
+                this.showToast($r('app.string.borderless_type_toast'))
+              }
+            })
             Text($r('app.string.index_borderless'))
               .fontSize($r('app.float.font_size_body2'))
               .width($r('app.float.text_borderless_width'))
               .opacity(this.currentMediaType.obj === MediaType.PHOTO ? Constants.NUMBER_1 : $r('app.float.disable_opacity'))
               .key('Index_Text_borderless')
           }
-          .onClick(() => {
-            if (this.currentMediaType.obj !== MediaType.PHOTO) {
-              this.showToast($r('app.string.borderless_type_toast'))
-            }
-          })
           .visibility(!this.isPhotoEnabled? Visibility.None : Visibility.Visible)
           .height($r('app.float.params_row_height'))
           .width($r('app.float.params_row_width'))
@@ -899,13 +909,23 @@ struct Index {
     print.on('extInfoChange', (extensionId: string, info: string) => {
       let extInfo = JSON.parse(info)
       Log.info(TAG, 'extInfoChange: ', info)
-      if (extInfo.code === ErrorCode.GET_CAPS_ERROR) {
-        this.adapter.getPrinterDiscCtl().queryPrinterCapability(this.printer.printerId)
-      } else if (extInfo.code === ErrorCode.CONNECTION_POP) {
-        if (!CheckEmptyUtils.isEmpty(this.printer)) {
-          if (this.printer.printerId !== this.usedPrinterId)
+      if (CheckEmptyUtils.isEmpty(this.printer)){
+        Log.info(TAG, 'invalid printer！')
+        return;
+      }
+      switch (extInfo.code){
+        case ErrorCode.IPP_CONNECT_ERROR:
+          this.connectionFailed();
+          break;
+        case ErrorCode.GET_CAPS_ERROR:
+          this.adapter.getPrinterDiscCtl().queryPrinterCapability(this.printer.printerId);
+          break;
+        case ErrorCode.CONNECTION_POP:
+          if (this.printer.printerId !== this.usedPrinterId){
             this.connectFlag = !this.connectFlag
-        }
+          }
+        default:
+          break;
       }
     })
   }
@@ -1170,12 +1190,16 @@ struct Index {
   async loadImageSources() {
     Log.info(TAG, 'loadImageSources start')
     if (this.jobFileList) {
+      this.fileNum = this.jobFileList.length;
       this.imageSources = await FileUtil.initImageData(this.checkMaxPages(this.jobFileList));
     } else {
       // @ts-ignore
       await print.queryPrintJobById(this.jobId).then(async (printJob) => {
-        Log.debug(TAG, 'queryPrintJobById printJob: ', JSON.stringify(printJob));
-        this.imageSources = await FileUtil.initFdImageData(printJob.fdList);
+        if (!CheckEmptyUtils.isEmpty(printJob) && !CheckEmptyUtils.isEmptyArr(printJob.fdList)) {
+          this.fileNum = printJob.fdList.length;
+          Log.debug(TAG, 'queryPrintJobById printJob: ', JSON.stringify(printJob));
+          this.imageSources = await FileUtil.initFdImageData(printJob.fdList);
+        }
       })
     }
     Log.debug(TAG, "loadImageSources imageSources: ", JSON.stringify(this.imageSources))
@@ -1373,7 +1397,8 @@ struct Index {
           Log.error(TAG, 'imageSource is error')
           continue;
         };
-        pixelMap = await imageSource.createPixelMap();
+        const editResult: boolean = orientation === Constants.NUMBER_1 ? true : false;
+        pixelMap = await imageSource.createPixelMap({isEdit: editResult});
         if (CheckEmptyUtils.isEmpty(pixelMap)) {
           Log.error(TAG, 'pixelMap is error')
           continue;
@@ -1386,7 +1411,7 @@ struct Index {
         //保存图片
         Log.info(TAG, 'begin createDataShareUri');
         if (this.firstFileName === undefined) {
-          this.firstFileName = '图片'//暂时不支持获取文件名
+          this.firstFileName = imageModel.name;
           Log.info(TAG, 'init firstFileName:' + this.firstFileName)
         }
         let fileName = uuidGenerator() + Constants.JPEG_SUFFIX;
@@ -1404,6 +1429,9 @@ struct Index {
         }
         if (canvasPixelMap !== undefined) {
           canvasPixelMap.release();
+        }
+        if (imageSource !== undefined) {
+          imageSource.release();
         }
       }
     }
@@ -1442,7 +1470,7 @@ struct Index {
       }
       let option = JSON.stringify(ops);
 
-      this.printJob = new PrintJob(jobFiles,fileList,this.jobId,this.printer.printerId,state,this.printCount,Constants.NUMBER_0,this.printerRange,true,this.printerPageSize,true,
+      this.printJob = new PrintJob(jobFiles,fileList,this.jobId,this.printer.printerId,state,Constants.NUMBER_0,this.printCount,this.printerRange,true,this.printerPageSize,true,
                       this.colorMode,this.currentDuplex.obj,new PrintMargin(),null,option);
       let printMargin = new PrintMargin();
       printMargin.top = Constants.NUMBER_0;
@@ -1468,11 +1496,8 @@ struct Index {
         jobId: this.jobId
       },
     }
-    let options = {
-      windowMode: Constants.WINDOW_FLOAT_MODE,
-    }
     // @ts-ignore
-    this.abilityContext.startAbility(jobAbilityWant, options).then(() => {
+    this.abilityContext.startAbility(jobAbilityWant).then(() => {
       Log.info(TAG,'startJobManagerAbility')
       this.canPrint = false;
       this.abilityContext.terminateSelf().then((data) => {
