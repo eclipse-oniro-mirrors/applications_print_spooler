@@ -42,9 +42,9 @@ export struct PreviewComponent {
   @State isPreviewFailed: boolean = false;
   @State @Watch('loadCurrentPix')currentPixelMap: PixelMap = undefined;
   @State imageOrientation: number = PageDirection.VERTICAL;
-  @State canvasWidth: number = 472 / canvasScale;
-  @State canvasHeight: number = 668 / canvasScale;
-  @State canvasRatio: number = 472 / 668;//width/height
+  @State canvasWidth: number = 313 / canvasScale;
+  @State canvasHeight: number = 444 / canvasScale;
+  @State canvasRatio: number = 313 / 444;//width/height
   @State offCanvasWidth: number = this.canvasWidth * to300DPI * canvasScale;
   @State offCanvasHeight: number = this.canvasHeight * to300DPI * canvasScale;
   @State imageWidth: number = Constants.NUMBER_0;
@@ -222,6 +222,8 @@ export struct PreviewComponent {
   aboutToAppear() {
     if(this.imageSources !== undefined){
       this.handleImage()
+    }else{
+      this.checkCanvasWidth()
     }
   }
 
@@ -318,6 +320,10 @@ export struct PreviewComponent {
    *界面高度调整
    */
   onHeightLoad(){
+    Log.info(TAG,'onHeightLoad:'+this.previewCompHeight)
+    if (this.imageSources === undefined ){
+      return;
+    }
     if(this.previewCompHeight){
       this.handleImage();
     }

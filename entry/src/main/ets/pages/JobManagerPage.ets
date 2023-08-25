@@ -117,7 +117,8 @@ struct JobManagerPage {
           });
         })
     }
-    .width($r('app.float.print_job_width'))
+    .width('100%')
+    .height('100%')
     .backgroundColor(Color.White)
     .alignItems(HorizontalAlign.Center)
 
