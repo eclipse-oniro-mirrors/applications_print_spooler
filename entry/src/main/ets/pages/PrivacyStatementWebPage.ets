@@ -38,9 +38,10 @@ struct PrivacyStatementWebPage {
   private url: string;
 
   aboutToAppear() {
-    let storage = LocalStorage.GetShared();
-    if (storage) {
-      this.privacyStatementFlag = storage.get<boolean>('privacyStatementFlag');
+    const params = router.getParams();
+    const hideCancel = params['info'];
+    if (hideCancel) {
+      this.privacyStatementFlag = hideCancel;
     }
     Log.info(TAG, 'privacyStatementFlag: ' + this.privacyStatementFlag);
     this.languageToWebUrl();
@@ -48,7 +49,7 @@ struct PrivacyStatementWebPage {
   }
 
   build() {
-    Column() {
+    Flex({ justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center, direction: FlexDirection.Column }) {
       Column() {
         ClickableImage({
           imageSrc: $r('app.media.ic_back'),
@@ -70,33 +71,33 @@ struct PrivacyStatementWebPage {
             .width('100%')
             .height('100%')
         }
-        .height('75%')
+        .height(600)
         .width('100%')
-        Column() {
-          CancelButton({
-            cancelLabel: $r('app.string.Cancel'),
-            cancelWidth: $r('app.float.about_button_width'),
-            cancelHeight: $r('app.float.privacy_statement_button_height'),
-            cancelClick: () => {
-              this.closeWindow();
-            }
-          })
+        if (!this.privacyStatementFlag) {
+          Column() {
+            CancelButton({
+              cancelLabel: $r('app.string.Cancel'),
+              cancelWidth: $r('app.float.about_button_width'),
+              cancelHeight: $r('app.float.privacy_statement_button_height'),
+              cancelClick: () => {
+                router.back({ url: 'pages/PrintPage' });
+              }
+            })
             .margin({
               top: $r('app.float.privacy_statement_button_to_text_margin_top')
             })
+          }
+          .width('100%')
+          .alignItems(HorizontalAlign.Center)
         }
-        .width('100%')
-        .alignItems(HorizontalAlign.Center)
-        .visibility(this.privacyStatementFlag ? Visibility.None : Visibility.Visible)
       }
       .margin({
         bottom: this.privacyStatementFlag ? 0
                                           : $r('app.float.privacy_statement_button_margin_bottom')
       })
+      .width('100%')
+      .height('100%')
     }
-    .width('100%')
-    .height('100%')
-    .alignItems(HorizontalAlign.Center)
   }
 
 
@@ -114,7 +115,7 @@ struct PrivacyStatementWebPage {
         if (parseInt(router.getLength()) > 1) {
           router.back({url: 'pages/AboutPage'})
         } else {
-          this.closeWindow();
+          router.replaceUrl({ url: 'pages/PrivacyStatementPage' })
         }
       }
     } catch (error) {

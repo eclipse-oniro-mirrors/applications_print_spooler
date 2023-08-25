@@ -13,9 +13,6 @@
  * limitations under the License.
  */
 
-import { Log } from '@ohos/common';
-import bundleManager from '@ohos.bundle.bundleManager';
-import window from '@ohos.window';
 import router from '@ohos.router';
 import {CancelButton} from './component/BaseComponent';
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper';
@@ -33,54 +30,54 @@ struct AboutPage {
   }
 
   build() {
-    Column() {
-      Column() {
-        Image($r('app.media.logo'))
-          .width($r('app.float.privacy_statement_print_log_width_height'))
-          .height($r('app.float.privacy_statement_print_log_width_height'))
-          .margin({top: $r('app.float.about_print_log_width_height')})
-        Text($r('app.string.MainAbility_label'))
-          .fontSize($r('sys.float.ohos_id_text_size_headline7'))
-          .fontColor($r('sys.color.ohos_id_color_text_primary'))
-          .fontWeight(FontWeight.Bolder)
-          .margin({top: $r('app.float.about_text_relative_img_margin_top')})
-        Text(this.versionName)
-          .margin({ top: $r('app.float.privacy_statement_text_relative_text_margin_top')})
-          .fontColor($r('sys.color.ohos_fa_text_tertiary'))
-          .fontWeight(FontWeight.Regular)
-      }
-      Blank().height('20%')
-      Column() {
-        Text($r('app.string.about_privacy_statement_text'))
-          .fontColor($r('sys.color.ohos_id_color_text_hyperlink'))
-          .onClick(() => {
-            router.pushUrl({url: 'pages/PrivacyStatementWebPage'})
+    Flex({ justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center }) {
+      Flex({ direction: FlexDirection.Column, justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
+        Column() {
+          Image($r('app.media.logo'))
+            .width($r('app.float.privacy_statement_print_log_width_height'))
+            .height($r('app.float.privacy_statement_print_log_width_height'))
+            .margin({top: $r('app.float.about_print_log_width_height')})
+          Text($r('app.string.MainAbility_label'))
+            .fontSize($r('sys.float.ohos_id_text_size_headline7'))
+            .fontColor($r('sys.color.ohos_id_color_text_primary'))
+            .fontWeight(FontWeight.Bolder)
+            .margin({top: $r('app.float.about_text_relative_img_margin_top')})
+          Text(this.versionName)
+            .margin({ top: $r('app.float.privacy_statement_text_relative_text_margin_top')})
+            .fontColor($r('sys.color.ohos_fa_text_tertiary'))
+            .fontWeight(FontWeight.Regular)
+        }
+        Column() {
+          Text($r('app.string.about_privacy_statement_text'))
+            .fontColor($r('sys.color.ohos_id_color_text_hyperlink'))
+            .onClick(() => {
+              router.pushUrl({
+                url: 'pages/PrivacyStatementWebPage',
+                params: {
+                  info: false
+                }
+              });
+            })
+            .margin({
+              left: $r('app.float.privacy_statement_text_margin_left_right'),
+              right: $r('app.float.privacy_statement_text_margin_left_right')
+            })
+          CancelButton({
+            cancelLabel: $r('app.string.Cancel'),
+            cancelWidth: $r('app.float.about_button_width'),
+            cancelHeight: $r('app.float.privacy_statement_button_height'),
+            cancelClick: () => {
+              router.back({ url: 'pages/PrintPage' });
+            }
           })
           .margin({
-            left: $r('app.float.privacy_statement_text_margin_left_right'),
-            right: $r('app.float.privacy_statement_text_margin_left_right')
+            top: $r('app.float.privacy_statement_button_to_text_margin_top')
           })
-        CancelButton({
-          cancelLabel: $r('app.string.Cancel'),
-          cancelWidth: $r('app.float.about_button_width'),
-          cancelHeight: $r('app.float.privacy_statement_button_height'),
-          cancelClick: () => {
-            var windowClass = window.findWindow('AboutPage');
-            if (windowClass) {
-              windowClass.destroyWindow(() => {
-                Log.info(TAG, 'Succeeded in destroying the window');
-              })
-            }
-          }
-        })
-        .margin({
-          top: $r('app.float.privacy_statement_button_to_text_margin_top')
-        })
+        }
+        .margin({bottom: $r('app.float.privacy_statement_button_margin_bottom')})
       }
-      .margin({bottom: $r('app.float.privacy_statement_button_margin_bottom')})
     }
     .width('100%')
     .height('100%')
-    .alignItems(HorizontalAlign.Center)
   }
 }
