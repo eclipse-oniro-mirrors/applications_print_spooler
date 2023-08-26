@@ -39,11 +39,11 @@ export default class JobManagerAbility extends UIAbility {
   onWindowStageCreate(windowStage): void {
     // Main window is created, set main page for this ability
     Log.info(TAG, 'onWindowStageCreate');
-    windowStage.getMainWindow().then((window) => {
-      window.resetSize(vp2px(Constants.JOB_WINDOW_WIDTH), vp2px(Constants.JOB_WINDOW_HEIGHT));
-    }).catch((err) => {
-      Log.error(TAG, 'Failed to obtain the main window. Cause: ' + JSON.stringify(err));
-    });
+    // windowStage.getMainWindow().then((window) => {
+    //   window.resetSize(vp2px(Constants.MAIN_WINDOW_WIDTH), vp2px(Constants.MAIN_WINDOW_HEIGHT));
+    // }).catch((err) => {
+    //   Log.error(TAG, 'Failed to obtain the main window. Cause: ' + JSON.stringify(err));
+    // });
 
     windowStage.setUIContent(this.context, 'pages/JobManagerPage', null);
   }

@@ -74,19 +74,19 @@ struct JobManagerPage {
       .width($r('app.float.print_job_comp_width'))
       .height($r('app.float.print_job_title_height'))
       .margin({left:$r('app.float.print_job_margin_left'),right:$r('app.float.print_job_margin_right')})
-        Row(){
-          Image($r('app.media.ic_printer_tips')).key('JobManagerPage_Image_printerTips')
-            .width($r('app.float.image_comp_width'))
-            .height($r('app.float.image_comp_height'))
-            .margin({right:$r('app.float.print_job_tips_image_margin_right')})
-          Text(this.blockedReason).key('JobManagerPage_Text_blockedReason')
-            .fontSize($r('app.float.font_size_body2'))
-            .fontColor($r('app.color.text_block_reason'))
-            .fontWeight(FontWeight.Regular)
-        }
-        .width($r('app.float.print_job_comp_width'))
-        .margin({left:$r('app.float.print_job_margin_left'),right:$r('app.float.print_job_margin_right')})
-        .visibility(this.isBlocked?Visibility.Visible:Visibility.None)
+      Row(){
+        Image($r('app.media.ic_printer_tips')).key('JobManagerPage_Image_printerTips')
+          .width($r('app.float.image_comp_width'))
+          .height($r('app.float.image_comp_height'))
+          .margin({right:$r('app.float.print_job_tips_image_margin_right')})
+        Text(this.blockedReason).key('JobManagerPage_Text_blockedReason')
+          .fontSize($r('app.float.font_size_body2'))
+          .fontColor($r('app.color.text_block_reason'))
+          .fontWeight(FontWeight.Regular)
+      }
+      .width($r('app.float.print_job_comp_width'))
+      .margin({left:$r('app.float.print_job_margin_left'),right:$r('app.float.print_job_margin_right')})
+      .visibility(this.isBlocked?Visibility.Visible:Visibility.None)
 
       Row() {
         List() {
@@ -117,7 +117,8 @@ struct JobManagerPage {
           });
         })
     }
-    .width($r('app.float.print_job_width'))
+    .width('100%')
+    .height('100%')
     .backgroundColor(Color.White)
     .alignItems(HorizontalAlign.Center)
 

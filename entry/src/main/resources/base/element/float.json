@@ -6,7 +6,7 @@
     },
     {
       "name": "disable_opacity",
-      "value": "0.6"
+      "value": "0.4"
     },
     {
       "name": "divider_opacity",
@@ -202,7 +202,7 @@
     },
     {
       "name":"print_job_height",
-      "value":"374vp"
+      "value":"627vp"
     },
     {
       "name":"print_job_title_height",

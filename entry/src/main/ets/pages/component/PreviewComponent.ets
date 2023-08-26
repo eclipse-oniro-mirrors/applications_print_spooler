@@ -42,9 +42,9 @@ export struct PreviewComponent {
   @State isPreviewFailed: boolean = false;
   @State @Watch('loadCurrentPix')currentPixelMap: PixelMap = undefined;
   @State imageOrientation: number = PageDirection.VERTICAL;
-  @State canvasWidth: number = 472 / canvasScale;
-  @State canvasHeight: number = 668 / canvasScale;
-  @State canvasRatio: number = 472 / 668;//width/height
+  @State canvasWidth: number = 313 / canvasScale;
+  @State canvasHeight: number = 444 / canvasScale;
+  @State canvasRatio: number = 313 / 444;//width/height
   @State offCanvasWidth: number = this.canvasWidth * to300DPI * canvasScale;
   @State offCanvasHeight: number = this.canvasHeight * to300DPI * canvasScale;
   @State imageWidth: number = Constants.NUMBER_0;
@@ -65,7 +65,7 @@ export struct PreviewComponent {
   build() {
     Column() {
       Row() {
-        Image($r('app.media.ic_firstPage')).width($r('app.float.image_comp_width')).height($r('app.float.image_comp_height')).key('PreviewComponent_Image_firstPage')
+        Image($r('app.media.ic_firstPage')).width(36).height(36).key('PreviewComponent_Image_firstPage')
           .enabled(this.currentIndex !== 1 && !this.isGlobalDisable)
           .opacity((this.currentIndex !== 1 && !this.isGlobalDisable) ? Constants.NUMBER_1 : $r('app.float.disable_opacity'))
           .onClick(() => {
@@ -90,7 +90,7 @@ export struct PreviewComponent {
             }
 
           })
-        Image($r('app.media.ic_previous')).width($r('app.float.image_comp_width')).height($r('app.float.image_comp_height')).key('PreviewComponent_Image_previous')
+        Image($r('app.media.ic_previous')).width(36).height(36).key('PreviewComponent_Image_previous')
           .enabled(this.currentIndex !== 1 && !this.isGlobalDisable)
           .opacity((this.currentIndex !== 1 && !this.isGlobalDisable) ? Constants.NUMBER_1 : $r('app.float.disable_opacity'))
           .onClick(() => {
@@ -120,13 +120,13 @@ export struct PreviewComponent {
 
           })
         Text(this.currentIndex+'/'+this.imageCount).key('PreviewComponent_Text_imageCount')
-          .fontSize($r('app.float.font_size_body2'))
+          .fontSize($r('app.float.font_size_body1'))
           .width($r('app.float.preview_pages_comp_width'))
           .height($r('app.float.params_comp_height')).textAlign(TextAlign.Center)
           .margin({left:$r('app.float.preview_pages_comp_margin_left'),right:$r('app.float.preview_pages_comp_margin_right')})
         Image($r('app.media.ic_next')).key('PreviewComponent_Image_next')
-          .width($r('app.float.image_comp_width'))
-          .height($r('app.float.image_comp_height'))
+          .width(36)
+          .height(36)
           .enabled(this.currentIndex !== this.imageCount && !this.isGlobalDisable)
           .opacity((this.currentIndex !== this.imageCount && !this.isGlobalDisable) ? Constants.NUMBER_1 : $r('app.float.disable_opacity'))
           .onClick(() => {
@@ -156,8 +156,8 @@ export struct PreviewComponent {
 
           })
         Image($r('app.media.ic_lastPage')).key('PreviewComponent_Image_lastPage')
-          .width($r('app.float.image_comp_width'))
-          .height($r('app.float.image_comp_height'))
+          .width(36)
+          .height(36)
           .enabled(this.currentIndex !== this.imageCount && !this.isGlobalDisable)
           .opacity((this.currentIndex !== this.imageCount && !this.isGlobalDisable) ? Constants.NUMBER_1 : $r('app.float.disable_opacity'))
           .onClick(() => {
@@ -182,8 +182,8 @@ export struct PreviewComponent {
             }
 
           })
-      }.height($r('app.float.params_comp_height'))
-       .margin({top:$r('app.float.preview_comp_margin'), bottom : $r('app.float.preview_comp_margin')})
+      }.height(48)
+      .margin({top:8, bottom : 8})
       Row() {
         if (this.currentPixelMap) {
           Image(this.currentPixelMap).key('PreviewComponent_Image_currentPixelMap')
@@ -222,6 +222,8 @@ export struct PreviewComponent {
   aboutToAppear() {
     if(this.imageSources !== undefined){
       this.handleImage()
+    }else{
+      this.checkCanvasWidth()
     }
   }
 
@@ -318,6 +320,10 @@ export struct PreviewComponent {
    *界面高度调整
    */
   onHeightLoad(){
+    Log.info(TAG,'onHeightLoad:'+this.previewCompHeight)
+    if (this.imageSources === undefined ){
+      return;
+    }
     if(this.previewCompHeight){
       this.handleImage();
     }
