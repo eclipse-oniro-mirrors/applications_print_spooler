@@ -115,8 +115,8 @@ export class Constants {
   static readonly SHOW_TOAST_TIMEOUT: number = 200;
   static readonly COUNTDOWN_ALARM_TO_FAIL: number = 26;
   static readonly COUNTDOWN_TO_FAIL: number = 25;
-  static readonly CANVAS_MAX_WIDTH: number = 441;
-  static readonly CANVAS_MAX_HEIGHT: number = 506;
+  static readonly CANVAS_MAX_WIDTH: number = 432;
+  static readonly CANVAS_MAX_HEIGHT: number = 302;
   static readonly MAX_PIXELMAP: number = 33554432;
   static readonly MAX_PAGES: number = 100;
   static readonly MAX_CUSTOM_PRINT_RANGE_LENGTH: number = 50;
