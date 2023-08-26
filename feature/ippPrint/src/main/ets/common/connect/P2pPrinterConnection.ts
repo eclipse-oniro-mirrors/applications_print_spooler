@@ -95,6 +95,9 @@ export default class P2PPrinterConnection implements WifiListener {
   }
 
   public close(): void {
+    if (this.inviteDelayTimer !== undefined) {
+      clearTimeout(this.inviteDelayTimer);
+    }
     if (this.delayTimer !== undefined) {
       clearTimeout(this.delayTimer);
     }

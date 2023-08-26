@@ -26,6 +26,8 @@ import print from '@ohos.print';
 import type { WifiListener } from './model/WifiModel';
 import CommonEventManager from '@ohos.commonEventManager';
 import HashSet from '@ohos.util.HashSet';
+import taskpool from '@ohos.taskpool';
+import type { PrinterInfo } from '@ohos/common';
 
 const TAG = 'LocalDiscoverySession';
 
@@ -179,16 +181,13 @@ export class LocalDiscoverySession implements Listener, WifiListener {
       return;
     }
     let localPrinter: LocalPrinter = undefined;
-    if (this.mPrinters.has(<string>printer.getPath())) {
-      localPrinter = this.mPrinters.get(<string>printer.getPath());
-    } else {
-      localPrinter = new LocalPrinter(this.mPrintServiceAdapter, this, printer);
-    }
+    localPrinter = new LocalPrinter(this.mPrintServiceAdapter, this, printer);
     this.mPrinters.set(<string>printer.getPath(), localPrinter);
 
     // 构建printerInfo
     const printerInfo = localPrinter.createPrinterInfo();
-    print.addPrinters([printerInfo]).then((result) => {
+    let task = new taskpool.Task(addPrinters, [printerInfo]);
+    taskpool.execute(task).then((result) => {
       Log.info(TAG, 'add printer result: ' + result);
     }).catch((error) => {
       Log.error(TAG, 'add printer error: ' + JSON.stringify(error));
@@ -204,7 +203,8 @@ export class LocalDiscoverySession implements Listener, WifiListener {
   onPrinterLost(printer: DiscoveredPrinter): void {
     // this.mPrinters.delete(<string>printer.getPath());
     // 打印机丢失
-    print.removePrinters([printer.getId()]).then((result) => {
+    let task = new taskpool.Task(removePrinters, [printer.getId()]);
+    taskpool.execute(task).then((result) => {
       Log.info(TAG, 'remove printer result: ' + result);
     }).catch((error) => {
       Log.error(TAG, 'remove printer error ' + JSON.stringify(error));
@@ -224,4 +224,14 @@ export class LocalDiscoverySession implements Listener, WifiListener {
       this.mPrintServiceAdapter.mdnsDiscovery.clearPrinterMap(true);
     }
   }
+}
+
+async function addPrinters(printerInfos :PrinterInfo[]) {
+  'use concurrent';
+  return await print.addPrinters(printerInfos);
+}
+
+async function removePrinters(printerIds :string[]) {
+  'use concurrent';
+  return await print.removePrinters(printerIds);
 }
