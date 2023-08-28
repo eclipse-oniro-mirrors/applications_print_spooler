@@ -22,6 +22,7 @@ import { Log } from '@ohos/common';
 import { PrintJobModel } from '../Model/PrintJobModel';
 import { PrintJob } from '../Model/PrintJob';
 import FileUtil from '../Common/Utils/FileUtil';
+import CheckEmptyUtils from '@ohos/common';
 
 const TAG = '[PrintJobController]:';
 
@@ -226,14 +227,25 @@ export class PrintJobController {
     }
   }
 
-  private convertToHwPrintJob(item: print.PrintJob): PrintJob {
+  convertToPrintJob(item: print.PrintJob): PrintJob {
     if (!this.isValidPrintJob(item)) {
-      Log.info(TAG, `convertToHwPrintJob invalid job, jobId${item.jobId}}`);
+      Log.info(TAG, `convertToPrintJob invalid job, jobId${item.jobId}}`);
       return null;
     }
     return new PrintJob(item.jobFiles, item.fdList, item.jobId, item.printerId, item.jobState,
       item.jobSubState, item.copyNumber, item.pageRange, item.isSequential, item.pageSize, item.isLandscape,
       item.colorMode, item.duplexMode, item.margin, item.preview, item.option);
+  }
+
+  isValidPrintJob(job: print.PrintJob): boolean {
+    if (job == null) {
+      return false;
+    }
+    if(CheckEmptyUtils.checkStrIsEmpty(job.printerId) || CheckEmptyUtils.checkStrIsEmpty(job.jobId) ||
+    !(job.jobState in PrintJobState) || !(job.jobSubState in PrintJobSubState)){
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -245,7 +257,7 @@ export class PrintJobController {
         Log.info(TAG, `queryAllPrintJobs data.length:${data?.length}`);
         let retPrintJobs:Array<PrintJob> = [];
         for (let item of data) {
-          let printJob = this.convertToHwPrintJob(item);
+          let printJob = this.convertToPrintJob(item);
           if (printJob === null) {
             Log.warn(TAG, 'queryAllPrintJobs invalid job.');
             continue;
