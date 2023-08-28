@@ -162,11 +162,13 @@ export default class FileUtil {
         file = Fileio.openSync(uri, Constants.READ_WRITE);
       } catch (error) {
         Log.error(TAG, 'open fail: ' + JSON.stringify(error));
+        errorFileName = fileName;
         errorCount++;
         continue;
       }
       if (file === undefined || file.fd < 0) {
         Log.error(TAG, 'open fail, file is undefined');
+        errorFileName = fileName;
         errorCount++;
         continue;
       }
@@ -175,6 +177,7 @@ export default class FileUtil {
       Log.info(TAG, 'image.createImageSource: ', JSON.stringify(imageSource));
       if (CheckEmptyUtils.isEmpty(imageSource)) {
         Log.error(TAG, 'imageSource is error');
+        errorFileName = fileName;
         errorCount++;
         continue;
       }
@@ -182,6 +185,7 @@ export default class FileUtil {
       Log.info(TAG, 'imageSource.getImageInfo: ', JSON.stringify(imageInfo));
       if (CheckEmptyUtils.isEmpty(imageInfo)) {
         Log.error(TAG, 'imageInfo is error');
+        errorFileName = fileName;
         errorCount++;
         continue;
       }
