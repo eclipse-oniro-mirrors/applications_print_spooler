@@ -15,7 +15,7 @@
 
 // @ts-ignore
 import print from '@ohos.print';
-import CheckEmptyUtils, { Log } from '@ohos/common';
+import CheckEmptyUtils, { Log, PrinterCapsOptions } from '@ohos/common';
 
 const TAG = 'NativeApi';
 const ERROR = -1
@@ -42,7 +42,14 @@ export class NativeApi {
     // @ts-ignore
     print.queryPrinterCapabilityByUri(uri).then((result) => {
       Log.debug(TAG, 'queryPrinterCapabilityByUri result: ' + JSON.stringify(result));
-      this.setCupsPrinter(uri, this.removeSpaces(printerName));
+      let options: PrinterCapsOptions = undefined;
+      try {
+        options = JSON.parse(result.option);
+        this.setCupsPrinter(uri, this.removeSpaces(printerName), options.make);
+      } catch (error) {
+        this.setCupsPrinter(uri, this.removeSpaces(printerName));
+        Log.error(TAG, 'json parse error: ' + error);
+      }
       getCapsCallback(result);
     }).catch((error) => {
       Log.error(TAG, 'queryPrinterCapabilityByUri error: ' + JSON.stringify(error));
