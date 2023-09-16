@@ -15,7 +15,7 @@
 
 // @ts-ignore
 import print from '@ohos.print';
-import CheckEmptyUtils, { Log, PrinterCapsOptions } from '@ohos/common';
+import CheckEmptyUtils, { Log } from '@ohos/common';
 
 const TAG = 'NativeApi';
 const ERROR = -1
@@ -42,14 +42,7 @@ export class NativeApi {
     // @ts-ignore
     print.queryPrinterCapabilityByUri(uri).then((result) => {
       Log.debug(TAG, 'queryPrinterCapabilityByUri result: ' + JSON.stringify(result));
-      let options: PrinterCapsOptions = undefined;
-      try {
-        options = JSON.parse(result.option);
-        this.setCupsPrinter(uri, this.removeSpaces(printerName), options.make);
-      } catch (error) {
-        this.setCupsPrinter(uri, this.removeSpaces(printerName), '');
-        Log.error(TAG, 'json parse error: ' + error);
-      }
+      this.setCupsPrinter(uri, this.removeSpaces(printerName));
       getCapsCallback(result);
     }).catch((error) => {
       Log.error(TAG, 'queryPrinterCapabilityByUri error: ' + JSON.stringify(error));
@@ -58,14 +51,14 @@ export class NativeApi {
     Log.debug(TAG, 'getCapabilities end');
   }
 
-  public setCupsPrinter(uri: string, name: string, make: string): void {
+  public setCupsPrinter(uri: string, name: string): void {
     Log.debug(TAG, 'setCupsPrinter enter');
     if (print === undefined) {
       Log.error(TAG, 'print is undefined');
       return;
     }
     // @ts-ignore
-    print.addPrinterToCups(uri, name, make).then((result) => {
+    print.addPrinterToCups(uri, name).then((result) => {
       Log.debug(TAG, 'addPrinterToCups result: ' + JSON.stringify(result));
     }).catch((error) => {
       Log.error(TAG, 'addPrinterToCups error: ' + JSON.stringify(error));
