@@ -174,9 +174,7 @@ export default class LocalPrinter implements ConnectionListener, OnLocalPrinterC
       this.getCapsFailedTimes = 0;
       // 上报打印机获取能力成功的回调
       let printerInfo: PrinterInfo = this.createPrinterInfo();
-      print.updatePrinters([printerInfo]).then((result) => {
-        Log.info(TAG, 'update success result: ' + result);
-      }).catch((error) => {
+      print.updatePrinters([printerInfo]).catch((error) => {
         Log.error(TAG, 'update error: ' + JSON.stringify(error));
       });
     } else {

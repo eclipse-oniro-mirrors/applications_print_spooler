@@ -187,11 +187,7 @@ export class LocalDiscoverySession implements Listener, WifiListener {
     // 构建printerInfo
     const printerInfo = localPrinter.createPrinterInfo();
     let task = new taskpool.Task(addPrinters, [printerInfo]);
-    taskpool.execute(task).then((result) => {
-      Log.info(TAG, 'add printer result: ' + result);
-    }).catch((error) => {
-      Log.error(TAG, 'add printer error: ' + JSON.stringify(error));
-    });
+    taskpool.execute(task);
   };
 
 
@@ -204,11 +200,7 @@ export class LocalDiscoverySession implements Listener, WifiListener {
     // this.mPrinters.delete(<string>printer.getPath());
     // 打印机丢失
     let task = new taskpool.Task(removePrinters, [printer.getId()]);
-    taskpool.execute(task).then((result) => {
-      Log.info(TAG, 'remove printer result: ' + result);
-    }).catch((error) => {
-      Log.error(TAG, 'remove printer error ' + JSON.stringify(error));
-    });
+    taskpool.execute(task);
   };
 
   onConnectionStateChanged(data): void {
@@ -226,12 +218,12 @@ export class LocalDiscoverySession implements Listener, WifiListener {
   }
 }
 
-async function addPrinters(printerInfos :PrinterInfo[]) {
+function addPrinters(printerInfos :PrinterInfo[]): void {
   'use concurrent';
-  return await print.addPrinters(printerInfos);
+  print.addPrinters(printerInfos);
 }
 
-async function removePrinters(printerIds :string[]) {
+function removePrinters(printerIds :string[]): void {
   'use concurrent';
-  return await print.removePrinters(printerIds);
+  print.removePrinters(printerIds);
 }
