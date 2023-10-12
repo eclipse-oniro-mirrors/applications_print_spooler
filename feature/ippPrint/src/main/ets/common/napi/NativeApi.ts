@@ -42,7 +42,13 @@ export class NativeApi {
     // @ts-ignore
     print.queryPrinterCapabilityByUri(uri).then((result) => {
       Log.debug(TAG, 'queryPrinterCapabilityByUri result: ' + JSON.stringify(result));
-      this.setCupsPrinter(uri, this.removeSpaces(printerName));
+      try {
+        let option = JSON.parse(result.option);
+        this.setCupsPrinter(uri, this.removeSpaces(printerName), option.make);
+      } catch (error) {
+        Log.error(TAG, 'parse option error: ' + JSON.stringify(error));
+        this.setCupsPrinter(uri, this.removeSpaces(printerName), '');
+      }
       getCapsCallback(result);
     }).catch((error) => {
       Log.error(TAG, 'queryPrinterCapabilityByUri error: ' + JSON.stringify(error));
@@ -51,14 +57,14 @@ export class NativeApi {
     Log.debug(TAG, 'getCapabilities end');
   }
 
-  public setCupsPrinter(uri: string, name: string): void {
+  public setCupsPrinter(uri: string, name: string, make: string): void {
     Log.debug(TAG, 'setCupsPrinter enter');
     if (print === undefined) {
       Log.error(TAG, 'print is undefined');
       return;
     }
     // @ts-ignore
-    print.addPrinterToCups(uri, name).then((result) => {
+    print.addPrinterToCups(uri, name, make).then((result) => {
       Log.debug(TAG, 'addPrinterToCups result: ' + JSON.stringify(result));
     }).catch((error) => {
       Log.error(TAG, 'addPrinterToCups error: ' + JSON.stringify(error));
