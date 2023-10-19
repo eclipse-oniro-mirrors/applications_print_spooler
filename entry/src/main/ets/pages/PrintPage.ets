@@ -202,365 +202,414 @@ struct Index {
         })
       Column() {
         Scroll(this.scroller) {
-        Column() {
-          PrinterSelection()
-          Flex({ direction: FlexDirection.Row, alignItems: ItemAlign.Center }) {
-            Text($r('app.string.index_add_copies'))
-              .fontSize($r('app.float.font_size_body2'))
-              .width($r('app.float.text_label_width'))
-              .textAlign(TextAlign.End)
-              .key('Index_Text_copies')
-              .focusable(true)
-            TextInput({ text: this.printCountStr })
-              .type(InputType.Number)
-              .maxLength(Constants.NUMBER_2)
-              .fontSize($r('app.float.font_size_body2'))
-              .border({
-                width: $r('app.float.border_width'),
-                radius: $r('app.float.radius_s'),
-                color: $r('app.color.border_line')
-              })
-              .backgroundColor(Color.White)
-              .width($r('app.float.print_copies_textInput_width'))
-              .height($r('app.float.params_comp_height'))
-              .margin({
-                left: $r('app.float.print_copies_textInput_left_margin'),
-                right: $r('app.float.print_copies_textInput_right_margin')
-              })
-              .key('Index_TextInput_copies')
-              .onChange((value: string) => {
-                Log.info(TAG, 'copies onChange value:' + value)
-                this.printCount = Number.parseInt(value)
-                this.printCountStr = value//规避前置0输入
-                this.printCountStr = this.printCount.toString()
-                Log.info(TAG, 'copies onChange printCount:' + this.printCount)
-                if (Number.isNaN(this.printCount)) {
-                  this.printCount = Constants.NUMBER_1
-                  this.printCountStr = Constants.STRING_NONE
-                }
-                if (this.printCount < Constants.NUMBER_1) {
-                  this.printCount = Constants.NUMBER_1
-                }
-                if (this.printCount > Constants.NUMBER_99||this.printCount >= Number.MAX_VALUE) {
-                  this.printCount = Constants.NUMBER_99
-                }
-              })
-              .onSubmit(() => {
-                this.printCountStr = Constants.STRING_NONE
-                this.printCountStr = this.printCount.toString()
-              })
-              .onBlur(() => {
-                this.printCountStr = ''
-                this.printCountStr = this.printCount.toString()
-                Log.info(TAG,'copies onBlur printCountStr: ',this.printCountStr)
-              })
-              .onTouch((e:TouchEvent)=>{
-                e.stopPropagation()
-              })
-              .onMouse((e:MouseEvent)=>{
-                e.stopPropagation()
-              })
-            Column() {
-              Image(this.getPlusImage(this.plusMouseState,this.printCount < Constants.NUMBER_99))
-                .width($r('app.float.print_copies_image_width'))
-                .height($r('app.float.print_copies_image_height'))
-                .enabled(this.printCount < Constants.NUMBER_99)
-                .key('Index_Image_plus_copies')
-                .onClick(() => {
-                  if (this.printCount < Constants.NUMBER_99) {
-                    this.printCount++
-                    this.printCountStr = this.printCount.toString()
-                  }
-                })
-                .onTouch((event: TouchEvent) => {
-                  if (event.type === TouchType.Down) {
-                    this.plusMouseState = MouseState.PRESS
-                  }
-                  if (event.type === TouchType.Up) {
-                    this.plusMouseState = MouseState.NONE
-                  }
-                })
-                .onHover((isHover: boolean) => {
-                  if (isHover) {
-                    this.plusMouseState = MouseState.HOVER
-                  } else {
-                    this.plusMouseState = MouseState.NONE
-                  }
-                })
-              Image(this.getMinusImage(this.minusMouseState,this.printCount > Constants.NUMBER_1))
-                .width($r('app.float.print_copies_image_width'))
-                .height($r('app.float.print_copies_image_height'))
-                .enabled(this.printCount > Constants.NUMBER_1)
-                .key('Index_Image_minus_copies')
-                .onClick(() => {
-                  if (this.printCount > Constants.NUMBER_1) {
-                    this.printCount--
-                    this.printCountStr = this.printCount.toString()
-                  }
-                })
-                .onTouch((event: TouchEvent) => {
-                  if (event.type === TouchType.Down) {
-                    this.minusMouseState = MouseState.PRESS
-                  }
-                  if (event.type === TouchType.Up) {
-                    this.minusMouseState = MouseState.NONE
-                  }
-                })
-                .onHover((isHover: boolean) => {
-                  if (isHover) {
-                    this.minusMouseState = MouseState.HOVER
-                  } else {
-                    this.minusMouseState = MouseState.NONE
-                  }
-                })
-            }
-            .width($r('app.float.print_copies_image_width'))
-            .height($r('app.float.params_comp_height'))
-
-            Text($r('app.string.ColorMode'))
-              .key('Index_Text_color')
-              .fontSize($r('app.float.font_size_body2'))
-              .height($r('app.float.params_comp_height'))
-              .margin({
-                left: $r('app.float.text_colorMode_left_margin'),
-                right: $r('app.float.text_colorMode_right_margin')
-              })
-              .textAlign(TextAlign.Start)
-              .visibility(this.isColorEnabled ? Visibility.Visible : Visibility.None)
-            Toggle({ type: ToggleType.Switch, isOn: !this.isColored })
-              .key('Index_Toggle_color')
-              .width($r('app.float.toggle_colorMode_width'))
-              .margin({ right: $r('app.float.toggle_colorMode_right_margin') })
-              .alignSelf(ItemAlign.Center)
-              .visibility(this.isColorEnabled ? Visibility.Visible : Visibility.None)
-              .onChange((isOn: boolean) => {
-                this.isColored = !isOn
-                Log.info(TAG, 'ColorMode onChange: ' + this.isColored)
-                if (this.isColored) {
-                  this.colorMode = ColorCode.COLOR
-                } else {
-                  this.colorMode = ColorCode.MONOCHROME
-                }
-              })
-          }
-          .height($r('app.float.params_row_height'))
-          .width($r('app.float.params_row_width'))
-
           Column() {
-            Row() {
-              Text($r('app.string.index_page_range'))
+            PrinterSelection()
+            Flex({ direction: FlexDirection.Row, alignItems: ItemAlign.Center }) {
+              Text($r('app.string.index_add_copies'))
                 .fontSize($r('app.float.font_size_body2'))
                 .width($r('app.float.text_label_width'))
                 .textAlign(TextAlign.End)
-                .key('Index_Text_pageRange')
-              Radio({ value: 'Radio1', group: 'radioGroup' })
-                .checked(this.printRangeType === PrintRangeType.ALL)
-                .key('Index_Radio_allPages_pageRange')
-                .width($r('app.float.image_comp_width'))
-                .margin({
-                  left: $r('app.float.Radio_pageRange_left_margin'),
-                  right: $r('app.float.Radio_pageRange_right_margin')
-                })
-                .onChange((value: boolean) => {
-                  Log.info(TAG,'Radio_range_pageRange all')
-                  if (value) {
-                    this.printRangeType = PrintRangeType.ALL;
-                    this.updatePrintRange()
+                .key('Index_Text_copies')
+                .focusable(true)
+                .onFocus(()=>{
+                  if (this.printRangeType === PrintRangeType.CUSTOM) {
+                    this.checkCustomRangeTextInput(false)
                   }
                 })
-              Text($r('app.string.index_all_pages'))
+              TextInput({ text: this.printCountStr })
+                .type(InputType.Number)
+                .maxLength(Constants.NUMBER_2)
                 .fontSize($r('app.float.font_size_body2'))
-                .key('Index_Text_allPages_pageRange')
+                .border({
+                  width: $r('app.float.border_width'),
+                  radius: $r('app.float.radius_s'),
+                  color: $r('app.color.border_line')
+                })
+                .backgroundColor(Color.White)
+                .width($r('app.float.print_copies_textInput_width'))
+                .height($r('app.float.params_comp_height'))
+                .margin({
+                  left: $r('app.float.print_copies_textInput_left_margin'),
+                  right: $r('app.float.print_copies_textInput_right_margin')
+                })
+                .key('Index_TextInput_copies')
+                .onChange((value: string) => {
+                  Log.info(TAG, 'copies onChange value:' + value)
+                  this.printCount = Number.parseInt(value)
+                  this.printCountStr = value//规避前置0输入
+                  this.printCountStr = this.printCount.toString()
+                  Log.info(TAG, 'copies onChange printCount:' + this.printCount)
+                  if (Number.isNaN(this.printCount)) {
+                    this.printCount = Constants.NUMBER_1
+                    this.printCountStr = Constants.STRING_NONE
+                  }
+                  if (this.printCount < Constants.NUMBER_1) {
+                    this.printCount = Constants.NUMBER_1
+                  }
+                  if (this.printCount > Constants.NUMBER_99||this.printCount >= Number.MAX_VALUE) {
+                    this.printCount = Constants.NUMBER_99
+                  }
+                })
+                .onSubmit(() => {
+                  this.printCountStr = Constants.STRING_NONE
+                  this.printCountStr = this.printCount.toString()
+                })
+                .onBlur(() => {
+                  this.printCountStr = ''
+                  this.printCountStr = this.printCount.toString()
+                  Log.info(TAG,'copies onBlur printCountStr: ',this.printCountStr)
+                })
+                .onTouch((e:TouchEvent)=>{
+                  e.stopPropagation()
+                })
+                .onMouse((e:MouseEvent)=>{
+                  e.stopPropagation()
+                })
+              Column() {
+                Image(this.getPlusImage(this.plusMouseState,this.printCount < Constants.NUMBER_99))
+                  .width($r('app.float.print_copies_image_width'))
+                  .height($r('app.float.print_copies_image_height'))
+                  .enabled(this.printCount < Constants.NUMBER_99)
+                  .key('Index_Image_plus_copies')
+                  .onClick(() => {
+                    if (this.printCount < Constants.NUMBER_99) {
+                      this.printCount++
+                      this.printCountStr = this.printCount.toString()
+                    }
+                  })
+                  .onTouch((event: TouchEvent) => {
+                    if (event.type === TouchType.Down) {
+                      this.plusMouseState = MouseState.PRESS
+                    }
+                    if (event.type === TouchType.Up) {
+                      this.plusMouseState = MouseState.NONE
+                    }
+                  })
+                  .onHover((isHover: boolean) => {
+                    if (isHover) {
+                      this.plusMouseState = MouseState.HOVER
+                    } else {
+                      this.plusMouseState = MouseState.NONE
+                    }
+                  })
+                Image(this.getMinusImage(this.minusMouseState,this.printCount > Constants.NUMBER_1))
+                  .width($r('app.float.print_copies_image_width'))
+                  .height($r('app.float.print_copies_image_height'))
+                  .enabled(this.printCount > Constants.NUMBER_1)
+                  .key('Index_Image_minus_copies')
+                  .onClick(() => {
+                    if (this.printCount > Constants.NUMBER_1) {
+                      this.printCount--
+                      this.printCountStr = this.printCount.toString()
+                    }
+                  })
+                  .onTouch((event: TouchEvent) => {
+                    if (event.type === TouchType.Down) {
+                      this.minusMouseState = MouseState.PRESS
+                    }
+                    if (event.type === TouchType.Up) {
+                      this.minusMouseState = MouseState.NONE
+                    }
+                  })
+                  .onHover((isHover: boolean) => {
+                    if (isHover) {
+                      this.minusMouseState = MouseState.HOVER
+                    } else {
+                      this.minusMouseState = MouseState.NONE
+                    }
+                  })
+              }
+              .width($r('app.float.print_copies_image_width'))
+              .height($r('app.float.params_comp_height'))
+
+              Text($r('app.string.ColorMode'))
+                .key('Index_Text_color')
+                .fontSize($r('app.float.font_size_body2'))
+                .height($r('app.float.params_comp_height'))
+                .margin({
+                  left: $r('app.float.text_colorMode_left_margin'),
+                  right: $r('app.float.text_colorMode_right_margin')
+                })
+                .textAlign(TextAlign.Start)
+                .visibility(this.isColorEnabled ? Visibility.Visible : Visibility.None)
+              Toggle({ type: ToggleType.Switch, isOn: !this.isColored })
+                .key('Index_Toggle_color')
+                .width($r('app.float.toggle_colorMode_width'))
+                .margin({ right: $r('app.float.toggle_colorMode_right_margin') })
+                .alignSelf(ItemAlign.Center)
+                .visibility(this.isColorEnabled ? Visibility.Visible : Visibility.None)
+                .onChange((isOn: boolean) => {
+                  this.isColored = !isOn
+                  Log.info(TAG, 'ColorMode onChange: ' + this.isColored)
+                  if (this.isColored) {
+                    this.colorMode = ColorCode.COLOR
+                  } else {
+                    this.colorMode = ColorCode.MONOCHROME
+                  }
+                })
             }
             .height($r('app.float.params_row_height'))
             .width($r('app.float.params_row_width'))
 
-            Row() {
-              Radio({ value: 'Radio2', group: 'radioGroup' })
-                .checked(this.printRangeType === PrintRangeType.RANGE)
-                .key('Index_Radio_range_pageRange')
-                .width($r('app.float.image_comp_width'))
-                .margin({
-                  left: $r('app.float.Radio_pageRange2_left_margin'),
-                  right: $r('app.float.Radio_pageRange2_right_margin')
-                })
-                .onChange((value: boolean) => {
-                  if (value) {
-                    if (this.changeRangeTypeFlag) {
-                      focusControl.requestFocus('Index_TextInput_from_pageRange')
+            Column() {
+              Row() {
+                Text($r('app.string.index_page_range'))
+                  .fontSize($r('app.float.font_size_body2'))
+                  .width($r('app.float.text_label_width'))
+                  .textAlign(TextAlign.End)
+                  .key('Index_Text_pageRange')
+                Radio({ value: 'Radio1', group: 'radioGroup' })
+                  .checked(this.printRangeType === PrintRangeType.ALL)
+                  .key('Index_Radio_allPages_pageRange')
+                  .width($r('app.float.image_comp_width'))
+                  .margin({
+                    left: $r('app.float.Radio_pageRange_left_margin'),
+                    right: $r('app.float.Radio_pageRange_right_margin')
+                  })
+                  .onChange((value: boolean) => {
+                    Log.info(TAG,'Radio_range_pageRange all')
+                    if (value) {
+                      if (this.printRangeType === PrintRangeType.CUSTOM) {
+                        this.checkCustomRangeTextInput(true);
+                        this.printRangeType = PrintRangeType.ALL
+                        focusControl.requestFocus('Index_Text_copies')
+                      }
+                      this.printRangeType = PrintRangeType.ALL;
+                      this.updatePrintRange()
                     }
-                    Log.info(TAG, 'Radio_range_pageRange onChange: '+ this.endPage)
-                    this.printRangeType = PrintRangeType.RANGE;
-                    Log.info(TAG,'this.isRangeRadioEnable = true')
-                    this.isRangeRadioEnable = true
-                    this.updatePrintRange()
-                  }else{
-                    Log.info(TAG,'this.isRangeRadioEnable = false')
-                    this.isRangeRadioEnable = false
-                    this.setStartPageStr()
-                    this.setEndPageStr()
-                  }
-                })
-                .onTouch((e:TouchEvent)=>{
-                  e.stopPropagation()
-                })
-                .onMouse((e:MouseEvent)=>{
-                  e.stopPropagation()
-                })
-              Text($r('app.string.index_from'))
-                .maxLines(Constants.NUMBER_2)
-                .textOverflow({ overflow: TextOverflow.Ellipsis})
-                .textAlign(TextAlign.Start)
-                .fontSize($r('app.float.font_size_body2'))
-                .key('Index_Text_from_pageRange')
-              TextInput({ text: this.startPageStr })
-                .key('Index_TextInput_from_pageRange')
-                .width($r('app.float.textInput_pageRange_width'))
-                .height($r('app.float.params_comp_height'))
-                .type(InputType.Number)
-                .maxLength(this.rangeInputLimit)
-                .fontSize($r('app.float.font_size_body2'))
-                .fontColor(this.isRangeRadioEnable?Color.Black:Color.Gray)
-                .border({
-                  width: $r('app.float.border_width'),
-                  radius: $r('app.float.radius_s'),
-                  color: $r('app.color.border_line')
-                })
-                .margin({
-                  left: $r('app.float.textInput_pageRange_left_margin'),
-                  right: $r('app.float.textInput_pageRange_right_margin')
-                })
-                .backgroundColor(Color.White)
-                .onChange((value: string) => {
-                  this.startPage = Number.parseInt(value)
-                  this.startPageStr = value//规避前置0输入
-                  this.startPageStr = this.startPage.toString()
-                  Log.info(TAG, 'from change; value = ' + this.startPage + ' endpage = ' + this.endPage)
-                  if (this.startPage < Constants.NUMBER_1) {
-                    this.startPage = Constants.NUMBER_1
-                  } else if (this.startPage > this.endPage) {
-                    this.startPage = this.endPage
-                    Log.info(TAG, 'from change; startPage = ' + this.startPage)
-                  }
-                  if (Number.isNaN(this.startPage)) {
-                    this.startPage = Constants.NUMBER_1
-                    this.startPageStr = Constants.STRING_NONE
-                  }
-                  if (!this.firstStartPageEdit) {
-                    this.printRangeType = PrintRangeType.RANGE;
-                    this.firstStartPageEdit = false
-                  }
-                    this.updatePrintRange();
-                })
-                .onSubmit(() => {
-                  Log.info(TAG,'startPageStr  onSubmit: ',this.startPage.toString())
-                  this.setStartPageStr()
-                })
-                .onBlur(() => {
-                  Log.info(TAG,'startPageStr  onBlur: ',this.startPage.toString())
-                  this.setStartPageStr()
-                })
-                .onFocus(()=>{
-                  this.printRangeType = PrintRangeType.RANGE;
-                })
-                .onTouch((e:TouchEvent)=>{
-                  e.stopPropagation()
-                })
-                .onMouse((e:MouseEvent)=>{
-                  e.stopPropagation()
-                })
+                  })
+                Text($r('app.string.index_all_pages'))
+                  .fontSize($r('app.float.font_size_body2'))
+                  .key('Index_Text_allPages_pageRange')
+              }
+              .height($r('app.float.params_row_height'))
+              .width($r('app.float.params_row_width'))
 
-              Text($r('app.string.index_to'))
-                .maxLines(Constants.NUMBER_2)
-                .textOverflow({ overflow: TextOverflow.Ellipsis})
-                .textAlign(TextAlign.Start)
-                .fontSize($r('app.float.font_size_body2'))
-                .key('Index_Text_to_pageRange')
-              TextInput({ text: this.endPageStr })
-                .width($r('app.float.textInput_pageRange_width'))
-                .height($r('app.float.params_comp_height'))
-                .key('Index_TextInput_to_pageRange')
-                .type(InputType.Number)
-                .maxLength(this.rangeInputLimit)
-                .fontSize($r('app.float.font_size_body2'))
-                .backgroundColor(Color.White)
-                .fontColor(this.isRangeRadioEnable?Color.Black:Color.Gray)
-                .margin({
-                  left: $r('app.float.textInput_pageRange_left_margin'),
-                  right: $r('app.float.textInput_pageRange_right_margin')
-                })
-                .border({
-                  width: $r('app.float.border_width'),
-                  radius: $r('app.float.radius_s'),
-                  color: $r('app.color.border_line')
-                })
-                .onChange((value: string) => {
-                  this.endPage = Number.parseInt(value)
-                  this.endPageStr = value//规避前置0输入
-                  this.endPageStr = this.endPage.toString()
-                  if (this.endPage > this.totalPage) {
-                    this.endPage = this.totalPage
-                  } else if (this.endPage < this.startPage) {
-                    this.endPage = this.startPage
-                  }
-                  if (Number.isNaN(this.endPage)) {
-                    this.endPage = this.startPage
-                    this.endPageStr = Constants.STRING_NONE
-                  }
-                  if(!this.firstEndPageEdit){
-                    this.printRangeType = PrintRangeType.RANGE;
-                    this.firstEndPageEdit = false
-                  }
+              Row() {
+                Radio({ value: 'Radio2', group: 'radioGroup' })
+                  .checked(this.printRangeType === PrintRangeType.RANGE)
+                  .key('Index_Radio_range_pageRange')
+                  .width($r('app.float.image_comp_width'))
+                  .margin({
+                    left: $r('app.float.Radio_pageRange2_left_margin'),
+                    right: $r('app.float.Radio_pageRange2_right_margin')
+                  })
+                  .onChange((value: boolean) => {
+                    if (value) {
+                      if (this.changeRangeTypeFlag) {
+                        focusControl.requestFocus('Index_TextInput_from_pageRange')
+                      }
+                      this.checkCustomRangeTextInput(true)
+                      Log.info(TAG, 'Radio_range_pageRange onChange: '+ this.endPage)
+                      this.printRangeType = PrintRangeType.RANGE;
+                      this.editCusRangeFlag = false;this.cusRangeText = Constants.NUMBER_1+Constants.HYPHEN+Constants.MAX_PAGES.toString()
+                      this.isRangeRadioEnable = true
+                      this.updatePrintRange()
+                    }else{
+                      Log.info(TAG,'this.isRangeRadioEnable = false')
+                      this.isRangeRadioEnable = false
+                      this.setStartPageStr()
+                      this.setEndPageStr()
+                    }
+                  })
+                  .onTouch((e:TouchEvent)=>{
+                    e.stopPropagation()
+                  })
+                  .onMouse((e:MouseEvent)=>{
+                    e.stopPropagation()
+                  })
+                Text($r('app.string.index_from'))
+                  .maxLines(Constants.NUMBER_2)
+                  .textOverflow({ overflow: TextOverflow.Ellipsis})
+                  .textAlign(TextAlign.Start)
+                  .fontSize($r('app.float.font_size_body2'))
+                  .key('Index_Text_from_pageRange')
+                TextInput({ text: this.startPageStr })
+                  .key('Index_TextInput_from_pageRange')
+                  .width($r('app.float.textInput_pageRange_width'))
+                  .height($r('app.float.params_comp_height'))
+                  .type(InputType.Number)
+                  .maxLength(this.rangeInputLimit)
+                  .fontSize($r('app.float.font_size_body2'))
+                  .fontColor(this.isRangeRadioEnable?Color.Black:Color.Gray)
+                  .border({
+                    width: $r('app.float.border_width'),
+                    radius: $r('app.float.radius_s'),
+                    color: $r('app.color.border_line')
+                  })
+                  .margin({
+                    left: $r('app.float.textInput_pageRange_left_margin'),
+                    right: $r('app.float.textInput_pageRange_right_margin')
+                  })
+                  .backgroundColor(Color.White)
+                  .onChange((value: string) => {
+                    this.startPage = Number.parseInt(value)
+                    this.startPageStr = value//规避前置0输入
+                    this.startPageStr = this.startPage.toString()
+                    Log.info(TAG, 'from change; value = ' + this.startPage + ' endpage = ' + this.endPage)
+                    if (this.startPage < Constants.NUMBER_1) {
+                      this.startPage = Constants.NUMBER_1
+                    } else if (this.startPage > this.endPage) {
+                      this.startPage = this.endPage
+                      Log.info(TAG, 'from change; startPage = ' + this.startPage)
+                    }
+                    if (Number.isNaN(this.startPage)) {
+                      this.startPage = Constants.NUMBER_1
+                      this.startPageStr = Constants.STRING_NONE
+                    }
+                    if (!this.firstStartPageEdit) {
+                      this.printRangeType = PrintRangeType.RANGE;
+                      this.firstStartPageEdit = false
+                    }
                     this.updatePrintRange();
-                })
-                .onSubmit(() => {
-                  Log.info(TAG,'endPageStr  onSubmit: ',this.endPage.toString())
-                  this.setEndPageStr();
-                })
-                .onBlur(() => {
-                  this.changeRangeTypeFlag = true;
-                  Log.info(TAG,'endPageStr  onBlur: ',this.endPage.toString())
-                  this.setEndPageStr();
-                })
-                .onFocus(()=>{
-                  this.changeRangeTypeFlag = false;
-                  this.printRangeType = PrintRangeType.RANGE;
-                  this.updatePrintRange()
-                })
-                .onTouch((e:TouchEvent)=>{
-                  e.stopPropagation()
-                })
-                .onMouse((e:MouseEvent)=>{
-                  e.stopPropagation()
-                })
-            }.height($r('app.float.params_row_height')).width($r('app.float.params_row_width'))
-            Row() {
-              Radio({ value: 'Radio3', group: 'radioGroup' })
-                .checked(this.printRangeType === PrintRangeType.CUSTOM)
-                .key('Index_Radio_custom_pageRange')
-                .width(24)
+                  })
+                  .onSubmit(() => {
+                    Log.info(TAG,'startPageStr  onSubmit: ',this.startPage.toString())
+                    this.setStartPageStr()
+                  })
+                  .onBlur(() => {
+                    Log.info(TAG,'startPageStr  onBlur: ',this.startPage.toString())
+                    this.setStartPageStr()
+                  })
+                  .onFocus(()=>{
+                    this.printRangeType = PrintRangeType.RANGE;
+                  })
+                  .onTouch((e:TouchEvent)=>{
+                    e.stopPropagation()
+                  })
+                  .onMouse((e:MouseEvent)=>{
+                    e.stopPropagation()
+                  })
+
+                Text($r('app.string.index_to'))
+                  .maxLines(Constants.NUMBER_2)
+                  .textOverflow({ overflow: TextOverflow.Ellipsis})
+                  .textAlign(TextAlign.Start)
+                  .fontSize($r('app.float.font_size_body2'))
+                  .key('Index_Text_to_pageRange')
+                TextInput({ text: this.endPageStr })
+                  .width($r('app.float.textInput_pageRange_width'))
+                  .height($r('app.float.params_comp_height'))
+                  .key('Index_TextInput_to_pageRange')
+                  .type(InputType.Number)
+                  .maxLength(this.rangeInputLimit)
+                  .fontSize($r('app.float.font_size_body2'))
+                  .backgroundColor(Color.White)
+                  .fontColor(this.isRangeRadioEnable?Color.Black:Color.Gray)
+                  .margin({
+                    left: $r('app.float.textInput_pageRange_left_margin'),
+                    right: $r('app.float.textInput_pageRange_right_margin')
+                  })
+                  .border({
+                    width: $r('app.float.border_width'),
+                    radius: $r('app.float.radius_s'),
+                    color: $r('app.color.border_line')
+                  })
+                  .onChange((value: string) => {
+                    this.endPage = Number.parseInt(value)
+                    this.endPageStr = value//规避前置0输入
+                    this.endPageStr = this.endPage.toString()
+                    if (this.endPage > this.totalPage) {
+                      this.endPage = this.totalPage
+                    } else if (this.endPage < this.startPage) {
+                      this.endPage = this.startPage
+                    }
+                    if (Number.isNaN(this.endPage)) {
+                      this.endPage = this.startPage
+                      this.endPageStr = Constants.STRING_NONE
+                    }
+                    if(!this.firstEndPageEdit){
+                      this.printRangeType = PrintRangeType.RANGE;
+                      this.firstEndPageEdit = false
+                    }
+                    this.updatePrintRange();
+                  })
+                  .onSubmit(() => {
+                    Log.info(TAG,'endPageStr  onSubmit: ',this.endPage.toString())
+                    this.setEndPageStr();
+                  })
+                  .onBlur(() => {
+                    this.changeRangeTypeFlag = true;
+                    Log.info(TAG,'endPageStr  onBlur: ',this.endPage.toString())
+                    this.setEndPageStr();
+                  })
+                  .onFocus(()=>{
+                    this.changeRangeTypeFlag = false;
+                    this.printRangeType = PrintRangeType.RANGE;
+                    this.updatePrintRange()
+                  })
+                  .onTouch((e:TouchEvent)=>{
+                    e.stopPropagation()
+                  })
+                  .onMouse((e:MouseEvent)=>{
+                    e.stopPropagation()
+                  })
+              }.height($r('app.float.params_row_height')).width($r('app.float.params_row_width'))
+              Row() {
+                Radio({ value: 'Radio3', group: 'radioGroup' })
+                  .checked(this.printRangeType === PrintRangeType.CUSTOM)
+                  .key('Index_Radio_custom_pageRange')
+                  .width(24)
+                  .margin({
+                    left: 98,
+                    right: 8
+                  })
+                  .onChange((value: boolean) => {
+                    if (value) {
+                      focusControl.requestFocus('Index_TextInput_custom_pageRange')
+                      this.printRangeType = PrintRangeType.CUSTOM;
+                      Log.info(TAG,'isCustomRadioEnable = true')
+                      this.isCustomRadioEnable = true
+                      this.updatePrintRange()
+                    }else{
+                      Log.info(TAG,'isCustomRadioEnable = false')
+                      this.isCustomRadioEnable = false
+                      // if (this.isCusRangeError) {
+                      //   this.editCusRangeFlag = false
+                      //   this.cusRangeText = ''
+                      // }
+                      // this.isCusRangeError = false
+                      // this.isCusRangeMax = false
+                      // this.cusRangeBorderColor = $r('app.color.border_line')
+                    }
+                  })
+                  .onTouch((e:TouchEvent)=>{
+                    e.stopPropagation()
+                  })
+                  .onMouse((e:MouseEvent)=>{
+                    e.stopPropagation()
+                  })
+                Text($r('app.string.index_page_custom'))
+                  .fontSize(14)
+                  .key('Index_Text_custom_pageRange')
+              }.height(48).width(432)
+              TextInput({placeholder:$r('app.string.index_page_custom_example'),text: this.cusRangeText }).key('Index_TextInput_custom_pageRange')
+                .width(326).height(32).border({ width: 1, radius: 8, color: this.cusRangeBorderColor })
                 .margin({
+                  bottom: 8,
                   left: 98,
                   right: 8
                 })
-                .onChange((value: boolean) => {
-                  if (value) {
-                    focusControl.requestFocus('Index_TextInput_custom_pageRange')
+                .backgroundColor(Color.White)
+                .placeholderFont({size:14})
+                .fontColor(this.isCustomRadioEnable?Color.Black:Color.Gray)
+                .fontSize(14)
+                .maxLength(50)
+                .onChange((value:string)=>{
+                  if (this.editCusRangeFlag) {
                     this.printRangeType = PrintRangeType.CUSTOM;
-                    Log.info(TAG,'isCustomRadioEnable = true')
-                    this.isCustomRadioEnable = true
-                    this.updatePrintRange()
                   }else{
-                    Log.info(TAG,'isCustomRadioEnable = false')
-                    this.isCustomRadioEnable = false
-                    if (this.isCusRangeError) {
-                      this.editCusRangeFlag = false
-                      this.cusRangeText = ''
-                    }
-                    this.isCusRangeError = false
-                    this.isCusRangeMax = false
-                    this.cusRangeBorderColor = $r('app.color.border_line')
+                    this.editCusRangeFlag = true
                   }
+                  this.checkCustomRange(value);
+                  this.updatePrintRange();
+                  this.cusRangeText = value;
+                })
+                .onBlur(() => {
+                  Log.info(TAG,'cusRangeTextInput onBlur')
+                })
+                .onFocus(()=>{
+                  this.printRangeType = PrintRangeType.CUSTOM;
                 })
                 .onTouch((e:TouchEvent)=>{
                   e.stopPropagation()
@@ -568,104 +617,60 @@ struct Index {
                 .onMouse((e:MouseEvent)=>{
                   e.stopPropagation()
                 })
-              Text($r('app.string.index_page_custom'))
-                .fontSize(14)
-                .key('Index_Text_custom_pageRange')
-            }.height(48).width(432)
-            TextInput({placeholder:$r('app.string.index_page_custom_example'),text: this.cusRangeText }).key('Index_TextInput_custom_pageRange')
-              .width(326).height(32).border({ width: 1, radius: 8, color: this.cusRangeBorderColor })
-              .margin({
-                bottom: 8,
-                left: 98,
-                right: 8
-              })
-              .backgroundColor(Color.White)
-              .placeholderFont({size:14})
-              .fontColor(this.isCustomRadioEnable?Color.Black:Color.Gray)
-              .fontSize(14)
-              .maxLength(50)
-              .onChange((value:string)=>{
-                if (this.editCusRangeFlag) {
-                  this.printRangeType = PrintRangeType.CUSTOM;
-                  this.checkCustomRange(value);
-                  this.updatePrintRange();
-                  this.cusRangeText = value;
-                }else{
-                  this.editCusRangeFlag = true
+              Text(this.errorMessage).key('Index_Text_custom_errorMessage')
+                .fontSize($r('app.float.font_size_body3')).fontColor('#E84026').fontWeight(FontWeight.Medium)
+                .margin({
+                  top: 8,
+                  left: 98,
+                  right: 20,
+                  bottom: 8
+                })
+                .visibility((this.isCusRangeError || this.isCusRangeMax)?Visibility.Visible:Visibility.None)
+            }
+            .alignItems(HorizontalAlign.Start)
+
+            MediaSizeSelection()
+            DirectionSelection()
+            MediaTypeSelection().visibility(!this.isPhotoEnabled ? Visibility.None : Visibility.Visible)
+            Row() {
+              Blank()
+              Row(){
+                Checkbox()
+                  .select(this.isBorderless)
+                  .width($r('app.float.image_comp_width'))
+                  .height($r('app.float.image_comp_height'))
+                  .enabled(this.currentMediaType.obj === MediaType.PHOTO)
+                  .key('Index_Checkbox_borderless')
+                  .onChange((value: boolean) => {
+                    if (value) {
+                      this.showToast($r('app.string.borderless_enable_toast'))
+                    }
+                    this.isBorderless = value
+                  })
+              }
+              .onClick(() => {
+                if (this.currentMediaType.obj !== MediaType.PHOTO) {
+                  this.showToast($r('app.string.borderless_type_toast'))
                 }
               })
-              .onBlur(() => {
-                Log.info(TAG,'cusRangeTextInput onBlur')
-                if (this.printRangeType === PrintRangeType.CUSTOM) {
-                  this.checkCustomRangeTextInput()
-                }
-              })
-              .onFocus(()=>{
-                if (this.editCusRangeFlag) {
-                  this.printRangeType = PrintRangeType.CUSTOM;
-                  this.updatePrintRange()
-                }
-              })
-              .onTouch((e:TouchEvent)=>{
-                e.stopPropagation()
-              })
-              .onMouse((e:MouseEvent)=>{
-                e.stopPropagation()
-              })
-            Text(this.errorMessage).key('Index_Text_custom_errorMessage')
-              .fontSize($r('app.float.font_size_body3')).fontColor('#E84026').fontWeight(FontWeight.Medium)
-              .margin({
-                top: 8,
-                left: 98,
-                right: 20,
-                bottom: 8
-              })
-              .visibility((this.isCusRangeError || this.isCusRangeMax)?Visibility.Visible:Visibility.None)
+              Text($r('app.string.index_borderless'))
+                .fontSize($r('app.float.font_size_body2'))
+                .width($r('app.float.text_borderless_width'))
+                .opacity(this.currentMediaType.obj === MediaType.PHOTO ? Constants.NUMBER_1 : $r('app.float.disable_opacity'))
+                .key('Index_Text_borderless')
+            }
+            .visibility(!this.isPhotoEnabled? Visibility.None : Visibility.Visible)
+            .height($r('app.float.params_row_height'))
+            .width($r('app.float.params_row_width'))
+
+            QualitySelection()
+            DuplexSelection().visibility(this.isDuplexEnabled ? Visibility.Visible : Visibility.None)
           }
           .alignItems(HorizontalAlign.Start)
-
-          MediaSizeSelection()
-          DirectionSelection()
-          MediaTypeSelection().visibility(!this.isPhotoEnabled ? Visibility.None : Visibility.Visible)
-          Row() {
-            Blank()
-            Row(){
-              Checkbox()
-                .select(this.isBorderless)
-                .width($r('app.float.image_comp_width'))
-                .height($r('app.float.image_comp_height'))
-                .enabled(this.currentMediaType.obj === MediaType.PHOTO)
-                .key('Index_Checkbox_borderless')
-                .onChange((value: boolean) => {
-                  if (value) {
-                    this.showToast($r('app.string.borderless_enable_toast'))
-                  }
-                  this.isBorderless = value
-                })
-            }
-            .onClick(() => {
-              if (this.currentMediaType.obj !== MediaType.PHOTO) {
-                this.showToast($r('app.string.borderless_type_toast'))
-              }
-            })
-            Text($r('app.string.index_borderless'))
-              .fontSize($r('app.float.font_size_body2'))
-              .width($r('app.float.text_borderless_width'))
-              .opacity(this.currentMediaType.obj === MediaType.PHOTO ? Constants.NUMBER_1 : $r('app.float.disable_opacity'))
-              .key('Index_Text_borderless')
-          }
-          .visibility(!this.isPhotoEnabled? Visibility.None : Visibility.Visible)
-          .height($r('app.float.params_row_height'))
-          .width($r('app.float.params_row_width'))
-
-          QualitySelection()
-          DuplexSelection().visibility(this.isDuplexEnabled ? Visibility.Visible : Visibility.None)
-        }
-        .alignItems(HorizontalAlign.Start)
-        .justifyContent(FlexAlign.Start)
-        .margin({ top: $r('app.float.print_setting_padding_top')
-        , bottom: $r('app.float.print_setting_padding_bottom')
-        })
+          .justifyContent(FlexAlign.Start)
+          .margin({ top: $r('app.float.print_setting_padding_top')
+          , bottom: $r('app.float.print_setting_padding_bottom')
+          })
 
         }
         // .height($r('app.float.print_setting_height'))
@@ -1012,12 +1017,6 @@ struct Index {
     }
     this.imageCount = this.printRange.length
     this.needDuplex = this.imageCount>1?true:false
-    if (this.printerRange === undefined) {
-      this.printerRange = new PrinterRange()
-    }
-    this.printerRange.startPage = this.startPage;
-    this.printerRange.endPage = this.endPage;
-    this.printerRange.pages = this.printRange.slice();
   }
 
   updateMediaSize() {
@@ -1089,7 +1088,7 @@ struct Index {
     Log.debug(TAG,'printer.option:',printer.option)
     let option = JSON.parse(printer.option);
     if(!CheckEmptyUtils.isEmpty(option.supportedMediaTypes)){
-       this.supportedMediaTypes = option.supportedMediaTypes
+      this.supportedMediaTypes = option.supportedMediaTypes
     }
     Log.debug(TAG,'supportedMediaTypes:',JSON.stringify(this.supportedMediaTypes))
     this.setMediaTypeSelect()
@@ -1451,7 +1450,9 @@ struct Index {
     Log.info(TAG, 'startPrint')
     this.isGlobalDisable = true
     this.saveLastedUsedPrinter(this.printer)
-    this.checkCustomRangeTextInput()
+    if (this.printRangeType === PrintRangeType.CUSTOM) {
+      this.checkCustomRangeTextInput(false)
+    }
 
     let jobFiles = new Array<string>()
     this.saveImage(jobFiles).then((fileList) => {
@@ -1471,7 +1472,7 @@ struct Index {
       let option = JSON.stringify(ops);
 
       this.printJob = new PrintJob(jobFiles,fileList,this.jobId,this.printer.printerId,state,Constants.NUMBER_0,this.printCount,this.printerRange,true,this.printerPageSize,true,
-                      this.colorMode,this.currentDuplex.obj,new PrintMargin(),null,option);
+        this.colorMode,this.currentDuplex.obj,new PrintMargin(),null,option);
       let printMargin = new PrintMargin();
       printMargin.top = Constants.NUMBER_0;
       printMargin.bottom = Constants.NUMBER_0;
@@ -1724,17 +1725,31 @@ struct Index {
     return returnList
   }
 
-  checkCustomRangeTextInput(){
-    if (this.printRangeType !== PrintRangeType.CUSTOM){
+  checkCustomRangeTextInput(isChangeRangeType: boolean){
+    if (!isChangeRangeType && this.printRangeType === PrintRangeType.ALL){
       return;
     }
-    if (this.isCusRangeError) {
+    if (isChangeRangeType) {
       this.editCusRangeFlag = false
       this.cusRangeText = ''
+      this.cusRangeArr = []
       this.isCusRangeError = false
+      this.isCusRangeMax = false
+      this.cusRangeBorderColor = $r('app.color.border_line')
+    } else {
+      if (CheckEmptyUtils.isEmpty(this.cusRangeText)) {
+        if (this.totalPage > Constants.NUMBER_1) {
+          if (this.isAbovePageLimit) {
+            this.cusRangeText = Constants.NUMBER_1+Constants.HYPHEN+Constants.MAX_PAGES.toString()
+          }else{
+            this.cusRangeText = Constants.NUMBER_1+Constants.HYPHEN+this.totalPage.toString()
+          }
+        }else{
+          this.cusRangeText = Constants.STRING_ONE
+        }
+      }
     }
-    this.isCusRangeMax = false
-    this.cusRangeBorderColor = $r('app.color.border_line')
+
     if (this.cusRangeArr.length === 0 ) {
       this.printRangeType = PrintRangeType.ALL;
       this.updatePrintRange()

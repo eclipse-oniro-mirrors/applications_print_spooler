@@ -74,6 +74,7 @@ export struct PreviewComponent {
           })
           .borderRadius($r('app.float.radius_m'))
           .backgroundColor(this.firstPageBackgroundColor)
+          .responseRegion({x:0,y:'-50%',width:'100%',height:'100%'})
           .onHover((isHover: boolean) => {
             if (isHover) {
               this.firstPageBackgroundColor =  $r('app.color.effect_color_hover')
@@ -101,6 +102,7 @@ export struct PreviewComponent {
             this.currentIndex -= 1;
             this.parseImageSize(false);
           })
+          .responseRegion({x:0,y:'-50%',width:'100%',height:'100%'})
           .borderRadius($r('app.float.radius_m'))
           .backgroundColor(this.previousBackgroundColor)
           .onHover((isHover: boolean) => {
@@ -129,6 +131,7 @@ export struct PreviewComponent {
           .height(32)
           .enabled(this.currentIndex !== this.imageCount && !this.isGlobalDisable)
           .opacity((this.currentIndex !== this.imageCount && !this.isGlobalDisable) ? Constants.NUMBER_1 : $r('app.float.disable_opacity'))
+          .responseRegion({x:0,y:'-50%',width:'100%',height:'100%'})
           .onClick(() => {
             Log.info(TAG,'this.currentIndex --:'+this.currentIndex)
             if(this.currentIndex === this.imageCount) {
@@ -164,6 +167,7 @@ export struct PreviewComponent {
             this.currentIndex = this.imageCount;
             this.parseImageSize(false)
           })
+          .responseRegion({x:0,y:'-50%',width:'100%',height:'100%'})
           .borderRadius($r('app.float.radius_m'))
           .backgroundColor(this.lastPageBackgroundColor)
           .onHover((isHover: boolean) => {
