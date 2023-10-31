@@ -1341,8 +1341,9 @@ struct Index {
     let size = this.mediaSize.get300PixelMediaSize();
     let fileList = new Array<number>();
     let imageSourceIndexList = new Array<number>();
-    for (let index = 0; index < this.printRange.length; index++) {
-      imageSourceIndexList.push(this.printRange[index] - 1);
+    let finalPrintRange = this.checkPrintRange();
+    for (let index = 0; index < finalPrintRange.length; index++) {
+      imageSourceIndexList.push(finalPrintRange[index] - 1);
     }
     Log.info(TAG, 'imageSourceIndexList: ', JSON.stringify(imageSourceIndexList))
     let len = imageSourceIndexList.length;
@@ -1754,6 +1755,27 @@ struct Index {
       this.printRangeType = PrintRangeType.ALL;
       this.updatePrintRange()
     }
+  }
+
+  checkPrintRange(): Array<number>{
+    let returnList = new Array<number>();
+    if (this.printRange.length>100) {
+      returnList = Array.from({length:100},(_,i)=>i+1);
+    }else{
+      returnList = CopyUtil.deepClone(this.printRange);
+    }
+    if (this.printerRange === undefined) {//下发打印参数需要
+      this.printerRange = {
+        startPage: this.startPage,
+        endPage: this.endPage,
+        pages: returnList.slice()
+      };
+    }else{
+      this.printerRange.startPage = this.startPage;
+      this.printerRange.endPage = this.endPage;
+      this.printerRange.pages = returnList.slice();
+    }
+    return returnList;
   }
 }
 
