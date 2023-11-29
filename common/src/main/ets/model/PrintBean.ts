@@ -65,7 +65,7 @@ export class PrinterInfo {
   public option?: string;
 }
 
-@Observed
+
 export class PrintJob {
   files: Array<string>;
   fdList: Array<number>;

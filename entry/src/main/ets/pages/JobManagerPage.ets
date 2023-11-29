@@ -22,6 +22,7 @@ import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
 import CheckEmptyUtils from '@ohos/common';
 import emitter from '@ohos.events.emitter';
 import PrintAdapter from '../Common/Adapter/PrintAdapter';
+import Util from '../Common/Utils/Util';
 import common from '@ohos.app.ability.common';
 import { PrintJob }  from '../Model/PrintJob';
 
@@ -66,6 +67,11 @@ struct JobManagerPage {
         Text($r('app.string.print_job')).key('JobManagerPage_Text_printJob')
           .fontSize($r('app.float.font_size_headline8'))
           .fontWeight(FontWeight.Medium)
+          .maxLines(Constants.NUMBER_1)
+          .textOverflow({overflow:TextOverflow.Ellipsis})
+        Text(this.getPrinterName()).key('JobManagerPage_Text_printerName')
+          .fontSize($r('app.float.font_size_body2'))
+          .fontWeight(FontWeight.Regular)
           .maxLines(Constants.NUMBER_1)
           .textOverflow({overflow:TextOverflow.Ellipsis})
       }
@@ -141,6 +147,15 @@ struct JobManagerPage {
 
   aboutToDisappear() {
     this.unsubscribe();
+  }
+
+  getPrinterName(): string {
+    let printerName = '';
+    let printerInfo = Util.getLastUsedPrinterInfo(this.abilityContext);
+    if (!CheckEmptyUtils.isEmpty(printerInfo)) {
+      printerName = printerInfo.printerName;
+    }
+    return printerName;
   }
 
   private subscribe() {
