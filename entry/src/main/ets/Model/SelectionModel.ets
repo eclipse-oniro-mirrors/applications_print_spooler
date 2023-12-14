@@ -92,7 +92,7 @@ export default class SelectionModel {
     SelectionModel.createSelectionValue<MediaSize>(MediaSize.INT_DL_ENVELOPE,'INT_DL_ENVELOPE');
     SelectionModel.createSelectionValue<MediaSize>(MediaSize.B_TABLOID,'B_TABLOID');
 
-    SelectionModel.createSelectionValue<number>(PageDirection.Auto,'PageDirection_AUTO');
+    SelectionModel.createSelectionValue<number>(PageDirection.AUTO,'PageDirection_AUTO');
     SelectionModel.createSelectionValue<number>(PageDirection.LANDSCAPE,'PageDirection_LANDSCAPE');
     SelectionModel.createSelectionValue<number>(PageDirection.VERTICAL,'PageDirection_VERTICAL');
     SelectionModel.createSelectionValue<number>(MediaType.NORMAL,'MediaType_NORMAL');
