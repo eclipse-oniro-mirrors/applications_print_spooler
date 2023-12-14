@@ -639,7 +639,7 @@ struct Index {
                   .select(this.isBorderless)
                   .width($r('app.float.image_comp_width'))
                   .height($r('app.float.image_comp_height'))
-                  .enabled(this.currentMediaType.obj === MediaType.PHOTO)
+                  .enabled(SelectionModel.getSelectionValue<number>(this.currentMediaType.name) === MediaType.PHOTO)
                   .key('Index_Checkbox_borderless')
                   .onChange((value: boolean) => {
                     if (value) {
@@ -649,14 +649,14 @@ struct Index {
                   })
               }
               .onClick(() => {
-                if (this.currentMediaType.obj !== MediaType.PHOTO) {
+                if (SelectionModel.getSelectionValue<number>(this.currentMediaType.name) !== MediaType.PHOTO) {
                   this.showToast($r('app.string.borderless_type_toast'))
                 }
               })
               Text($r('app.string.index_borderless'))
                 .fontSize($r('app.float.font_size_body2'))
                 .width($r('app.float.text_borderless_width'))
-                .opacity(this.currentMediaType.obj === MediaType.PHOTO ? Constants.NUMBER_1 : $r('app.float.disable_opacity'))
+                .opacity(SelectionModel.getSelectionValue<number>(this.currentMediaType.name) === MediaType.PHOTO ? Constants.NUMBER_1 : $r('app.float.disable_opacity'))
                 .key('Index_Text_borderless')
             }
             .visibility(!this.isPhotoEnabled? Visibility.None : Visibility.Visible)
@@ -969,10 +969,11 @@ struct Index {
 
   initParams() {
     this.printButtonFlag = true
-    this.printerPageSize = MediaSizeUtil.mediaSizeToPageSize(SelectionModel.MediaSize_ISO_A4.obj)
+    this.printerPageSize = MediaSizeUtil.mediaSizeToPageSize(SelectionModel.getSelectionValue<MediaSize>(SelectionModel.MediaSize_ISO_A4.name))
   }
 
   setSelect() {
+    SelectionModel.initSelectionMap();
     this.setSelectDefault(false);
     this.setMediaSizesSelect();
     this.setDirectionSelect();
@@ -1023,8 +1024,8 @@ struct Index {
     if (CheckEmptyUtils.isEmpty(this.currentMediaSize)) {
       return
     }
-    if (!CheckEmptyUtils.isEmpty(this.currentMediaSize.obj)) {
-      this.mediaSize = this.currentMediaSize.obj
+    if (!CheckEmptyUtils.isEmpty(SelectionModel.getSelectionValue<MediaSize>(this.currentMediaSize.name))) {
+      this.mediaSize = SelectionModel.getSelectionValue<MediaSize>(this.currentMediaSize.name);
       Log.info(TAG, 'updateMediaSize:MediaSize = ' + JSON.stringify(this.mediaSize))
       this.printerPageSize = MediaSizeUtil.mediaSizeToPageSize(this.mediaSize)
     }
@@ -1035,7 +1036,7 @@ struct Index {
     if (this.printer !== undefined) {
       let isBSH = this.isBiSheng(this.printer.printerName)
       if (isBSH) {
-        this.mediaSizeList = MediaSizeUtil.getDefaultMediaSizeByMediaType(this.currentMediaType.obj)
+        this.mediaSizeList = MediaSizeUtil.getDefaultMediaSizeByMediaType(SelectionModel.getSelectionValue<number>(this.currentMediaType.name))
       }
       this.setMediaSizesSelect()
     }
@@ -1047,7 +1048,7 @@ struct Index {
   }
 
   updateDirection() {
-    this.pageDirection = this.currentDirection.obj
+    this.pageDirection = SelectionModel.getSelectionValue<number>(this.currentMediaType.name)
   }
 
   /**
@@ -1078,7 +1079,7 @@ struct Index {
     }
     let isBSH = this.isBiSheng(printer.printerName)
     if (isBSH) {
-      this.mediaSizeList = MediaSizeUtil.getDefaultMediaSizeByMediaType(this.currentMediaType.obj)
+      this.mediaSizeList = MediaSizeUtil.getDefaultMediaSizeByMediaType(SelectionModel.getSelectionValue<number>(this.currentMediaType.name))
     } else {
       this.mediaSizeList = new Array<MediaSize>()
       for (let index = 0; index < cap.pageSize.length; index++) {
@@ -1156,7 +1157,7 @@ struct Index {
 
   setPrintQualitySelect() {
     this.qualitySelectArray = new Array<SelectionModel>()
-    if (this.currentMediaType.obj === MediaType.NORMAL) {
+    if (SelectionModel.getSelectionValue<number>(this.currentMediaType.name) === MediaType.NORMAL) {
       this.qualitySelectArray.push(SelectionModel.PrintQuality_BEST, SelectionModel.PrintQuality_STANDARD, SelectionModel.PrintQuality_ECONOMY);
     } else {
       this.qualitySelectArray.push(SelectionModel.PrintQuality_BEST, SelectionModel.PrintQuality_STANDARD);
@@ -1300,8 +1301,9 @@ struct Index {
 
   onPrinterChange() {
     if (this.printer !== undefined) {
-      this.currentPrinterSelection = new SelectionModel(this.printer.printerName, this.printer, this.printer.printerName)
-      Log.info(TAG, 'onPrinterChange printerName: ' + StringUtil.encodeCommonString(this.currentPrinterSelection.name))
+      this.currentPrinterSelection = new SelectionModel(this.printer.printerName, this.printer.printerName);
+      SelectionModel.createSelectionValue<PrinterInfo>(this.printer,this.printer.printerName);
+      Log.info(TAG, 'onPrinterChange printerName: ' + StringUtil.encodeCommonString(this.currentPrinterSelection.name));
     }
   }
 
@@ -1462,9 +1464,9 @@ struct Index {
         jobName: this.jobName,
         jobNum: this.jobNum,
         jobDescription: this.jobDes,
-        mediaType: this.getMediaType(this.currentMediaType.obj),
-        documentCategory: this.currentMediaType.obj === MediaType.PHOTO ? Constants.NUMBER_1 : Constants.NUMBER_0,
-        printQuality: this.currentQuality.obj.toString(),
+        mediaType: this.getMediaType(SelectionModel.getSelectionValue<number>(this.currentMediaType.name)),
+        documentCategory: SelectionModel.getSelectionValue<number>(this.currentMediaType.name) === MediaType.PHOTO ? Constants.NUMBER_1 : Constants.NUMBER_0,
+        printQuality: SelectionModel.getSelectionValue<number>(this.currentQuality.name).toString(),
         printerName: this.removeSpaces(this.printer.printerName),
         printerUri: this.getPrinterUri(),
         documentFormat: 'image/jpeg',
@@ -1473,7 +1475,7 @@ struct Index {
       let option = JSON.stringify(ops);
 
       this.printJob = new PrintJob(jobFiles,fileList,this.jobId,this.printer.printerId,state,Constants.NUMBER_0,this.printCount,this.printerRange,true,this.printerPageSize,true,
-        this.colorMode,this.currentDuplex.obj,new PrintMargin(),null,option);
+        this.colorMode,SelectionModel.getSelectionValue<number>(this.currentDuplex.name),new PrintMargin(),null,option);
       let printMargin = new PrintMargin();
       printMargin.top = Constants.NUMBER_0;
       printMargin.bottom = Constants.NUMBER_0;
@@ -1567,7 +1569,7 @@ struct Index {
         break;
     }
     let mediaType = Constants.STRING_NONE
-    switch (this.currentMediaType.obj) {
+    switch (SelectionModel.getSelectionValue<number>(this.currentMediaType.name)) {
       case MediaType.NORMAL:
         mediaType = StringUtil.getString('MediaType_NORMAL') + StringUtil.getString('pauseMark')
         break;
@@ -1580,7 +1582,7 @@ struct Index {
       borderless = StringUtil.getString('pauseMark') + StringUtil.getString('JobDes_BorderLess')
     }
     let quality = Constants.STRING_NONE
-    switch (this.currentQuality.obj) {
+    switch (SelectionModel.getSelectionValue<number>(this.currentQuality.name)) {
       case PrintQuality.ECONOMY:
         quality = StringUtil.getString('PrintQuality_ECONOMY') + StringUtil.getString('pauseMark')
         break;
@@ -1592,7 +1594,7 @@ struct Index {
         break;
     }
     let direction = Constants.STRING_NONE
-    switch (this.currentDirection.obj) {
+    switch (SelectionModel.getSelectionValue<number>(this.currentDirection.name)) {
       case PageDirection.AUTO:
         direction = StringUtil.getString('PageDirection_AUTO') + StringUtil.getString('pauseMark')
         break;

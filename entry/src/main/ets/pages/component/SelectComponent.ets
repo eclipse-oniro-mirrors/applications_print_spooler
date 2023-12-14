@@ -17,7 +17,7 @@ import SelectionModel from '../../Model/SelectionModel'
 import { Log } from '@ohos/common';
 import CheckEmptyUtils from '@ohos/common';
 import WifiP2pHelper from '../../Common/Adapter/WifiP2pHelper';
-import { Constants, Duplex } from '@ohos/common';
+import { Constants, Duplex, PrinterInfo } from '@ohos/common';
 
 const TAG = 'SelectComponent'
 
@@ -134,12 +134,13 @@ export struct PrinterSelection {
   }
 
   checkLoading() {
-    if ((!CheckEmptyUtils.isEmpty(this.currentPrinterSelection.obj)
-    && this.currentPrinterSelection.obj.printerId !== '-1'
+    let printer: PrinterInfo = SelectionModel.getSelectionValue<PrinterInfo>(this.currentPrinterSelection.name);
+    if ((!CheckEmptyUtils.isEmpty(printer)
+    && printer.printerId !== '-1'
     && !this.canPrint)) {
-      return true
+      return true;
     }
-    return false
+    return false;
   }
 }
 
@@ -792,7 +793,7 @@ export struct DuplexSelection {
   }
 
   getText(){
-    if(this.currentDuplex.obj === Duplex.SINGLE){
+    if(SelectionModel.getSelectionValue<number>(this.currentDuplex.name) === Duplex.SINGLE){
       return $r('app.string.DuplexMode_SINGLE')
     } else {
       return this.currentDuplex.res
@@ -816,7 +817,7 @@ struct DuplexSelectionComponent {
     Row() {
       Image(this.getImage()).width(48).height(48).margin({right:16}).objectFit(ImageFit.Contain)
       Column(){
-        Text(this.selection.obj===Duplex.SINGLE?$r('app.string.DuplexMode_SINGLE'):$r('app.string.DuplexMode_DOUBLE'))
+        Text(SelectionModel.getSelectionValue<number>(this.selection.name) === Duplex.SINGLE?$r('app.string.DuplexMode_SINGLE'):$r('app.string.DuplexMode_DOUBLE'))
           .textAlign(TextAlign.Start)
           .fontSize($r('app.float.font_size_body1'))
           .fontColor('#E5000000')
@@ -860,7 +861,7 @@ struct DuplexSelectionComponent {
 
   aboutToAppear() {
     Log.info(TAG,'DuplexSelectionComponent: ',JSON.stringify(this.currentDuplex))
-    this.isSingle = (this.selection.obj === Duplex.SINGLE);
+    this.isSingle = (SelectionModel.getSelectionValue<number>(this.selection.name) === Duplex.SINGLE);
     this.checkSelectedColor()
   }
 
@@ -873,13 +874,13 @@ struct DuplexSelectionComponent {
   }
 
   getImage(){
-    Log.info(TAG,'getImage: ',this.selection.obj)
+    Log.info(TAG,'getImage: ',this.selection.name)
     let res = $r('app.media.ic_single');
-    if (this.selection.obj === Duplex.LONG) {
-      Log.info(TAG,'getImage: app.media.ic_long',this.selection.obj)
+    if (SelectionModel.getSelectionValue<number>(this.selection.name) === Duplex.LONG) {
+      Log.info(TAG,'getImage: app.media.ic_long',this.selection.name)
       res = $r('app.media.ic_long')
-    } else if(this.selection.obj === Duplex.SHORT) {
-      Log.info(TAG,'getImage: app.media.ic_short',this.selection.obj)
+    } else if(SelectionModel.getSelectionValue<number>(this.selection.name) === Duplex.SHORT) {
+      Log.info(TAG,'getImage: app.media.ic_short',this.selection.name)
       res = $r('app.media.ic_short')
     }
     return res
