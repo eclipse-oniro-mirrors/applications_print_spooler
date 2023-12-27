@@ -1082,7 +1082,7 @@ struct Index {
         this.mediaSizeList.push(MediaSizeUtil.pageSizeToMediaSize(cap!.pageSize[index]))
       }
     }
-    Log.debug(TAG,'printer.option:',printer.options)
+    Log.debug(TAG,'printer.options:',printer.options)
     let options: PrinterCapsOptions = JSON.parse(printer.options!);
     if(!CheckEmptyUtils.isEmpty(options?.supportedMediaTypes)){
       this.supportedMediaTypes = options?.supportedMediaTypes
@@ -1470,10 +1470,10 @@ struct Index {
         documentFormat: 'image/jpeg',
         files: jobFiles
       }
-      let option = JSON.stringify(ops);
+      let options = JSON.stringify(ops);
       this.printJob = new PrintJob(jobFiles,fileList,this.jobId, this.printer!.printerId, print.PrintJobState.PRINT_JOB_PREPARE, print.PrintJobSubState.PRINT_JOB_COMPLETED_SUCCESS,
         this.printCount,this.printerRange!,true,this.printerPageSize!,true,this.colorMode,SelectionModel.getSelectionValue<number>(this.currentDuplex.name)!,new PrintMargin(Constants.NUMBER_0, Constants.NUMBER_0, Constants.NUMBER_0, Constants.NUMBER_0),
-      new PreviewAttribute(this.printerRange!, Constants.NUMBER_1), option);
+      new PreviewAttribute(this.printerRange!, Constants.NUMBER_1), options);
 
       startPrintJob(this.printJob).then((result) => {
         if (result) {
@@ -1524,8 +1524,8 @@ struct Index {
     if (CheckEmptyUtils.isEmpty(this.printer)) {
       return '';
     }
-    let option = this.printer!.options;
-    let optionObject: PrinterCapsOptions = JSON.parse(option!);
+    let options = this.printer!.options;
+    let optionObject: PrinterCapsOptions = JSON.parse(options!);
     if (CheckEmptyUtils.checkStrIsEmpty(optionObject.printerUri)) {
       return '';
     }

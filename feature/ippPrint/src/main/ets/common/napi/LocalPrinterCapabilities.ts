@@ -40,7 +40,7 @@ export default class LocalPrinterCapabilities {
    * 构造额外的参数, 传递给UI
    */
   static buildExtraCaps(caps: PrinterCapability, printerUri: string): string {
-    let optionObject: PrinterCapsOptions = LocalPrinterCapabilities.parseOption(caps.option);
+    let optionObject: PrinterCapsOptions = LocalPrinterCapabilities.parseOption(caps.options);
     if (optionObject === undefined) {
       return '';
     }
@@ -53,13 +53,13 @@ export default class LocalPrinterCapabilities {
     return JSON.stringify(options);
   }
 
-  private static parseOption(option: string): PrinterCapsOptions {
-    if (CheckEmptyUtils.checkStrIsEmpty(option)) {
+  private static parseOption(options: string): PrinterCapsOptions {
+    if (CheckEmptyUtils.checkStrIsEmpty(options)) {
       return undefined;
     }
     let result: PrinterCapsOptions = undefined;
     try {
-      result = JSON.parse(option);
+      result = JSON.parse(options);
     } catch (error) {
       Log.error(TAG, 'json parse error: ' + error);
     }

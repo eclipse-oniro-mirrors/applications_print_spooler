@@ -43,10 +43,10 @@ export class NativeApi {
     print.queryPrinterCapabilityByUri(uri).then((result) => {
       Log.debug(TAG, 'queryPrinterCapabilityByUri result: ' + JSON.stringify(result));
       try {
-        let option = JSON.parse(result.option);
-        this.setCupsPrinter(uri, this.removeSpaces(printerName), option.make);
+        let options = JSON.parse(result.options);
+        this.setCupsPrinter(uri, this.removeSpaces(printerName), options.make);
       } catch (error) {
-        Log.error(TAG, 'parse option error: ' + JSON.stringify(error));
+        Log.error(TAG, 'parse options error: ' + JSON.stringify(error));
         this.setCupsPrinter(uri, this.removeSpaces(printerName), '');
       }
       getCapsCallback(result);

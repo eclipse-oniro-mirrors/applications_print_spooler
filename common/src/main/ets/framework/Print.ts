@@ -98,7 +98,7 @@ export class PrinterCapability implements print.PrinterCapability {
   pageSize: Array<PrintPageSize>;
   resolution?: Array<PrintResolution>;
   minMargin?: PrintMargin;
-  option?: string; /* Change Type*/
+  options?: string; /* Change Type*/
 }
 
 /**

@@ -5,9 +5,5 @@
 **/build
 package-lock.json
 .clang-format
-.clang-tidygigt 
+.clang-tidygigt
 .clangd
-open_source/boringssl/src/
-open_source/cups/src/
-open_source/libjpeg/src/
-oh_modules
