@@ -12,11 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { PrintPageSize } from '../framework/Print';
 
 import { MediaType } from '../model/Constants';
 import { MediaSize } from '../model/MediaSize';
-import { PrintPageSize } from '../model/PrintBean';
-import { Log } from './Log';
 import { StringUtil } from './StringUtil';
 
 export class MediaSizeUtil {

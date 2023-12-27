@@ -16,14 +16,14 @@
 import router from '@ohos.router';
 import {CancelButton} from './component/BaseComponent';
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper';
-import { AppStorageKeyName } from '@ohos/common';
+import { AppStorageKeyName, Constants } from '@ohos/common';
 
 const TAG = 'AboutPage';
 
 @Entry
 @Component
 struct AboutPage {
-  @State versionName: string = undefined;
+  @State versionName: string = Constants.STRING_NONE;
 
   aboutToAppear() {
     this.versionName = AppStorageHelper.getValue<string>(AppStorageKeyName.APP_VERSION);

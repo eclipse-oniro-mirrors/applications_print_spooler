@@ -26,23 +26,11 @@ export { SCHEME_IPP,
   WIFI_POWER_CLOSED,
   P2P_DISCOVERY_DELAY } from './src/main/ets/model/PrintConstants'
 
-export { PrintMargin,
-  PrinterRange,
-  PreviewAttribute,
-  PrintResolution,
-  PrintPageSize,
-  PrinterCapability,
-  PrinterInfo,
-  PrintJob,
-  PrinterExtensionInfo,
-  PrinterState,
-  PrintJobState,
-  PrintJobSubState,
+export {
   MessageEvent,
-  PrinterCapsOptions,
-  PrintJobOptions,
   PrinterFoundType,
-  DateTimeFormat } from './src/main/ets/model/PrintBean'
+  DateTimeFormat,
+  CustomPrintJobState } from './src/main/ets/model/PrintBean'
 
 export { MediaSize, Size } from './src/main/ets/model/MediaSize'
 
@@ -70,10 +58,6 @@ export { Log } from './src/main/ets/utils/Log'
 
 export { DateUtils } from './src/main/ets/utils/DateUtils'
 
-export { ColorMode } from './src/main/ets/model/ColorMode'
-
-export { DuplexMode, DuplexModeCode } from './src/main/ets/model/DuplexMode'
-
 export { MediaTypes, MediaTypeCode } from './src/main/ets/model/MediaType'
 
 export { default } from './src/main/ets/utils/CheckEmptyUtils';
@@ -97,3 +81,33 @@ export { RequestCode,
 } from './src/main/ets/model/Constants'
 
 export { StringUtil } from './src/main/ets/utils/StringUtil'
+
+export { PrintMargin,
+  PrinterRange,
+  PreviewAttribute,
+  PrintResolution,
+  PrintPageSize,
+  PrinterCapability,
+  PrinterInfo,
+  PrinterCapsOptions,
+  PrintJob,
+  PrintJobOptions,
+  startPrintJob,
+  queryAllPrintJobs,
+  cancelPrintJob,
+  isValidPrintJob,
+  convertToSpoolerPrintJob,
+  convertToFwkPrintJob,
+  convertToPrinterInfo } from './src/main/ets/framework/Print'
+
+export { PrintJobChangeListener,
+  PrintItemChangeListener,
+  ConfigChangeListener } from './src/main/ets/framework/Interfaces'
+
+export { PrintUtil } from './src/main/ets/utils/PrintUtil'
+
+export  { GlobalObject } from './src/main/ets/utils/GlobalObject'
+
+export { SingletonHelper } from './src/main/ets/utils/SingletonHelper'
+
+export { configMgr } from './src/main/ets/framework/ConfigManager'

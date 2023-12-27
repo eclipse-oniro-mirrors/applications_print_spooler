@@ -12,25 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-export class MessageEvent<T> {
-  data: T;
-}
-
-export enum PrinterFoundType {
-  FROM_P2P = 0,
-  FROM_EPRINT = 1,
-  FROM_LOCAL_NET = 2,
-  FROM_USB = 3
-}
-
-export enum DateTimeFormat {
-  DATE = 0,
-  DATE_TIME = 1,
-  TIME = 2
-}
-
-export enum CustomPrintJobState {
-  PRINT_JOB_CANCELLING = 6,  // canceling state of print job
-  PRINT_JOB_UNKNOWN = 100, // unknown state of print job
-}
+/**
+ * controller层数据刷新回调model层
+ */
+export type PrintJobChangeListener = {
+  onAddPrintJob: Function,
+  onUpdatePrintJob: Function,
+  onRemovePrintJob: Function,
+  onAllPrintJobsFinished: Function
+};
+/**
+ * 打印任务model层数据刷新后回调UI
+ */
+export type PrintItemChangeListener = {
+  onPrintItemsChanged: Function
+};
+/**
+ * 环境配置变化回调listener
+ */
+export type ConfigChangeListener = {
+  notifyConfigurationChanged: Function
+};

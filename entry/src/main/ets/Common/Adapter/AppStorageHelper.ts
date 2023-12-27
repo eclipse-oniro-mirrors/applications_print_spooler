@@ -47,12 +47,12 @@ export default class AppStorageHelper {
       Log.error(TAG, 'Can not find register storageKey: ' + JSON.stringify(storageKey));
       return undefined;
     }
-    if (!AppStorage.Has(storageKey)) {
-      AppStorage.SetOrCreate<T>(storageKey, value)
+    if (!AppStorage.has(storageKey)) {
+      AppStorage.setOrCreate<T>(storageKey, value)
       Log.error(TAG, 'AppStorageHelper Create key of ' + JSON.stringify(storageKey));
     } else {
       Log.info(TAG, 'setValue' + JSON.stringify(storageKey) + ' : ' + JSON.stringify(value))
-      AppStorage.Set<T>(storageKey, value)
+      AppStorage.set<T>(storageKey, value)
     }
     return AppStorageHelper.getValue<T>(storageKey)
   }
@@ -69,8 +69,8 @@ export default class AppStorageHelper {
       Log.error(TAG, 'Can not find register storageKey: ' + JSON.stringify(storageKey));
       return false
     }
-    if (AppStorage.Has(storageKey)) {
-      AppStorage.Set<T>(storageKey, value)
+    if (AppStorage.has(storageKey)) {
+      AppStorage.set<T>(storageKey, value)
       return true
     }
     return false
@@ -82,10 +82,10 @@ export default class AppStorageHelper {
    * @returns 成功返回value，若之前未挂载则返回undefined
    */
   public static getValue<T>(storageKey: string): T {
-    if (!AppStorage.Has(storageKey)) {
+    if (!AppStorage.has(storageKey)) {
       Log.error(TAG, 'The storageKey is not exist, key =  ' + JSON.stringify(storageKey));
       return undefined
     }
-    return (AppStorage.Get<T>(storageKey) as T)
+    return (AppStorage.get<T>(storageKey) as T)
   }
 }

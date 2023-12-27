@@ -16,7 +16,7 @@
 import { Log } from '@ohos/common';
 import { Constants, AppCommonEvent, AppStorageKeyName } from '@ohos/common';
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper';
-import { PrinterCapability, PrinterInfo, PrinterState } from '@ohos/common';
+import { PrinterCapability, PrinterInfo } from '@ohos/common';
 import emitter from '@ohos.events.emitter';
 import { StringUtil } from '@ohos/common';
 import Util from '../Common/Utils/Util';
@@ -127,16 +127,16 @@ export class PrinterDiscModel {
    *
    * @param printerId  printer id
    * @param capability printer capability
-   * @param option printer capability
+   * @param options printer capability
    * @param description printer descriptions
    * @return true for update
    */
-  public printerUpdateCapability(printerId: string, capability: PrinterCapability, option: string, description: string): boolean {
+  public printerUpdateCapability(printerId: string, capability: PrinterCapability, options: string, description: string): boolean {
     Log.info(TAG, 'PrinterUpdateCapability printerId: ' + StringUtil.splitMac(printerId) + ' capability : ' + JSON.stringify(capability));
     for (let index = 0; index < this.mPrinters.length; index++) {
       if (this.mPrinters[index].printerId === printerId) {
         this.mPrinters[index].capability = capability;
-        this.mPrinters[index].option = option;
+        this.mPrinters[index].options = options;
         this.mPrinters[index].description = description;
         AppStorageHelper.setValue<Array<PrinterInfo>>(this.mPrinters, AppStorageKeyName.PRINTER_QUEUE_NAME);
         let innerEvent = {

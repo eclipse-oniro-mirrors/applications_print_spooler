@@ -14,8 +14,7 @@
  */
 
 import router from '@ohos.router';
-import { Log } from '@ohos/common';
-import bundleManager from '@ohos.bundle.bundleManager';
+import CheckEmptyUtils, { Log } from '@ohos/common';
 import common from '@ohos.app.ability.common';
 import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
 import { PreferencesKey} from '@ohos/common';
@@ -25,12 +24,12 @@ import {CancelButton} from './component/BaseComponent';
 
 const TAG = 'PrivacyStatementPage';
 
-@Entry
+let storage = LocalStorage.getShared();
+@Entry(storage)
 @Component
 struct PrivacyStatementPage {
-  @State versionName: string = undefined;
   private readonly PRIVACY_STATEMENT_STORE: string = 'privacyStatementStore';
-  private abilityContext: common.UIAbilityContext = undefined
+  private abilityContext: common.UIAbilityContext | undefined = undefined
   private dialogController: CustomDialogController = new CustomDialogController({
     builder: PrivacyStatementDialog(),
     autoCancel: false,
@@ -38,11 +37,6 @@ struct PrivacyStatementPage {
   })
 
   aboutToAppear() {
-    bundleManager.getBundleInfoForSelf(bundleManager.BundleFlag.GET_BUNDLE_INFO_DEFAULT)
-      .then((bundleInfo) => {
-        Log.info(TAG, 'bundleInfo: ' + JSON.stringify(bundleInfo));
-        this.versionName = bundleInfo.versionName;
-      })
     this.abilityContext = GlobalThisHelper.getValue<common.UIAbilityContext>(GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT)
   }
 
@@ -79,9 +73,9 @@ struct PrivacyStatementPage {
             .width($r('app.float.shield_width_height'))
             .height($r('app.float.shield_width_height'))
           Text() {
-            ForEach(this.getPrivacyStatementText(), (privacyStatementText) => {
-              if (privacyStatementText === this.abilityContext.resourceManager.getStringByNameSync('location_information') ||
-                privacyStatementText === this.abilityContext.resourceManager.getStringByNameSync('print_permission_network')) {
+            ForEach(this.getPrivacyStatementText(), (privacyStatementText: string) => {
+              if (privacyStatementText === this.abilityContext?.resourceManager.getStringByNameSync('location_information') ||
+                privacyStatementText === this.abilityContext?.resourceManager.getStringByNameSync('print_permission_network')) {
                 Span(privacyStatementText).fontWeight(FontWeight.Bolder)
               } else {
                 Span(privacyStatementText)
@@ -120,14 +114,14 @@ struct PrivacyStatementPage {
               cancelWidth: $r('app.float.privacy_statement_button_width'),
               cancelHeight: $r('app.float.privacy_statement_button_height'),
               cancelClick: () => {
-                this.abilityContext.terminateSelf();
+                this.abilityContext?.terminateSelf();
               }
             })
             .margin({right: $r('app.float.privacy_statement_button_space')})
             Button($r('app.string.Agree'))
               .onClick(() => {
                 this.agreePrivacyStatement();
-                router.replaceUrl({url: 'pages/PrintPage'});
+                router.replaceUrl({url: 'pages/PrintPage', params: storage});
               })
               .width($r('app.float.privacy_statement_button_width'))
               .height($r('app.float.privacy_statement_button_height'))
@@ -159,12 +153,16 @@ struct PrivacyStatementPage {
   }
 
   private getPrivacyStatementText() : Array<string> {
-    var privacyStatementTextList = new Array<string>();
-    var privacyStatementText = this.abilityContext.resourceManager.getStringByNameSync('privacy_statement_text');
-    var printPermissionNetwork = this.abilityContext.resourceManager.getStringByNameSync('print_permission_network');
-    var locationInformation = this.abilityContext.resourceManager.getStringByNameSync('location_information');
+    let privacyStatementTextList = new Array<string>();
+    if (CheckEmptyUtils.isEmpty(this.abilityContext)) {
+      Log.warn(TAG, 'getPrivacyStatementText abilityContext is invalid.');
+      return privacyStatementTextList;
+    }
+    let privacyStatementText = this.abilityContext!.resourceManager.getStringByNameSync('privacy_statement_text');
+    let printPermissionNetwork = this.abilityContext!.resourceManager.getStringByNameSync('print_permission_network');
+    let locationInformation = this.abilityContext!.resourceManager.getStringByNameSync('location_information');
 
-    var privacyStatementTexts = privacyStatementText.split(printPermissionNetwork);
+    let privacyStatementTexts = privacyStatementText.split(printPermissionNetwork);
     privacyStatementTextList.push(privacyStatementTexts[0]);
     privacyStatementTextList.push(printPermissionNetwork);
     privacyStatementTexts = privacyStatementTexts[1].split(locationInformation);

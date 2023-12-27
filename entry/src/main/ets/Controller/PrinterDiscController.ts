@@ -13,23 +13,21 @@
  * limitations under the License.
  */
 
-
-// @ts-ignore
 import print from '@ohos.print';
-import commonEvent from '@ohos.commonEvent';
+import commonEvent from '@ohos.commonEventManager';
 import {
   AppCommonEvent,
-  PrintErrorCode,
-  AppStorageKeyName
+	AppStorageKeyName,
+	convertToPrinterInfo,
+  PrintErrorCode
 } from '@ohos/common';
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper';
-import { GlobalThisHelper, GlobalThisStorageKey } from '@ohos/common';
 import WifiP2pHelper from '../Common/Adapter/WifiP2pHelper';
 import { Log } from '@ohos/common';
 import { PrinterDiscModel } from '../Model/PrinterDiscModel';
 import emitter from '@ohos.events.emitter';
 import { StringUtil } from '@ohos/common';
-import { PrintJob, PrinterCapability, PrinterInfo, PrinterState } from '@ohos/common';
+import { PrinterCapability, PrinterInfo } from '@ohos/common';
 
 const TAG = '[PrinterDiscController]:';
 
@@ -96,36 +94,27 @@ export class PrinterDiscController {
    * @param state printer state
    * @param info printer info
    */
-  private onPrinterStateChanged = (state, info): void => {
-    if (state === null || info === null) {
+  private onPrinterStateChanged = (state: print.PrinterState, printerInfo: print.PrinterInfo): void => {
+    if (state === null || printerInfo === null) {
       Log.error(TAG, 'printer state changed state is null or info is null');
       return;
     }
 
-    Log.info(TAG, 'on printer state changed, state = ' + JSON.stringify(state));
-    info.toJSON = function (): JSON {
-      return {
-        // @ts-ignore
-        'printerId': StringUtil.splitMac(<string> this.printerId),
-        'printerName': StringUtil.encodeCommonString(<string> this.printerName),
-        'printerIcon': this.printerIcon,
-        'printerState': this.printerState
-      };
-    };
-    Log.info(TAG, 'on printer state changed, info = ' + JSON.stringify(info));
+    let info: PrinterInfo = convertToPrinterInfo(printerInfo);
+    Log.info(TAG, 'on printer state changed, state = ' + JSON.stringify(state) + ' ,info =' + info?.toString());
     switch (state) {
-      case PrinterState.PRINTER_ADDED:
+      case print.PrinterState.PRINTER_ADDED:
         this.onPrinterFound(info);
         break;
-      case PrinterState.PRINTER_REMOVED:
+      case print.PrinterState.PRINTER_REMOVED:
         this.onPrinterOffline(info);
         break;
-      case PrinterState.PRINTER_UPDATE_CAP:
+      case print.PrinterState.PRINTER_CAPABILITY_UPDATED:
         this.onPrinterUpdateCapability(info);
         break;
-      case PrinterState.PRINTER_CONNECTED:
-      case PrinterState.PRINTER_DISCONNECTED:
-      case PrinterState.PRINTER_RUNNING:
+      case print.PrinterState.PRINTER_CONNECTED:
+      case print.PrinterState.PRINTER_DISCONNECTED:
+      case print.PrinterState.PRINTER_RUNNING:
         this.onPrinterStateChange(info);
         break;
       default:
@@ -152,23 +141,14 @@ export class PrinterDiscController {
    *
    * @param info printer info
    */
-  private onPrinterFound(info: print.PrinterInfo): void {
+  private onPrinterFound(info: PrinterInfo): void {
     Log.info(TAG, 'enter onPrinterFound');
     if (info === null) {
       Log.error(TAG, 'onPrinterFound for null data');
       return;
     }
-    let newPrinter = new PrinterInfo();
-    newPrinter.printerId = info.printerId;
-    newPrinter.printerName = info.printerName;
-    newPrinter.printerState = info.printerState;
-    newPrinter.printerIcon = info.printerIcon;
-    newPrinter.description = info.description;
-    newPrinter.capability = info.capability;
-    // @ts-ignore
-    newPrinter.option = info.options;
-    let added = this.mPrinterDiscModel.addPrinter(newPrinter);
-    Log.info(TAG, 'foundPrinter = ' + StringUtil.encodeCommonString(<string> info.printerName));
+    this.mPrinterDiscModel.addPrinter(info);
+    Log.info(TAG, 'foundPrinter = ' + StringUtil.encodeCommonString(info.printerName));
   }
 
   /**
@@ -179,7 +159,7 @@ export class PrinterDiscController {
   public findPrinter(printerId: string): boolean {
     Log.debug(TAG, 'findPrinter = ' + StringUtil.splitMac(printerId));
     let res: boolean = this.mPrinterDiscModel.findPrinter(printerId);
-    return <boolean> res;
+    return res;
   }
 
   /**
@@ -187,12 +167,12 @@ export class PrinterDiscController {
    *
    * @param info printer info
    */
-  private onPrinterStateChange(info: print.PrinterInfo): void {
-    Log.error(TAG, 'onPrinterStateChange, info = ' + JSON.stringify(info));
+  private onPrinterStateChange(info: PrinterInfo): void {
     if (info === null) {
       Log.error(TAG, 'onPrinterStateChange for null data');
       return;
     }
+    Log.error(TAG, 'onPrinterStateChange, info = ' + info?.toString());
     this.mPrinterDiscModel.printerStateChange(<string> info.printerId, <number> info.printerState);
   }
 
@@ -201,15 +181,13 @@ export class PrinterDiscController {
    *
    * @param info printer info
    */
-  private onPrinterUpdateCapability(info: print.PrinterInfo): void {
-    Log.info(TAG, 'onPrinterUpdateCapability, info = ' + JSON.stringify(info));
+  private onPrinterUpdateCapability(info: PrinterInfo): void {
     if (info === null) {
       Log.error(TAG, 'onPrinterUpdateCapability for null data');
       return;
     }
-    this.mPrinterDiscModel.printerUpdateCapability(<string> info.printerId, <PrinterCapability> info.capability,
-// @ts-ignore
-      <string> info.option, <string> info.description);
+    Log.info(TAG, 'onPrinterUpdateCapability, info = ' + info?.toString());
+    this.mPrinterDiscModel.printerUpdateCapability(info.printerId, info.capability, info.options, info.description);
   }
 
   /**

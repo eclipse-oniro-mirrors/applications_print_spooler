@@ -69,7 +69,7 @@ export default class SelectionModel {
     , $r('app.string.DuplexMode_LONG'))
   public static readonly DuplexMode_SHORT: SelectionModel = new SelectionModel('DuplexMode_SHORT'
     , $r('app.string.DuplexMode_SHORT'))
-  public static MediaSizeSelections: Array<SelectionModel> = undefined;
+  public static MediaSizeSelections: Array<SelectionModel> = [];
   name: string; // 选项名称
   res: Resource | string;
 
@@ -110,7 +110,7 @@ export default class SelectionModel {
     Log.debug(TAG, 'createSelectionValue name = ' + name);
   }
 
-  public static getSelectionValue<T>(name: string): T {
+  public static getSelectionValue<T>(name: string): T | undefined {
     if (SelectionModel.selectionMap[name] === undefined) {
       Log.error(TAG, 'getSelectionValue name not exist: ' + name);
       return undefined;
@@ -118,11 +118,11 @@ export default class SelectionModel {
     return (SelectionModel.selectionMap[name] as T);
   }
 
-  public static getSelectionModelByLabel(label: string): SelectionModel {
+  public static getSelectionModelByLabel(label: string): SelectionModel | undefined {
     if (SelectionModel.MediaSizeSelections === undefined) {
       SelectionModel.initMediaSizeSelections();
     }
-    let rtnSelect: SelectionModel = undefined;
+    let rtnSelect: SelectionModel | undefined = undefined;
     SelectionModel.MediaSizeSelections.forEach((selection, index, all) => {
       if (selection.res === label) {
         rtnSelect = selection;

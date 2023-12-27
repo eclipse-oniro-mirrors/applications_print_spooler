@@ -14,38 +14,43 @@
  */
 
 import webview from '@ohos.web.webview';
-import window from '@ohos.window';
-import { Log } from '@ohos/common';
-import { WindowErrorCode } from '@ohos/common';
+import CheckEmptyUtils, { configMgr, Constants, Log } from '@ohos/common';
 import router from '@ohos.router';
 import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
-import { AppStorageKeyName} from '@ohos/common';
 import common from '@ohos.app.ability.common';
-import AppStorageHelper from '../Common/Adapter/AppStorageHelper';
 import {CancelButton, ClickableImage} from './component/BaseComponent';
+import { Configuration } from '@ohos.app.ability.Configuration';
 
 const TAG = 'PrivacyStatementWebPage';
 
 @Entry
 @Component
 struct PrivacyStatementWebPage {
-  @State @Watch('languageChange') language: string = AppStorageHelper.getValue(AppStorageKeyName.CONFIG_LANGUAGE);
+  @State @Watch('languageChange') language: string = configMgr.getConfiguration().language ?? '';
   private abilityContext: common.UIAbilityContext = GlobalThisHelper
     .getValue<common.UIAbilityContext>(GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT);
   private webController: webview.WebviewController = new webview.WebviewController();
   private privacyStatementFlag: boolean = false;
-  private baseUrl: string;
-  private url: string;
+  private baseUrl: string = Constants.STRING_NONE;
+  private url: string = Constants.STRING_NONE;
 
   aboutToAppear() {
-    const params = router.getParams();
-    const hideCancel = params['info'];
+    const hideCancel = router.getParams() as boolean;
     if (hideCancel) {
       this.privacyStatementFlag = hideCancel;
     }
     Log.info(TAG, 'privacyStatementFlag: ' + this.privacyStatementFlag);
     this.languageToWebUrl();
-    this.setLanguageChangeCallback();
+    configMgr.registerConfigManager(TAG, this);
+  }
+
+  aboutToDisappear() {
+    configMgr.unregisterConfigManager(TAG);
+  }
+
+  notifyConfigurationChanged(config: Configuration): void {
+    this.language = config.language?.substr(0, 2) ?? '';
+    Log.info(TAG, 'notifyConfigurationChanged language: ' + JSON.stringify((this.language)));
   }
 
   build() {
@@ -55,7 +60,7 @@ struct PrivacyStatementWebPage {
           imageSrc: $r('app.media.ic_back'),
           imageHeight: $r('app.float.privacy_statement_text_headline_height'),
           imageWidth: $r('app.float.privacy_statement_text_headline_height'),
-          setting: {hoverAble: true},
+          isHoverEnable: true,
           clickEvent: () => {
             this.onBack();
           }
@@ -123,22 +128,6 @@ struct PrivacyStatementWebPage {
     }
   }
 
-  private closeWindow() {
-    try {
-      var windowClass = window.findWindow('PrivacyStatementWebPage');
-    } catch (exception) {
-      Log.info(TAG, 'findWindow exception: ' + JSON.stringify(exception));
-      if (WindowErrorCode.WINDOW_STATE_ABNORMAL === exception.code) {
-        windowClass = window.findWindow('AboutPage');
-      }
-    }
-    if (windowClass) {
-      windowClass.destroyWindow(() => {
-        Log.info(TAG, 'Succeeded in destroying the window');
-      })
-    }
-  }
-
   private languageChange():void {
     Log.info(TAG, 'languageChange language: ' + this.language);
     this.languageToWebUrl();
@@ -149,33 +138,11 @@ struct PrivacyStatementWebPage {
 
   private languageToWebUrl() {
     let languageCode = 'en-US';
-    if (this.language.substr(0, 2) === 'zh') {
+    if (CheckEmptyUtils.checkStrIsEmpty(this.language) || this.language.substr(0, 2) === 'zh') {
       languageCode = 'zh-CN';
     }
     this.baseUrl = this.abilityContext.resourceManager.getStringByNameSync('privacy_statement_web_base_url');
     Log.info(TAG, "languageToWebUrl baseUrl: " + this.baseUrl);
     this.url = this.baseUrl + languageCode;
-  }
-
-  private setLanguageChangeCallback() {
-    let envCallback = {
-      bindThis(that) {
-        this.that = that;
-      },
-      onConfigurationUpdated(config) {
-        this.that.language = config.language.substr(0, 2);
-        Log.info(TAG, 'onConfigurationUpdated language: ' + JSON.stringify(this.that.language));
-      },
-      onMemoryLevel() {}
-    };
-    envCallback.bindThis(this);
-    try {
-      if (this.abilityContext) {
-        let applicationContext = this.abilityContext.getApplicationContext();
-        applicationContext.on('environment', envCallback);
-      }
-    } catch (paramError) {
-      console.error('error: ${paramError.code}, ${paramError.message}');
-    }
   }
 }

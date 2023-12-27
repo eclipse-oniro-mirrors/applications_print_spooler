@@ -34,7 +34,7 @@ enum ErrorTxt {
 }
 
 export class ErrorMessage {
-  constructor(private code: ErrorCode, private message: ErrorTxt) {
+  constructor(public code: ErrorCode, public message: ErrorTxt) {
     this.code = code;
     this.message = message;
   }

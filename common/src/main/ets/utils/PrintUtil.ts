@@ -13,29 +13,28 @@
  * limitations under the License.
  */
 
-// @ts-nocheck
-import print from '@ohos.print'
-import { Log } from '@ohos/common';
-import { PrintJob} from '@ohos/common';
-
-const TAG = '[PrintExtensionController]:'
-
+const TAG: string = 'PrintUtil';
 /**
- * PrintPreviewController
- *
+ * 打印通用工具类
  */
-export class PrintPreviewController {
+export class PrintUtil {
+  /**
+   * 获取默认长度数据，填充为1,2,...,num
+   * @param num 数组长度
+   * @returns 数值型数组
+   */
+  public static getDefaultArray(num: number): Array<number> {
+    return Array.from({ length: num }, (_, i) => i + 1);
+  }
 
-    /**
-     * request print preview
-     *
-     * @param jobInfo print job Info
-     * @return preview url
-     */
-    public async requestPrintPreview(jobInfo: PrintJob) : string {
-        Log.debug(TAG, 'requestPrintPreview jobInfo:'  + JSON.stringify(jobInfo))
-        let url = await print.requestPrintPreview(jobInfo)
-        return url
-    }
-
+  /**
+   * check value in enum
+   *
+   * @param value value
+   * @param enumClass enum name
+   * @returns result result
+   */
+  public static isValueInEnum<T>(value: number, enumClass: T): boolean{
+    return Object.values(enumClass).includes(value as T);
+  }
 }

@@ -13,15 +13,14 @@
  * limitations under the License.
  */
 
-import { PrinterInfo} from '@ohos/common';
+import { PrinterInfo, PrintJob, queryAllPrintJobs} from '@ohos/common';
 import PrintAdapter from '../../Common/Adapter/PrintAdapter'
 import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
 import {Constants } from '@ohos/common'
 import { Log } from '@ohos/common';
 import { CopyUtil }from '@ohos/common';
-import promptAction from '@ohos.prompt';
+import promptAction from '@ohos.promptAction';
 import {CancelButton} from '../component/BaseComponent';
-import { PrintJob }  from '../../Model/PrintJob';
 
 const TAG = 'CusDialogComp'
 
@@ -31,7 +30,7 @@ export struct PrintingSelectDialog{
   @Consume('PrintAdapter') adapter:PrintAdapter;
   @Consume('PrinterSelectFlag') printerSelectFlag:boolean;
   @Consume('WLANFlag') wlanFlag:boolean;
-  private printingSelectDialogCtl: CustomDialogController;
+  private printingSelectDialogCtl?: CustomDialogController;
 
   build(){
     Column() {
@@ -48,11 +47,11 @@ export struct PrintingSelectDialog{
       //show printer list
       Stack(){
         List({initialIndex: Constants.NUMBER_0}){
-          ForEach(this.printerList,(printer)=>{
+          ForEach(this.printerList,(printer: PrinterInfo)=>{
             ListItem(){
               printerItem({currentPrinter:printer,printingSelectDialogCtl:this.printingSelectDialogCtl})
             }.key(`PrintingSelectDialog_ListItem_${printer.printerName}`)
-          },printer=>JSON.stringify(printer))
+          },(printer: PrinterInfo)=>JSON.stringify(printer))
         }.key('PrintingSelectDialog_List_printerList')
         .width('100%')
         .height(this.getAdjustedHeight())
@@ -72,7 +71,7 @@ export struct PrintingSelectDialog{
         cancelWidth: $r('app.float.dialog_button_width'),
         cancelHeight: $r('app.float.dialog_button_height'),
         cancelClick: () => {
-          this.printingSelectDialogCtl.close()
+          this.printingSelectDialogCtl?.close()
           GlobalThisHelper.createValue<boolean>(false, GlobalThisStorageKey.KEY_PRINTER_SELECT_DIALOG_OPEN, true)
         }
       })
@@ -93,12 +92,11 @@ export struct PrintingSelectDialog{
     Log.info(TAG,'createValue KEY_PRINTER_SELECT_DIALOG_OPEN: '+true)
   }
 
-  getAdjustedHeight():number{
-    let height = Constants.NUMBER_48
+  getAdjustedHeight():number | Resource {
+    let height: number | Resource = Constants.NUMBER_48;
     if(this.printerList.length < Constants.NUMBER_9){
       height = Constants.NUMBER_48 * this.printerList.length
     }else{
-      // @ts-ignore
       height = $r('app.float.printer_select_max_height')
     }
     Log.info(TAG,'getAdjustedHeight: '+height)
@@ -108,9 +106,8 @@ export struct PrintingSelectDialog{
 
 @Component
 struct printerItem{
-  private printingSelectDialogCtl: CustomDialogController;
-  private currentPrinter : PrinterInfo;
-  private deviceAddress:string;
+  private printingSelectDialogCtl?: CustomDialogController;
+  private currentPrinter ?: PrinterInfo;
   @Consume('CanPrint') canPrint:boolean;
   @Consume('Printer') printer:PrinterInfo;
   @Consume('PrintAdapter') adapter:PrintAdapter;
@@ -120,9 +117,7 @@ struct printerItem{
   @Consume('ConnectingPrinterId') connectingPrinterId:string;
   @Consume('ConnectingPrinterName') connectingPrinterName:string;
   @Consume('UsedPrinterId') usedPrinterId: string;
-  // @ts-ignore
-  @State backgroundColor : Resource = $r('app.color.white')
-  private usedPrinter: PrinterInfo;
+  @State bgColor : Resource = $r('app.color.white')
 
   build(){
     Row() {
@@ -130,11 +125,11 @@ struct printerItem{
         .width($r('app.float.image_comp_width'))
         .height($r('app.float.image_comp_height'))
         .margin({left:$r('app.float.printer_select_item_image_margin_left'),right:$r('app.float.printer_select_item_image_margin_right')})
-      Text(this.currentPrinter.printerName)
+      Text(this.currentPrinter?.printerName)
         .margin({right:$r('app.float.printer_select_item_text_margin_right')})
         .fontSize($r('app.float.font_size_body1'))
     }
-    .backgroundColor(this.backgroundColor)
+    .backgroundColor(this.bgColor)
     .borderRadius($r('app.float.radius_l')).height($r('app.float.printer_select_item_height'))
     .width('100%').margin({left:$r('app.float.printer_select_item_padding_left'),right:$r('app.float.printer_select_item_padding_right')})
     .onClick(()=>{
@@ -142,31 +137,30 @@ struct printerItem{
     })
     .onHover((isHover: boolean) => {
       if (isHover) {
-        this.backgroundColor =  $r('app.color.effect_color_hover')
+        this.bgColor =  $r('app.color.effect_color_hover')
       } else {
-        this.backgroundColor =  $r('app.color.white')
+        this.bgColor =  $r('app.color.white')
       }
     })
     .onTouch((event: TouchEvent) => {
       if (event.type === TouchType.Down) {
-        this.backgroundColor =  $r('app.color.effect_color_press')
+        this.bgColor =  $r('app.color.effect_color_press')
       }
       if (event.type === TouchType.Up) {
-        this.backgroundColor =  $r('app.color.white')
+        this.bgColor =  $r('app.color.white')
       }
     })
   }
 
   async handleToConnect(){
-    // @ts-ignore
-    let result:Array<PrintJob> = await this.adapter.getPrintJobCtl().queryAllPrintJobs(this.usedPrinterId)
+    let result:Array<PrintJob> = await queryAllPrintJobs(this.usedPrinterId)
     Log.info(TAG,'handleToConnect after queryAllPrintJobs')
     Log.info(TAG,'handleToConnect typeof result'+typeof result)
-    Log.info(TAG,'handleToConnect this.currentPrinter.printerId'+this.currentPrinter.printerId)
-    if (this.usedPrinterId !== this.currentPrinter.printerId
+    Log.info(TAG,'handleToConnect this.currentPrinter.printerId'+this.currentPrinter?.printerId)
+    if (this.usedPrinterId !== this.currentPrinter?.printerId
         && result!==undefined && result.length!==0
-        && !this.checkPrintingPrinter(this.currentPrinter.printerId,result)){
-      this.printingSelectDialogCtl.close()
+        && !this.checkPrintingPrinter(this.currentPrinter!.printerId,result)){
+      this.printingSelectDialogCtl?.close()
       GlobalThisHelper.createValue<boolean>(false, GlobalThisStorageKey.KEY_PRINTER_SELECT_DIALOG_OPEN, true)
       this.showToast($r('app.string.toast_cannot_connect_while_printing'))
     }else{
@@ -174,14 +168,14 @@ struct printerItem{
       clearInterval(this.timer)
       if (this.printer === undefined ||
       this.printer.printerId === Constants.STRING_NEGATIVE_ONE ||
-      this.printer.printerId !== this.currentPrinter.printerId) {
+      this.printer.printerId !== this.currentPrinter!.printerId) {
         this.checkConnectingPrinter()
         if (this.canPrint) {
           this.canPrint = false
         }
       }
       this.printer = CopyUtil.deepClone(this.currentPrinter)
-      this.printingSelectDialogCtl.close()
+      this.printingSelectDialogCtl?.close()
       GlobalThisHelper.createValue<boolean>(false, GlobalThisStorageKey.KEY_PRINTER_SELECT_DIALOG_OPEN, true)
     }
 
@@ -190,12 +184,12 @@ struct printerItem{
 
   checkConnectingPrinter(){
     if (this.connectingPrinterId !== Constants.DEFAULT_CONNECTING_PRINTER_ID) {
-      if (this.connectingPrinterId.includes('p2p') && this.currentPrinter.printerId.includes('mdns') &&
-      this.connectingPrinterName.includes(this.currentPrinter.printerName)) {
+      if (this.connectingPrinterId.includes('p2p') && this.currentPrinter!.printerId.includes('mdns') &&
+      this.connectingPrinterName.includes(this.currentPrinter!.printerName)) {
         Log.info(TAG, 'The previous p2p printer is the same as this current mdns printer, ignore disconnectPrinter');
         this.startConnect();
       } else {
-        this.adapter.getPrinterDiscCtl().disconnectPrinter(this.connectingPrinterId).then(() => {
+        this.adapter?.getPrinterDiscCtl()?.disconnectPrinter(this.connectingPrinterId).then(() => {
           this.startConnect()
         });
       }
@@ -219,15 +213,14 @@ struct printerItem{
 
   startConnect(){
     Log.info(TAG, 'startConnect printConnect: ' + JSON.stringify(this.currentPrinter));
-    this.adapter.getPrinterDiscCtl().connectPrinter(this.currentPrinter)
-    this.connectingPrinterId = this.currentPrinter.printerId
-    this.connectingPrinterName = this.currentPrinter.printerName;
+    this.adapter?.getPrinterDiscCtl()?.connectPrinter(this.currentPrinter)
+    this.connectingPrinterId = this.currentPrinter!.printerId
+    this.connectingPrinterName = this.currentPrinter!.printerName;
   }
 
   showToast(message: Resource) {
     try {
       promptAction.showToast({
-        // @ts-ignore
         message: message,
         duration: Constants.TOAST_INTERVAL,
         bottom: Constants.TOAST_BOTTOM
@@ -243,8 +236,8 @@ struct printerItem{
 
 @CustomDialog
 export struct alarmDialog{
-  private alarmDialogCtl: CustomDialogController
-  private alarmText: string
+  private alarmDialogCtl?: CustomDialogController
+  private alarmText: string = Constants.STRING_NONE;
   build(){
     Column(){
       Image($r('app.media.ic_tip')).key('AlarmDialog_Image_tips')
@@ -261,7 +254,7 @@ export struct alarmDialog{
         .height($r('app.float.dialog_button_height'))
         .margin({bottom:$r('app.float.dialog_button_margin_bottom')})
         .onClick(()=>{
-          this.alarmDialogCtl.close()
+          this.alarmDialogCtl?.close()
         })
     }
     .width($r('app.float.dialog_width'))
@@ -312,7 +305,6 @@ export struct WLANConfirmDialog{
   showToast(message: Resource) {
     try {
       promptAction.showToast({
-        // @ts-ignore
         message: message,
         duration: Constants.TOAST_INTERVAL,
         bottom: Constants.TOAST_BOTTOM

@@ -15,10 +15,10 @@
 
 @Component
 export struct CancelButton {
-  cancelLabel: ResourceStr;
-  cancelWidth: Length;
-  cancelHeight: Length;
-  cancelClick: (event?: ClickEvent) => void;
+  cancelLabel?: ResourceStr;
+  cancelWidth?: Length;
+  cancelHeight?: Length;
+  cancelClick?: (event?: ClickEvent) => void;
   build() {
     Button(this.cancelLabel)
       .width(this.cancelWidth)
@@ -31,13 +31,13 @@ export struct CancelButton {
 
 @Component
 export struct ClickableImage {
-  imageSrc: ResourceStr;
-  imageWidth: Length;
-  imageHeight: Length;
-  clickEvent: (event?: ClickEvent) => void;
-  setting: any;
+  imageSrc?: ResourceStr;
+  imageWidth?: Length;
+  imageHeight?: Length;
+  clickEvent?: (event?: ClickEvent) => void;
+  isHoverEnable: boolean = false;
   isHover: boolean = false;
-  @State bckColor: Resource = undefined;
+  @State bckColor: Resource | undefined = undefined;
   build() {
     Image(this.imageSrc)
       .width(this.imageWidth)
@@ -46,14 +46,14 @@ export struct ClickableImage {
       .borderRadius($r('sys.float.ohos_id_corner_radius_clicked'))
       .onClick(this.clickEvent)
       .onHover((isHover) => {
-        if ((this.setting?.hoverAble ?? false) && this.isHover != isHover) {
+        if (this.isHoverEnable && this.isHover != isHover) {
           if (isHover) {
             this.bckColor = $r('sys.color.ohos_id_color_hover')
           } else {
             this.bckColor = $r('sys.color.ohos_id_color_background');
           }
-          this.isHover = isHover;
         }
+        this.isHover = isHover;
       })
       .onTouch((event) => {
         if (event.type === TouchType.Down) {
