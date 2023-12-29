@@ -113,7 +113,7 @@ export class PrinterInfo implements print.PrinterInfo {
   capability?: PrinterCapability;
   options?: string;
 
-  constructor(printerId: string, printerName: string, printerState: number, printerIcon?: number, description?: string,
+  constructor(printerId: string, printerName: string, printerState: print.PrinterState, printerIcon?: number, description?: string,
               capability?: PrinterCapability, options?: string) {
     this.printerId = printerId;
     this.printerName = printerName;
@@ -318,7 +318,7 @@ export function convertToFwkPrintJob(printJobInfo: PrintJob): print.PrintJob {
     jobState: printJobInfo.jobState,
     jobSubstate: printJobInfo.jobSubstate,
     copyNumber: printJobInfo.copyNumber,
-    pageRange: printJobInfo.pageRange,
+    pageRange: pageRangeInfo,
     isSequential: printJobInfo.isSequential,
     pageSize: printJobInfo.pageSize,
     isLandscape: printJobInfo.isLandscape,
