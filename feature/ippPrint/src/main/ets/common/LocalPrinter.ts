@@ -223,7 +223,7 @@ export default class LocalPrinter implements ConnectionListener, OnLocalPrinterC
     // 通知打印框架连接失败
     Log.error(TAG, 'connect delay');
     // @ts-ignore
-    print.updatePrinterState(this.mPrinterId, PrinterState.PRINTER_DISCONNECTED);
+    print.updatePrinterState(this.mPrinterId, print.PrinterState.PRINTER_DISCONNECTED);
     this.mSession.removeConnectedId(this.mPrinterId);
   }
 }
