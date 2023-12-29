@@ -32,17 +32,17 @@ export default class SelectionModel {
   public static readonly MediaSize_JIS_B5: SelectionModel = new SelectionModel('JIS_B5'
     , MediaSize.JIS_B5.label)
   public static readonly MediaSize_ISO_C5: SelectionModel = new SelectionModel('ISO_C5'
-    , MediaSize.ISO_C5.label)
+    , '')
   public static readonly MediaSize_ISO_DL: SelectionModel = new SelectionModel('ISO_DL'
-    , MediaSize.ISO_DL.label)
+    , '')
   public static readonly MediaSize_LETTER: SelectionModel = new SelectionModel('LETTER'
     , MediaSize.LETTER.label)
   public static readonly MediaSize_LEGAL: SelectionModel = new SelectionModel('LEGAL'
     , MediaSize.LEGAL.label)
   public static readonly MediaSize_PHOTO_4x6: SelectionModel = new SelectionModel('PHOTO_4x6'
-    , MediaSize.PHOTO_4x6.label)
+    , '')
   public static readonly MediaSize_PHOTO_5x7: SelectionModel = new SelectionModel('PHOTO_5x7'
-    , MediaSize.PHOTO_5x7.label)
+    , '')
   public static readonly MediaSize_INT_DL_ENVELOPE: SelectionModel = new SelectionModel('INT_DL_ENVELOPE'
     , MediaSize.INT_DL_ENVELOPE.label)
   public static readonly MediaSize_B_TABLOID: SelectionModel = new SelectionModel('B_TABLOID'

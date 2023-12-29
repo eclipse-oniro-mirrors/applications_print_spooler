@@ -564,13 +564,6 @@ struct Index {
                     }else{
                       Log.info(TAG,'isCustomRadioEnable = false')
                       this.isCustomRadioEnable = false
-                      // if (this.isCusRangeError) {
-                      //   this.editCusRangeFlag = false
-                      //   this.cusRangeText = ''
-                      // }
-                      // this.isCusRangeError = false
-                      // this.isCusRangeMax = false
-                      // this.cusRangeBorderColor = $r('app.color.border_line')
                     }
                   })
                   .onTouch((e:TouchEvent)=>{
@@ -1411,7 +1404,7 @@ struct Index {
 
         //保存图片
         Log.info(TAG, 'begin createDataShareUri');
-        if (this.firstFileName === undefined) {
+        if (CheckEmptyUtils.checkStrIsEmpty(this.firstFileName)) {
           this.firstFileName = imageModel.name;
           Log.info(TAG, 'init firstFileName:' + this.firstFileName)
         }

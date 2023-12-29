@@ -151,65 +151,62 @@ struct printJobComponent {
   @State imagePath: Resource = $r('app.media.ic_delete')
 
   build(){
-    Row() {
-      Stack(){
-        Image(this.item!.fileNum > Constants.NUMBER_1 ? $r('app.media.ic_two') : $r('app.media.ic_one'))
-          .width($r('app.float.print_job_item_icon_width'))
-          .height($r('app.float.print_job_item_icon_height'))
-          .margin({left: $r('app.float.print_job_item_icon_margin_left'), right: $r('app.float.print_job_item_icon_margin_right')})
-          .key(this.compId + '_image')
-      }
+    Flex({justifyContent: FlexAlign.SpaceBetween, alignItems:ItemAlign.Center}) {
+      Image(this.item!.fileNum > Constants.NUMBER_1 ? $r('app.media.ic_two') : $r('app.media.ic_one'))
+        .width($r('app.float.image_comp_width')).height($r('app.float.image_comp_height')).objectFit(ImageFit.Contain).flexGrow(0).flexShrink(0).key(this.compId + '_image')
       Column() {
-        Text(this.item!.jobTitleText)
-          .fontSize($r('app.float.font_size_body1'))
-          .fontWeight(FontWeight.Medium)
+        Text(this.item?.jobTitleText)
+          .fontSize($r('sys.float.ohos_id_text_size_body3'))
+          .fontWeight(FontWeight.Regular)
+          .fontFamily('sans-serif')
+          .fontStyle(FontStyle.Normal)
+          .fontColor($r('sys.color.ohos_id_color_primary'))
           .textOverflow({ overflow: TextOverflow.Ellipsis })
+          .maxLines(1)
           .key(this.compId + '_jobTitle')
         Text(this.item!.jobDescriptionText)
-          .fontSize($r('app.float.font_size_body2'))
-          .fontColor($r('app.color.text_jobDes'))
-          .fontWeight(FontWeight.Lighter)
+          .fontSize($r('sys.float.ohos_id_text_size_body3'))
+          .fontWeight(FontWeight.Regular)
+          .fontFamily('sans-serif')
+          .fontStyle(FontStyle.Normal)
+          .fontColor($r('sys.color.ohos_id_color_secondary'))
           .textOverflow({ overflow: TextOverflow.Ellipsis })
-          .margin({top:$r('app.float.print_job_item_des_margin_top'),bottom:$r('app.float.print_job_item_des_margin_bottom')})
+          .maxLines(1)
+          .margin({ top: '2vp', bottom: '2vp' })
           .key(this.compId + '_jobDescriptionText')
         Text(this.context?.resourceManager?.getStringByNameSync(this.item!.jobStateStrName) ?? '')
+          .fontSize($r('sys.float.ohos_id_text_size_body3'))
           .fontColor(this.item!.jobStateColor)
-          .fontSize($r('app.float.font_size_body2'))
-          .fontWeight(FontWeight.Medium)
+          .fontWeight(FontWeight.Regular)
           .textOverflow({ overflow: TextOverflow.Ellipsis })
           .key(this.compId + '_jobStateStrName')
       }
+      .alignItems(HorizontalAlign.Start).justifyContent(FlexAlign.SpaceBetween)
       .width($r('app.float.print_job_item_des_width'))
-      .alignItems(HorizontalAlign.Start)
-      Button({ type: ButtonType.Normal, stateEffect: true }) {
-        Image(this.imagePath).width($r('app.float.image_comp_width')).height($r('app.float.image_comp_height'))
-      }
-      .width($r('app.float.print_job_delete_button_width'))
-      .height($r('app.float.print_job_delete_button_height'))
-      .borderRadius($r('app.float.radius_s'))
-      .margin({left:$r('app.float.print_job_delete_button_margin_left')})
-      .visibility(this.item!.isHideCancelBtn ? Visibility.Hidden:Visibility.Visible)
-      .key(this.compId + '_deleteBtn')
-      .onHover((isHover: boolean) => {
-        if (isHover) {
-          this.imagePath = $r('app.media.ic_delete_hover');
-        } else {
-          this.imagePath = $r('app.media.ic_delete');
-        }
-      })
-      .onTouch((event: TouchEvent) => {
-        if (event.type === TouchType.Down) {
-          this.imagePath = $r('app.media.ic_delete_press');
-        }
-        if (event.type === TouchType.Up) {
-          this.imagePath = $r('app.media.ic_delete');
-        }
+      .margin({right: '12vp'})
 
-      })
-      .onClick(this.action)
+      Image(this.imagePath).width($r('app.float.image_comp_width')).height($r('app.float.image_comp_height')).objectFit(ImageFit.Contain)
+        .visibility(this.item!.isHideCancelBtn ? Visibility.Hidden:Visibility.Visible)
+        .key(this.compId + '_deleteBtn')
+        .onHover((isHover: boolean) => {
+          if (isHover) {
+            this.imagePath = $r('app.media.ic_delete_hover');
+          } else {
+            this.imagePath = $r('app.media.ic_delete');
+          }
+        })
+        .onTouch((event: TouchEvent) => {
+          if (event.type === TouchType.Down) {
+            this.imagePath = $r('app.media.ic_delete_press');
+          }
+          if (event.type === TouchType.Up) {
+            this.imagePath = $r('app.media.ic_delete');
+          }
+
+        })
+        .onClick(this.action)
     }
-    .width($r('app.float.print_job_comp_width'))
     .height($r('app.float.print_job_item_height'))
-
+    .padding({top :'4vp', bottom: '4vp'})
   }
 }
