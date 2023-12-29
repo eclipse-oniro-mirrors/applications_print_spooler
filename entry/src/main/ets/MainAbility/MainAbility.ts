@@ -27,6 +27,7 @@ import { Configuration } from '@ohos.app.ability.Configuration';
 import image from '@ohos.multimedia.image';
 import Want from '@ohos.app.ability.Want';
 import AbilityConstant from '@ohos.app.ability.AbilityConstant';
+import window from '@ohos.window';
 
 const TAG = '[MainAbility]:';
 
@@ -59,7 +60,7 @@ export default class MainAbility extends UIAbility {
     Log.info(TAG, 'onDestroy');
   }
 
-  onWindowStageCreate(windowStage) {
+  onWindowStageCreate(windowStage: window.WindowStage) {
     // Main window is created, set main page for this ability
     Log.info(TAG, 'onWindowStageCreate');
 
@@ -72,9 +73,9 @@ export default class MainAbility extends UIAbility {
 
       Log.info(TAG, 'onWindowStageCreate flag: ' + JSON.stringify(flag));
       if (flag) {
-        windowStage.setUIContent(this.context, 'pages/PrivacyStatementPage', null);
+        windowStage.loadContent('pages/PrivacyStatementPage', this.storage);
       } else {
-        windowStage.setUIContent(this.context, 'pages/PrintPage', null);
+        windowStage.loadContent('pages/PrintPage', this.storage);
       }
     });
 
