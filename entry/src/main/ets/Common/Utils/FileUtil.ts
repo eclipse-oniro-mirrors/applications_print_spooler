@@ -148,8 +148,7 @@ export default class FileUtil {
     let imageArray: FileModel[] = new Array<FileModel>();
     if (CheckEmptyUtils.isEmptyArr(fileList)) {
       Log.error(TAG, 'fileList is empty');
-      // @ts-ignore
-      return <object[]> imageArray;
+      return imageArray;
     }
     for (let uri of fileList) {
       let uriArr = uri.split(FILE_SEPARATOR);

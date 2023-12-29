@@ -13,18 +13,15 @@
  * limitations under the License.
  */
 
-// @ts-nocheck
-import { Constants, AppStorageKeyName } from '@ohos/common'
-import { Log } from '@ohos/common';
+import { AppStorageKeyName, Log, PrinterExtensionInfo } from '@ohos/common'
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper'
-import { PrinterExtensionInfo } from '@ohos/common';
 
 const TAG = '[PrintExtensionModel]:'
 
 export class PrintExtensionModel {
   private mPrintExtensions: Array<PrinterExtensionInfo> = []
 
-  get getPrintExtensions() {
+  get getPrintExtensions():Array<PrinterExtensionInfo> {
     return this.mPrintExtensions;
   }
 
@@ -40,9 +37,9 @@ export class PrintExtensionModel {
       Log.error(TAG, 'dealGetAllPrintExtension return for null data');
       return;
     }
-    this.setPrintExtensions([]);
+    this.mPrintExtensions = [];
     for (let index = 0; index < data.length; index++) {
-      var newInfo = new PrinterExtensionInfo(data[index].extensionId, data[index].vendorId,
+      let newInfo = new PrinterExtensionInfo(data[index].extensionId, data[index].vendorId,
       data[index].vendorName, data[index].vendorIcon, data[index].version);
       this.mPrintExtensions.push(newInfo);
     }

@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-// @ts-ignore
 import mdns from '@ohos.net.mdns';
 import DiscoveredPrinter from '../discovery/DiscoveredPrinter';
 import { Log } from '@ohos/common';

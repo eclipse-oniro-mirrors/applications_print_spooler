@@ -191,6 +191,22 @@ export class PrintJob implements print.PrintJob {
     this.options = options;
   }
 }
+
+export class PrinterExtensionInfo implements print.PrinterExtensionInfo {
+  extensionId: string; // extension id of printer extension
+  vendorId: string; // vendor id of extension
+  vendorName: string;  // vendor name
+  vendorIcon: number; // resource id of vendor
+  version: string; // version of current printer extension
+  constructor(extensionId: string, vendorId: string, vendorName: string, vendorIcon: number, version: string) {
+    this.extensionId = extensionId;
+    this.vendorId = vendorId;
+    this.vendorName = vendorName;
+    this.vendorIcon = vendorIcon;
+    this.version = version;
+  }
+}
+
 /**
  * PrintJob.options 数据结构
  */
