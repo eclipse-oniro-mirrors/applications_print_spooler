@@ -115,7 +115,6 @@ struct printerItem{
   @Consume('PrinterSelectFlag') printerSelectFlag:boolean;
   @Consume('ConnectCountDownTimer') timer:number;
   @Consume('ConnectingPrinterId') connectingPrinterId:string;
-  @Consume('ConnectingPrinterName') connectingPrinterName:string;
   @Consume('UsedPrinterId') usedPrinterId: string;
   @State bgColor : Resource = $r('app.color.white')
 
@@ -184,15 +183,9 @@ struct printerItem{
 
   checkConnectingPrinter(){
     if (this.connectingPrinterId !== Constants.DEFAULT_CONNECTING_PRINTER_ID) {
-      if (this.connectingPrinterId.includes('p2p') && this.currentPrinter!.printerId.includes('mdns') &&
-      this.connectingPrinterName.includes(this.currentPrinter!.printerName)) {
-        Log.info(TAG, 'The previous p2p printer is the same as this current mdns printer, ignore disconnectPrinter');
+      this.adapter?.getPrinterDiscCtl()?.disconnectPrinter(this.connectingPrinterId).then(() => {
         this.startConnect();
-      } else {
-        this.adapter?.getPrinterDiscCtl()?.disconnectPrinter(this.connectingPrinterId).then(() => {
-          this.startConnect()
-        });
-      }
+      });
     } else {
       this.startConnect()
     }
@@ -215,7 +208,6 @@ struct printerItem{
     Log.info(TAG, 'startConnect printConnect: ' + JSON.stringify(this.currentPrinter));
     this.adapter?.getPrinterDiscCtl()?.connectPrinter(this.currentPrinter)
     this.connectingPrinterId = this.currentPrinter!.printerId
-    this.connectingPrinterName = this.currentPrinter!.printerName;
   }
 
   showToast(message: Resource) {
