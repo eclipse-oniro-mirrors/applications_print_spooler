@@ -23,7 +23,7 @@ import { MdnsDiscovery } from '@ohos/ippprint';
 import {PrintServiceAdapter} from '@ohos/ippprint';
 import { Backend } from '@ohos/ippprint';
 import { CapabilitiesCache } from '@ohos/ippprint';
-import { Log } from '@ohos/common';
+import { Log, MediaSizeHelper } from '@ohos/common';
 import { WifiModel } from '@ohos/ippprint';
 import type { PrintJob } from '@ohos/common';
 import { SERVICE_IPP } from '@ohos/common';
@@ -57,6 +57,8 @@ export default class PrintExtension extends PrintExtensionAbility {
     this.mPrintServiceAdapter.p2pMonitor = <P2PMonitor> new P2PMonitor();
     this.mPrintServiceAdapter.mdnsDiscovery = <MdnsDiscovery> new MdnsDiscovery(SERVICE_IPP);
     this.mPrintServiceAdapter.localDiscoverySession = <LocalDiscoverySession> new LocalDiscoverySession(this.mPrintServiceAdapter);
+    // @ts-ignore
+    MediaSizeHelper.init(this.context);
   }
 
   /**

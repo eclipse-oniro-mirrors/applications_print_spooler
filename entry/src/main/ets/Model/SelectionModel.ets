@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { PageDirection, PrintQuality, MediaType ,Duplex} from '@ohos/common'
+import { PageDirection, PrintQuality, MediaType ,Duplex, MediaSizeHelper} from '@ohos/common'
 import { Log, MediaSize } from '@ohos/common'
 
 const TAG = '[SelectionModel]:'
@@ -24,29 +24,29 @@ export default class SelectionModel {
   public static readonly NO_Printer: SelectionModel = new SelectionModel('index_no_printer_selected'
     , $r('app.string.index_no_printer_selected'))
   public static readonly MediaSize_ISO_A3: SelectionModel = new SelectionModel('ISO_A3'
-    , MediaSize.ISO_A3.label)
+    , MediaSizeHelper.ISO_A3.label)
   public static readonly MediaSize_ISO_A4: SelectionModel = new SelectionModel('ISO_A4'
-    , MediaSize.ISO_A4.label)
+    , MediaSizeHelper.ISO_A4.label)
   public static readonly MediaSize_ISO_A5: SelectionModel = new SelectionModel('ISO_A5'
-    , MediaSize.ISO_A5.label)
+    , MediaSizeHelper.ISO_A5.label)
   public static readonly MediaSize_JIS_B5: SelectionModel = new SelectionModel('JIS_B5'
-    , MediaSize.JIS_B5.label)
+    , MediaSizeHelper.JIS_B5.label)
   public static readonly MediaSize_ISO_C5: SelectionModel = new SelectionModel('ISO_C5'
     , '')
   public static readonly MediaSize_ISO_DL: SelectionModel = new SelectionModel('ISO_DL'
     , '')
   public static readonly MediaSize_LETTER: SelectionModel = new SelectionModel('LETTER'
-    , MediaSize.LETTER.label)
+    , MediaSizeHelper.LETTER.label)
   public static readonly MediaSize_LEGAL: SelectionModel = new SelectionModel('LEGAL'
-    , MediaSize.LEGAL.label)
+    , MediaSizeHelper.LEGAL.label)
   public static readonly MediaSize_PHOTO_4x6: SelectionModel = new SelectionModel('PHOTO_4x6'
     , '')
   public static readonly MediaSize_PHOTO_5x7: SelectionModel = new SelectionModel('PHOTO_5x7'
     , '')
   public static readonly MediaSize_INT_DL_ENVELOPE: SelectionModel = new SelectionModel('INT_DL_ENVELOPE'
-    , MediaSize.INT_DL_ENVELOPE.label)
+    , MediaSizeHelper.INT_DL_ENVELOPE.label)
   public static readonly MediaSize_B_TABLOID: SelectionModel = new SelectionModel('B_TABLOID'
-    , MediaSize.B_TABLOID.label)
+    , MediaSizeHelper.B_TABLOID.label)
   public static readonly Direction_AUTO: SelectionModel = new SelectionModel('PageDirection_AUTO'
     , $r('app.string.PageDirection_AUTO'))
   public static readonly Direction_LANDSCAPE: SelectionModel = new SelectionModel('PageDirection_LANDSCAPE'
@@ -79,18 +79,18 @@ export default class SelectionModel {
   }
 
   public static initSelectionMap():void{
-    SelectionModel.createSelectionValue<MediaSize>(MediaSize.ISO_A3,'ISO_A3');
-    SelectionModel.createSelectionValue<MediaSize>(MediaSize.ISO_A4,'ISO_A4');
-    SelectionModel.createSelectionValue<MediaSize>(MediaSize.ISO_A5,'ISO_A5');
-    SelectionModel.createSelectionValue<MediaSize>(MediaSize.JIS_B5,'JIS_B5');
-    SelectionModel.createSelectionValue<MediaSize>(MediaSize.ISO_C5,'ISO_C5');
-    SelectionModel.createSelectionValue<MediaSize>(MediaSize.ISO_DL,'ISO_DL');
-    SelectionModel.createSelectionValue<MediaSize>(MediaSize.LETTER,'LETTER');
-    SelectionModel.createSelectionValue<MediaSize>(MediaSize.LEGAL,'LEGAL');
-    SelectionModel.createSelectionValue<MediaSize>(MediaSize.PHOTO_4x6,'PHOTO_4x6');
-    SelectionModel.createSelectionValue<MediaSize>(MediaSize.PHOTO_5x7,'PHOTO_5x7');
-    SelectionModel.createSelectionValue<MediaSize>(MediaSize.INT_DL_ENVELOPE,'INT_DL_ENVELOPE');
-    SelectionModel.createSelectionValue<MediaSize>(MediaSize.B_TABLOID,'B_TABLOID');
+    SelectionModel.createSelectionValue<MediaSize>(MediaSizeHelper.ISO_A3,'ISO_A3');
+    SelectionModel.createSelectionValue<MediaSize>(MediaSizeHelper.ISO_A4,'ISO_A4');
+    SelectionModel.createSelectionValue<MediaSize>(MediaSizeHelper.ISO_A5,'ISO_A5');
+    SelectionModel.createSelectionValue<MediaSize>(MediaSizeHelper.JIS_B5,'JIS_B5');
+    SelectionModel.createSelectionValue<MediaSize>(MediaSizeHelper.ISO_C5,'ISO_C5');
+    SelectionModel.createSelectionValue<MediaSize>(MediaSizeHelper.ISO_DL,'ISO_DL');
+    SelectionModel.createSelectionValue<MediaSize>(MediaSizeHelper.LETTER,'LETTER');
+    SelectionModel.createSelectionValue<MediaSize>(MediaSizeHelper.LEGAL,'LEGAL');
+    SelectionModel.createSelectionValue<MediaSize>(MediaSizeHelper.PHOTO_4x6,'PHOTO_4x6');
+    SelectionModel.createSelectionValue<MediaSize>(MediaSizeHelper.PHOTO_5x7,'PHOTO_5x7');
+    SelectionModel.createSelectionValue<MediaSize>(MediaSizeHelper.INT_DL_ENVELOPE,'INT_DL_ENVELOPE');
+    SelectionModel.createSelectionValue<MediaSize>(MediaSizeHelper.B_TABLOID,'B_TABLOID');
 
     SelectionModel.createSelectionValue<number>(PageDirection.AUTO,'PageDirection_AUTO');
     SelectionModel.createSelectionValue<number>(PageDirection.LANDSCAPE,'PageDirection_LANDSCAPE');

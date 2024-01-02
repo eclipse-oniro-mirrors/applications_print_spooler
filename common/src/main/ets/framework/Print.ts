@@ -150,7 +150,7 @@ export class PrinterCapsOptions {
 }
 
 /**
- * defines print job.
+ * defines print job
  */
 export class PrintJob implements print.PrintJob {
   jobFiles: Array<string>; /* Add a Variable */
@@ -167,12 +167,13 @@ export class PrintJob implements print.PrintJob {
   colorMode: number;
   duplexMode: number;
   margin: PrintMargin;
-  preview?: print.PreviewAttribute;
+  preview: PreviewAttribute;
   options: string; /* Change Type */
+
   constructor(jobFiles: Array<string>, fdList: Array<number>, jobId: string, printerId: string, jobState: print.PrintJobState,
               jobSubstate: print.PrintJobSubState, copyNumber: number, pageRange: PrinterRange, isSequential: boolean,
               pageSize: PrintPageSize, isLandscape: boolean, colorMode: number, duplexMode: number, margin: PrintMargin,
-              preview: print.PreviewAttribute, options: string) {
+              preview: PreviewAttribute, options: string) {
     this.jobFiles = jobFiles;
     this.fdList = fdList;
     this.jobId = jobId;
@@ -208,7 +209,7 @@ export class PrinterExtensionInfo implements print.PrinterExtensionInfo {
 }
 
 /**
- * PrintJob.options 数据结构
+ * PrintJob.options数据结构
  */
 export class PrintJobOptions {
   jobName: string;
@@ -305,7 +306,7 @@ export function convertToSpoolerPrintJob(job: print.PrintJob): PrintJob {
 
 export function convertToFwkPrintJob(printJobInfo: PrintJob): print.PrintJob {
   let pageRangeInfo: PrinterRange;
-  if (printJobInfo.pageRange?.pages.length === 0) {
+  if (printJobInfo.pageRange.pages.length === 0) {
     pageRangeInfo = { startPage: printJobInfo.pageRange.startPage, endPage: printJobInfo.pageRange.endPage };
   } else {
     pageRangeInfo = { pages: printJobInfo.pageRange.pages };

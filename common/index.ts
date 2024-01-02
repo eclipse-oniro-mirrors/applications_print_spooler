@@ -32,7 +32,7 @@ export {
   DateTimeFormat,
   CustomPrintJobState } from './src/main/ets/model/PrintBean'
 
-export { MediaSize, Size } from './src/main/ets/model/MediaSize'
+export { MediaSize, Size, MediaSizeHelper } from './src/main/ets/model/MediaSize'
 
 export { GlobalThisStorageKey } from './src/main/ets/model/GlobalThisStorageKey'
 

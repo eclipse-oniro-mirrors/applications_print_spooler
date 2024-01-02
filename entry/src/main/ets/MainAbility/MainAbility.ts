@@ -14,8 +14,7 @@
  */
 
 import UIAbility from '@ohos.app.ability.UIAbility';
-import { configMgr, GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
-import { MediaSizeUtil } from '@ohos/common';
+import { configMgr, GlobalThisHelper, GlobalThisStorageKey, MediaSizeHelper } from '@ohos/common';
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper';
 import { Log } from '@ohos/common';
 import { Constants, AppStorageKeyName, PreferencesKey } from '@ohos/common';
@@ -41,7 +40,7 @@ export default class MainAbility extends UIAbility {
     let pkgName = want.parameters[Constants.WANT_PKG_NAME_KEY] as string;
     Log.info(TAG, 'fileList = ' + JSON.stringify(fileList));
     GlobalThisHelper.createValue<common.UIAbilityContext>(this.context, GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT, true);
-    MediaSizeUtil.initMediaSizeLabel()
+    MediaSizeHelper.init(this.context);
     this.storage.setOrCreate<string>(Constants.WANT_JOB_ID_KEY, jobId);
     this.storage.setOrCreate<Array<string>>(Constants.WANT_FILE_LIST_KEY, fileList);
     this.context.resourceManager.getConfiguration((error, value) => {

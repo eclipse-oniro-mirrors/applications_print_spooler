@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { ErrorMessage, MediaTypeCode, MediaTypes, PreviewAttribute, PrinterCapsOptions, PrintJob, PrintJobOptions, PrintUtil, startPrintJob } from '@ohos/common';
+import { ErrorMessage, MediaSizeHelper, MediaTypeCode, MediaTypes, PreviewAttribute, PrinterCapsOptions, PrintJob, PrintJobOptions, PrintUtil, startPrintJob } from '@ohos/common';
 import WifiP2pHelper from '../Common/Adapter/WifiP2pHelper';
 import FileModel from '../Model/FileModel';
 import SelectionModel from '../Model/SelectionModel';
@@ -116,7 +116,7 @@ struct Index {
   @State mediaSizeList: Array<MediaSize> = []; //所有纸张尺寸
   @State printRangeType: number = PrintRangeType.ALL; //打印范围类型 0：全部页面 1：范围打印
   @State colorMode: number = ColorCode.MONOCHROME;
-  @State mediaSize: MediaSize = MediaSize.ISO_A4; //纸张尺寸
+  @State mediaSize: MediaSize = MediaSizeHelper.ISO_A4; //纸张尺寸
   @State pageDirection: number = Constants.NUMBER_0; //纸张方向
   @State printerRange: PrinterRange | undefined = undefined; //打印框架需要的参数，实际不起效
   @State printerPageSize: PrintPageSize | undefined = undefined; //纸张尺寸

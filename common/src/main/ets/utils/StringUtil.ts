@@ -39,6 +39,20 @@ export class StringUtil {
     return '';
   }
   /**
+   * Get String from resources.
+   *
+   * @param name string code
+   * @param context context
+   * @param args variable args
+   * @returns string value
+   */
+  public static getStringByName(name: string, context: common.Context,  ...args: Array<string | number>): string {
+    if (CheckEmptyUtils.isEmpty(context) || CheckEmptyUtils.checkStrIsEmpty(name)) {
+      return '';
+    }
+    return context!.resourceManager?.getStringByNameSync(name, ...args) ?? '';
+  }
+  /**
    * get anonymization string
    *
    * @param {string} originStr - string
