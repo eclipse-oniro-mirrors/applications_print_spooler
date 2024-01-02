@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import CheckEmptyUtils, {Constants, Log } from '@ohos/common';
+import CheckEmptyUtils, {Constants, Log, StringUtil } from '@ohos/common';
 import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
 import Util from '../Common/Utils/Util';
 import common from '@ohos.app.ability.common';
@@ -52,7 +52,7 @@ struct JobManagerPage {
             .width($r('app.float.image_comp_width'))
             .height($r('app.float.image_comp_height'))
             .margin({right:$r('app.float.print_job_tips_image_margin_right')})
-          Text(this.tips.showTipsText).key('JobManagerPage_Text_blockedReason')
+          Text(StringUtil.getStringByName(this.tips.showTipsText, this.abilityContext)).key('JobManagerPage_Text_blockedReason')
             .fontSize($r('app.float.font_size_body2'))
             .fontColor(this.tips.fontColor)
             .fontWeight(FontWeight.Regular)
@@ -99,17 +99,20 @@ struct JobManagerPage {
     .height('100%')
     .backgroundColor(Color.White)
     .alignItems(HorizontalAlign.Center)
-
-
   }
 
   aboutToAppear() {
     this.abilityContext = GlobalThisHelper.getValue<common.UIAbilityContext>(GlobalThisStorageKey.KEY_JOB_MANAGER_ABILITY_CONTEXT);
+  }
+
+  onPageShow() {
+    Log.debug(TAG, 'onPageShow');
     this.viewModel.aboutToAppear(this);
     this.viewModel.getPrintJobQueue();
   }
 
-  aboutToDisappear() {
+  onPageHide() {
+    Log.debug(TAG, 'onPageHide');
     this.viewModel.aboutToDisappear();
   }
 

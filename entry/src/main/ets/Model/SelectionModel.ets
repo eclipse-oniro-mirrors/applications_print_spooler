@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { PageDirection, PrintQuality, MediaType ,Duplex, MediaSizeHelper} from '@ohos/common'
+import CheckEmptyUtils, { PageDirection, PrintQuality, MediaType ,Duplex, MediaSizeHelper} from '@ohos/common'
 import { Log, MediaSize } from '@ohos/common'
 
 const TAG = '[SelectionModel]:'
@@ -119,7 +119,7 @@ export default class SelectionModel {
   }
 
   public static getSelectionModelByLabel(label: string): SelectionModel | undefined {
-    if (SelectionModel.MediaSizeSelections === undefined) {
+    if (CheckEmptyUtils.isEmptyArr(SelectionModel.MediaSizeSelections)) {
       SelectionModel.initMediaSizeSelections();
     }
     let rtnSelect: SelectionModel | undefined = undefined;

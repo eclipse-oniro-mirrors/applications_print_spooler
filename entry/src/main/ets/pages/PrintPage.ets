@@ -1101,10 +1101,10 @@ struct Index {
   }
 
   setMediaSizesSelect() {
-    Log.info(TAG, 'setMediaSizesSelect mediaSizeList.length:' + this.mediaSizeList.length);
     if (CheckEmptyUtils.isEmptyArr(this.mediaSizeList)) {
       MediaSizeUtil.initMediaSizeArray(this.mediaSizeList);
     }
+    Log.info(TAG, 'setMediaSizesSelect mediaSizeList.length:' + this.mediaSizeList.length);
     this.mediaSizeSelectArray = new Array<SelectionModel>()
     let isNeedResetMediaSize = true
     this.mediaSizeList.forEach(mediaSize => {
