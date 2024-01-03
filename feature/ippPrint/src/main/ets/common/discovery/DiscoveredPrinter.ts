@@ -94,7 +94,6 @@ export default class DiscoveredPrinter {
     Log.debug(TAG, 'portIt 2: ' + portIt);
     Log.debug(TAG, 'pathIt 2: ' + pathIt);
     this.uri = new uri.URI(`${SCHEME_IPP}://${ip}:${portIt}/${pathIt}`);
-    Log.debug(TAG, 'uri: ' + this.uri.toString());
   }
 
   public isBiSheng(): boolean {
@@ -112,5 +111,4 @@ export default class DiscoveredPrinter {
     let uri = CommonUtils.getSecurityIp(this.uri.toString());
     return `deviceName: ${printerName}, uri: ${uri}`;
   }
-
 }

@@ -19,6 +19,7 @@ import { Constants, PageDirection, ColorCode } from '@ohos/common';
 import { GlobalThisHelper, GlobalThisStorageKey } from '@ohos/common';
 import CheckEmptyUtils from '@ohos/common';
 import image from '@ohos.multimedia.image';
+import { BusinessError } from '@ohos.base';
 
 const canvasScale = 2
 const to300DPI = 300/72
@@ -38,9 +39,9 @@ export struct PreviewComponent {
   @Link @Watch('onMediaSizeChange') mediaSize:MediaSize
   @Link @Watch('handleImage')  imageSources: Array<FileModel>
 
-  @State currentImage: FileModel = undefined;
+  @State currentImage: FileModel | undefined = undefined;
   @State isPreviewFailed: boolean = false;
-  @State @Watch('loadCurrentPix')currentPixelMap: PixelMap = undefined;
+  @State @Watch('loadCurrentPix')currentPixelMap: PixelMap | undefined = undefined;
   @State imageOrientation: number = PageDirection.VERTICAL;
   @State canvasWidth: number = 313 / canvasScale;
   @State canvasHeight: number = 444 / canvasScale;
@@ -241,10 +242,10 @@ export struct PreviewComponent {
       return;
     }
     if (!isRendered) {
-      this.fdToPixelMap(this.currentImage.fd);
+      this.fdToPixelMap(this.currentImage!.fd);
     }
-    let width = this.currentImage.width
-    let height = this.currentImage.height
+    let width = this.currentImage!.width
+    let height = this.currentImage!.height
     if(width > height) {
       this.imageOrientation = PageDirection.LANDSCAPE  //图片横向
     } else {
@@ -347,7 +348,7 @@ export struct PreviewComponent {
    * 画布宽度是否超过最大值
    */
   checkCanvasWidth(){
-    let ratio = null
+    let ratio: number = 1;
     if(this.canvasWidth > Constants.CANVAS_MAX_WIDTH){
       ratio = this.canvasHeight/this.canvasWidth
       this.canvasWidth = Constants.CANVAS_MAX_WIDTH
@@ -364,31 +365,27 @@ export struct PreviewComponent {
    * @param fd
    */
   fdToPixelMap(fd:number){
-    if (image === undefined) {
-      Log.error(TAG, 'image is undefined');
-      return;
-    }
     Log.info(TAG, 'fd is: ' + fd);
     Log.debug(TAG, 'this.currentImage: ' + JSON.stringify(this.currentImage));
     if (this.currentImage === undefined) {
       Log.error(TAG, 'currentImage is undefined');
       return;
     }
-    if (CheckEmptyUtils.isEmpty(this.currentImage.imageSource)) {
-      this.currentImage.imageSource = image.createImageSource(fd);
-      if (this.currentImage.imageSource === undefined) {
+    if (CheckEmptyUtils.isEmpty(this.currentImage!.imageSource)) {
+      this.currentImage!.imageSource = image.createImageSource(fd);
+      if (this.currentImage!.imageSource === undefined) {
         Log.error(TAG, 'createImageSource error');
         return;
       }
     }
-    let info = this.currentImage.imageSource.getImageInfo();
+    let info = this.currentImage!.imageSource!.getImageInfo();
     if (CheckEmptyUtils.isEmpty(info)) {
       Log.error(TAG, 'createImageSource error: invalid imageSource');
       return;
     }
-    let decodingOptions
-    let width = this.currentImage.width
-    let height = this.currentImage.height
+    let decodingOptions: image.DecodingOptions | undefined = undefined;
+    let width = this.currentImage!.width
+    let height = this.currentImage!.height
     let ratio = width/height
     if(width*height>=Constants.MAX_PIXELMAP){//超过像素上限pixelmap无法显示在image组件里,需要resize
       height = Math.floor(Math.sqrt(Constants.MAX_PIXELMAP/ratio))
@@ -397,10 +394,10 @@ export struct PreviewComponent {
         desiredSize:{width:height*ratio,height:height}
       }
     }
-    this.currentImage.imageSource.createPixelMap(decodingOptions).then(pixelmap => {
+    this.currentImage!.imageSource!.createPixelMap(decodingOptions).then(pixelmap => {
       Log.info(TAG,'Succeeded in creating pixelmap object through image decoding parameters.');
       if(this.currentPixelMap!==undefined){
-        this.currentPixelMap.release().then(()=>{
+        this.currentPixelMap!.release().then(()=>{
           Log.info(TAG,'currentPixelMap release success');
           this.currentPixelMap = pixelmap
           GlobalThisHelper.createValue<PixelMap>(this.currentPixelMap, GlobalThisStorageKey.KEY_CURRENT_PIXELMAP);
@@ -410,7 +407,7 @@ export struct PreviewComponent {
         GlobalThisHelper.createValue<PixelMap>(this.currentPixelMap, GlobalThisStorageKey.KEY_CURRENT_PIXELMAP);
       }
 
-    }).catch(error => {
+    }).catch((error: BusinessError) => {
       Log.info(TAG,'Failed to create pixelmap object through image decoding parameters.'+error);
     })
   }

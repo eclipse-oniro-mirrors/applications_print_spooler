@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { MediaTypeCode, MediaTypes, PrintJobOptions } from '@ohos/common';
+import { ErrorMessage, MediaSizeHelper, MediaTypeCode, MediaTypes, PreviewAttribute, PrinterCapsOptions, PrintJob, PrintJobOptions, PrintUtil, startPrintJob } from '@ohos/common';
 import WifiP2pHelper from '../Common/Adapter/WifiP2pHelper';
 import FileModel from '../Model/FileModel';
 import SelectionModel from '../Model/SelectionModel';
@@ -29,8 +29,7 @@ import {
 import { MediaSize, MediaSizeUtil } from '@ohos/common';
 import { StringUtil } from '@ohos/common';
 import { PreviewComponent } from './component/PreviewComponent';
-import { ErrorCode, PrintPageSize, PreviewAttribute, PrinterRange, PrintMargin, PrinterCapability, PrinterInfo, PrinterState } from '@ohos/common';
-import { PrintJob } from '../Model/PrintJob'
+import { ErrorCode, PrintPageSize, PrinterRange, PrintMargin, PrinterCapability, PrinterInfo } from '@ohos/common';
 import PrintAdapter from '../Common/Adapter/PrintAdapter';
 import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
 import FileUtil from '../Common/Utils/FileUtil';
@@ -52,35 +51,36 @@ import { Log } from '@ohos/common';
 import { uuidGenerator } from '@ohos/common';
 import { BISHENG_PRINTER } from '@ohos/common';
 import emitter from '@ohos.events.emitter';
-// @ts-ignore
 import print from '@ohos.print';
 import promptAction from '@ohos.promptAction';
 import common from '@ohos.app.ability.common';
 import {CancelButton} from './component/BaseComponent';
 import image from '@ohos.multimedia.image';
 import { AboutPageComponent } from './component/AboutPageComponent';
+import router from '@ohos.router';
+import Want from '@ohos.app.ability.Want';
+import { BusinessError } from '@ohos.base';
 
 const TAG = 'PrintPage';
 
-
-@Entry
+let storage = LocalStorage.getShared();
+@Entry(storage)
 @Component
 struct Index {
   @Provide('ImageCount') imageCount: number = Constants.NUMBER_1;//预览显示的页数
   @Provide('CurrentIndex') currentIndex: number = Constants.NUMBER_1;
-  @Provide('Printer') @Watch('onPrinterChange') printer: PrinterInfo = undefined //打印机
+  @Provide('Printer') @Watch('onPrinterChange') printer: PrinterInfo | undefined = undefined; //打印机
   @Provide('ShowPageNum') showPageNum: number = Constants.NUMBER_1
   @Provide('PrinterList') printerList: Array<PrinterInfo> = [];
-  @Provide('PrintJob') printJob: PrintJob = undefined;
-  @Provide('UsedPrinterId') usedPrinterId: string = undefined;
-  @Provide('PrintAdapter') adapter: PrintAdapter = undefined;
+  @Provide('PrintJob') printJob: PrintJob | undefined = undefined;
+  @Provide('UsedPrinterId') usedPrinterId: string | undefined = undefined;
+  @Provide('PrintAdapter') adapter: PrintAdapter | undefined = undefined;
   @Provide('ConnectCountDown') connectCount: number = Constants.CONNECT_COUNT;
-  @Provide('ConnectCountDownTimer') ConnectTimer: number = undefined
+  @Provide('ConnectCountDownTimer') ConnectTimer: number | undefined = undefined;
   @Provide('CanPrint') canPrint: boolean = false;
   @Provide('WLANFlag') wlanFlag: boolean = false;
   @Provide('IsNeedListenWlan') isNeedListenWlan: boolean = false;
   @Provide('ConnectingPrinterId') connectingPrinterId: string = Constants.DEFAULT_CONNECTING_PRINTER_ID;
-  @Provide('ConnectingPrinterName') connectingPrinterName: string = undefined;
   @Provide('PrinterSelectArray') printerSelectArray: Array<SelectionModel> = [];
   @Provide('CurrentPrinter') currentPrinterSelection: SelectionModel = SelectionModel.NO_Printer;
   @Provide('MediaSizeSelectArray') mediaSizeSelectArray: Array<SelectionModel> = [];
@@ -97,8 +97,8 @@ struct Index {
   @Provide('NeedDuplex') @Watch('needDuplexChange')needDuplex: boolean = true;
   @Provide('IsBorderless') isBorderless: boolean = false //是否无边距
   @Provide('IsPreviewFailed') isPreviewFailed: boolean = false //是否需要显示预览失败图示
-  private abilityContext: common.UIAbilityContext = undefined
-  @State @Watch('updateImageSources')imageSources: Array<FileModel> = undefined;
+  private abilityContext: common.UIAbilityContext | undefined = undefined;
+  @State @Watch('updateImageSources')imageSources: Array<FileModel> = new Array();
   @State startPage: number = Constants.NUMBER_1 //打印范围起始页
   @State startPageStr: string = Constants.STRING_ONE //打印范围起始页
   @State endPage: number = Constants.NUMBER_1 //打印范围终止页
@@ -113,24 +113,24 @@ struct Index {
   @State plusMouseState: number = MouseState.NONE //份数+
   @State minusMouseState: number = MouseState.NONE //份数-
   @State isMinusPressed: boolean = false //是否按下份数-
-  @State mediaSizeList: Array<MediaSize> = undefined; //所有纸张尺寸
+  @State mediaSizeList: Array<MediaSize> = []; //所有纸张尺寸
   @State printRangeType: number = PrintRangeType.ALL; //打印范围类型 0：全部页面 1：范围打印
   @State colorMode: number = ColorCode.MONOCHROME;
-  @State mediaSize: MediaSize = MediaSize.ISO_A4; //纸张尺寸
+  @State mediaSize: MediaSize = MediaSizeHelper.ISO_A4; //纸张尺寸
   @State pageDirection: number = Constants.NUMBER_0; //纸张方向
-  @State printerRange: PrinterRange = undefined; //打印框架需要的参数，实际不起效
-  @State printerPageSize: PrintPageSize = undefined; //纸张尺寸
-  @State alarmText: string = undefined;
+  @State printerRange: PrinterRange | undefined = undefined; //打印框架需要的参数，实际不起效
+  @State printerPageSize: PrintPageSize | undefined = undefined; //纸张尺寸
+  @State alarmText: string | undefined = undefined;
   @State lastPrinterExist: boolean = false;
   @State isConnected: boolean = false;
-  @State printerCap: print.PrinterCapability = undefined;
+  @State printerCap: print.PrinterCapability | undefined = undefined;
   @State printButtonFlag: boolean = true;
   @State cusRangeBorderColor: Resource = $r('app.color.border_line');
-  @State errorMessage: Resource = undefined;
+  @State errorMessage: Resource | undefined = undefined;
   @State isCusRangeError: boolean = false;
   @State isCusRangeMax: boolean = false;
   @State cusRangeArr: Array<number> = [];
-  @State cusRangeText: string = undefined;
+  @State cusRangeText: string | undefined = undefined;
   @State isRangeRadioEnable: boolean = false;
   @State isCustomRadioEnable: boolean = false;
   @State isAbovePageLimit: boolean = false;//是否超过页数限制
@@ -142,7 +142,7 @@ struct Index {
   @Provide('ConnectFlag') @Watch('connectAlarm') connectFlag: boolean = true;
   @StorageLink('JobQueue') jobQueue: Array<PrintJob> = new Array();
   private usedPrinterFileName: string = 'lastUsedPrinter'
-  private firstFileName: string = undefined
+  private firstFileName: string = Constants.STRING_NONE;
   private totalPage: number = Constants.NUMBER_1//总页数
   private allPages: Array<number> = [];
   private jobName: string = Constants.STRING_NONE
@@ -150,7 +150,7 @@ struct Index {
   private jobDes: string = Constants.STRING_NONE
   private jobId: string = Constants.STRING_NONE
   private jobFileList: Array<string> = []
-  private supportedMediaTypes: Array<string> = []
+  private supportedMediaTypes: Array<number> = []
   private scroller: Scroller = new Scroller()
   private firstStartPageEdit: boolean = true
   private firstEndPageEdit: boolean = true
@@ -197,7 +197,7 @@ struct Index {
         .height('40%')
         .onAreaChange((oldValue: Area, newValue: Area) => {
           Log.info(`Ace: on area change, oldValue is ${JSON.stringify(oldValue)} value is ${JSON.stringify(newValue)}`)
-          this.previewCompHeight = <number>newValue.height;
+          this.previewCompHeight = newValue.height as number;
           this.printParamCompHeight = this.previewCompHeight*1.5
         })
       Column() {
@@ -564,13 +564,6 @@ struct Index {
                     }else{
                       Log.info(TAG,'isCustomRadioEnable = false')
                       this.isCustomRadioEnable = false
-                      // if (this.isCusRangeError) {
-                      //   this.editCusRangeFlag = false
-                      //   this.cusRangeText = ''
-                      // }
-                      // this.isCusRangeError = false
-                      // this.isCusRangeMax = false
-                      // this.cusRangeBorderColor = $r('app.color.border_line')
                     }
                   })
                   .onTouch((e:TouchEvent)=>{
@@ -698,7 +691,7 @@ struct Index {
             cancelWidth: $r('app.float.button_index_width'),
             cancelHeight: $r('app.float.button_index_height'),
             cancelClick: () => {
-              this.abilityContext.terminateSelf().then((data) => {
+              this.abilityContext?.terminateSelf().then((data) => {
                 console.info('===>terminateSelfCallBack===>: ' + data);
               });
             }
@@ -724,7 +717,7 @@ struct Index {
         })
       }.width($r('app.float.print_setting_width'))
     }
-    .onTouch((event?:TouchEvent)=>{
+    .onTouch((event:TouchEvent)=>{
       if (event.type === TouchType.Down) {
         Log.info(TAG,'requestFocus')
         focusControl.requestFocus('Index_Text_copies')
@@ -737,15 +730,12 @@ struct Index {
       return $r('app.media.ic_plus_disabled');
     }
     switch (mouseState) {
-      case MouseState.NONE:
-        return $r('app.media.ic_plus');
-        break
       case MouseState.PRESS:
         return $r('app.media.ic_plusPress');
-        break
       case MouseState.HOVER:
         return $r('app.media.ic_plusHover');
-        break
+      default:
+        return $r('app.media.ic_plus');
     }
   }
 
@@ -754,15 +744,12 @@ struct Index {
       return $r('app.media.ic_minus_disabled');
     }
     switch (mouseState) {
-      case MouseState.NONE:
-        return $r('app.media.ic_minus');
-        break
       case MouseState.PRESS:
         return $r('app.media.ic_minusPress');
-        break
       case MouseState.HOVER:
         return $r('app.media.ic_minusHover');
-        break
+      default:
+        return $r('app.media.ic_minus');
     }
   }
 
@@ -811,21 +798,19 @@ struct Index {
 
   private getWant() {
     this.abilityContext = GlobalThisHelper.getValue<common.UIAbilityContext>(GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT)
-    let data = {
-      wantJobId: Constants.STRING_NONE,
-      wantFileList: [],
+    if (CheckEmptyUtils.isEmpty<LocalStorage>(storage)) {
+      storage = router.getParams() as LocalStorage;
     }
-    this.abilityContext.eventHub.emit(Constants.EVENT_GET_ABILITY_DATA, data);
-    Log.debug(TAG, 'aboutToAppear jobId: ' + JSON.stringify(data.wantJobId) + ', fileList: ' + JSON.stringify(data.wantFileList));
-    this.jobId = data.wantJobId
-    this.jobFileList = data.wantFileList
+    this.jobId = storage.get<string>(Constants.WANT_JOB_ID_KEY)!;
+    this.jobFileList = storage.get<Array<string>>(Constants.WANT_FILE_LIST_KEY)!;
+    Log.debug(TAG, 'aboutToAppear jobId: ' + JSON.stringify(this.jobId) + ', fileList: ' + JSON.stringify(this.jobFileList));
   }
 
   private subscribe() {
 
-    var innerEventState = { eventId: AppCommonEvent.PRINTER_STATE_CHANGE_EVENT }
+    let innerEventState: emitter.InnerEvent = { eventId: AppCommonEvent.PRINTER_STATE_CHANGE_EVENT }
     emitter.on(innerEventState, (eventData) => {
-      let printers = AppStorage.Get<Array<PrinterInfo>>(AppStorageKeyName.PRINTER_QUEUE_NAME)
+      let printers = AppStorage.get<Array<PrinterInfo>>(AppStorageKeyName.PRINTER_QUEUE_NAME)
 
       if (this.printer === undefined || printers === undefined) {
         Log.error(TAG, 'emitter callback this printer is null or printers is null, return');
@@ -840,9 +825,9 @@ struct Index {
       }
     })
 
-    var innerEventCap = { eventId: AppCommonEvent.PRINTER_UPDATE_CAPABILITY_EVENT }
+    let innerEventCap: emitter.InnerEvent = { eventId: AppCommonEvent.PRINTER_UPDATE_CAPABILITY_EVENT }
     emitter.on(innerEventCap, (eventData) => {
-      let printers = AppStorage.Get<Array<PrinterInfo>>(AppStorageKeyName.PRINTER_QUEUE_NAME);
+      let printers = AppStorage.get<Array<PrinterInfo>>(AppStorageKeyName.PRINTER_QUEUE_NAME);
       if (this.printer === undefined || this.printer === null) {
         Log.error(TAG, 'printer is undefined');
         return;
@@ -857,7 +842,7 @@ struct Index {
           clearInterval(this.ConnectTimer)
           this.connectConfirmDialogCtl.close()
           this.printer.capability = printers[index].capability
-          this.printer.option = printers[index].option
+          this.printer.options = printers[index].options
           this.printer.description = printers[index].description
           Log.info(TAG, 'this.printer.capability update: ', JSON.stringify(this.printer.capability))
           this.updateSupportParam(printers[index])
@@ -865,8 +850,8 @@ struct Index {
       }
     })
 
-    var innerEventWlan = { eventId: AppCommonEvent.WLAN_INACTIVE_EVENT }
-    emitter.on(innerEventWlan, (eventData) => {
+    let inactiveWlanEvent: emitter.InnerEvent = { eventId: AppCommonEvent.WLAN_INACTIVE_EVENT }
+    emitter.on(inactiveWlanEvent, (eventData) => {
       Log.info(TAG, 'WLAN_INACTIVE_EVENT')
       this.isNeedListenWlan = true
       let isPrinterSelectDialogOpen = GlobalThisHelper.getValue<boolean>(GlobalThisStorageKey.KEY_PRINTER_SELECT_DIALOG_OPEN);
@@ -878,17 +863,17 @@ struct Index {
       }
     })
 
-    var innerEventWlan = { eventId: AppCommonEvent.WLAN_ACTIVE_EVENT }
-    emitter.on(innerEventWlan, (eventData) => {
+    let activeWlanEvent: emitter.InnerEvent = { eventId: AppCommonEvent.WLAN_ACTIVE_EVENT }
+    emitter.on(activeWlanEvent, (eventData) => {
       Log.info(TAG, 'WLAN_ACTIVE_EVENT')
       if (this.isNeedListenWlan) {
         this.isNeedListenWlan = false
-        this.adapter.getPrinterDiscCtl().startDiscovery(Constants.STRING_NONE, [])
+        this.adapter?.getPrinterDiscCtl()?.startDiscovery(Constants.STRING_NONE, [])
       }
 
     })
 
-    var innerEventPrinter = { eventId: AppCommonEvent.ADD_PRINTER_EVENT }
+    let innerEventPrinter: emitter.InnerEvent = { eventId: AppCommonEvent.ADD_PRINTER_EVENT }
     emitter.on(innerEventPrinter, (eventData) => {
       if (!this.firstPrinterDiscoveredFlag){
         this.firstPrinterDiscoveredFlag = true;
@@ -898,13 +883,17 @@ struct Index {
         emitter.off(AppCommonEvent.ADD_PRINTER_EVENT);
         return;
       }
-      let printerJSON = eventData.data.printer
-      let printer = JSON.parse(printerJSON)
+      if (CheckEmptyUtils.isEmpty(eventData) || CheckEmptyUtils.isEmpty(eventData.data)) {
+        Log.error(TAG, 'add_printer info is empty.');
+        return;
+      }
+      let printerJSON: string = eventData!.data!.printer
+      let printer: PrinterInfo = JSON.parse(printerJSON)
       Log.info(TAG, 'ADD_PRINTER_EVENT')
       if (printer.printerId === this.usedPrinterId) {
         Log.info(TAG, 'last printer is connecting');
         this.printer = printer;
-        this.adapter.getPrinterDiscCtl().connectPrinter(printer)
+        this.adapter?.getPrinterDiscCtl()?.connectPrinter(printer)
         emitter.off(AppCommonEvent.ADD_PRINTER_EVENT)
       }
 
@@ -912,7 +901,7 @@ struct Index {
 
 
     print.on('extInfoChange', (extensionId: string, info: string) => {
-      let extInfo = JSON.parse(info)
+      let extInfo: ErrorMessage = JSON.parse(info)
       Log.info(TAG, 'extInfoChange: ', info)
       if (CheckEmptyUtils.isEmpty(this.printer)){
         Log.info(TAG, 'invalid printer！')
@@ -923,10 +912,10 @@ struct Index {
           this.connectionFailed();
           break;
         case ErrorCode.GET_CAPS_ERROR:
-          this.adapter.getPrinterDiscCtl().queryPrinterCapability(this.printer.printerId);
+          this.adapter?.getPrinterDiscCtl()?.queryPrinterCapability(this.printer!.printerId);
           break;
         case ErrorCode.CONNECTION_POP:
-          if (this.printer.printerId !== this.usedPrinterId){
+          if (this.printer!.printerId !== this.usedPrinterId){
             this.connectFlag = !this.connectFlag
           }
         default:
@@ -944,7 +933,7 @@ struct Index {
   }
 
   preDiscovery() {
-    this.adapter.getPrinterDiscCtl().startDiscovery(Constants.STRING_NONE, [])
+    this.adapter?.getPrinterDiscCtl()?.startDiscovery(Constants.STRING_NONE, [])
   }
 
   checkWlan(){
@@ -987,13 +976,13 @@ struct Index {
     this.printRange = []
     switch (this.printRangeType) {
       case PrintRangeType.ALL:
-        for (var num = 1; num <= this.totalPage; ) {
+        for (let num = 1; num <= this.totalPage; ) {
           this.printRange.push(num)
           num++
         }
         break;
       case PrintRangeType.RANGE:
-        for (var num = this.startPage; num <= this.endPage; ) {
+        for (let num = this.startPage; num <= this.endPage; ) {
           this.printRange.push(num)
           num++
         }
@@ -1010,7 +999,7 @@ struct Index {
       if (this.allPages != undefined) {
         this.printRange = CopyUtil.deepClone(this.allPages)
       }else{
-        for (var num = 1; num <= this.totalPage; ) {
+        for (let num = 1; num <= this.totalPage; ) {
           this.printRange.push(num)
           num++
         }
@@ -1025,18 +1014,18 @@ struct Index {
       return
     }
     if (!CheckEmptyUtils.isEmpty(SelectionModel.getSelectionValue<MediaSize>(this.currentMediaSize.name))) {
-      this.mediaSize = SelectionModel.getSelectionValue<MediaSize>(this.currentMediaSize.name);
+      this.mediaSize = SelectionModel.getSelectionValue<MediaSize>(this.currentMediaSize.name)!;
       Log.info(TAG, 'updateMediaSize:MediaSize = ' + JSON.stringify(this.mediaSize))
       this.printerPageSize = MediaSizeUtil.mediaSizeToPageSize(this.mediaSize)
     }
-    Log.info(TAG, 'afterUpdateMediaSize: ' + this.printerPageSize.name)
+    Log.info(TAG, 'afterUpdateMediaSize: ' + this.printerPageSize?.name)
   }
 
   updateMediaType() {
     if (this.printer !== undefined) {
       let isBSH = this.isBiSheng(this.printer.printerName)
       if (isBSH) {
-        this.mediaSizeList = MediaSizeUtil.getDefaultMediaSizeByMediaType(SelectionModel.getSelectionValue<number>(this.currentMediaType.name))
+        this.mediaSizeList = MediaSizeUtil.getDefaultMediaSizeByMediaType(SelectionModel.getSelectionValue<number>(this.currentMediaType.name)!);
       }
       this.setMediaSizesSelect()
     }
@@ -1048,7 +1037,7 @@ struct Index {
   }
 
   updateDirection() {
-    this.pageDirection = SelectionModel.getSelectionValue<number>(this.currentMediaType.name)
+    this.pageDirection = SelectionModel.getSelectionValue<number>(this.currentMediaType.name)!;
   }
 
   /**
@@ -1057,13 +1046,13 @@ struct Index {
    * @param cap
    */
   updateSupportParam(printer: PrinterInfo) {
-    Log.info(TAG, 'updateSupportParam printer: ' + StringUtil.encodeCommonString(this.printer.printerName));
+    Log.info(TAG, 'updateSupportParam printer: ' + StringUtil.encodeCommonString(this.printer?.printerName));
     let cap = printer.capability
     if (CheckEmptyUtils.isEmpty(cap)) {
       return
     }
 
-    if (cap.colorMode === ColorCode.MONOCHROME) {
+    if (cap!.colorMode === ColorCode.MONOCHROME) {
       this.colorMode = ColorCode.MONOCHROME
       this.isColored = false
       this.isColorEnabled = false
@@ -1071,7 +1060,7 @@ struct Index {
       this.isColorEnabled = true
     }
 
-    if (cap.duplexMode === Duplex.SINGLE) {
+    if (cap!.duplexMode === Duplex.SINGLE) {
       this.isDuplexEnabled = false;
       this.currentDuplex = SelectionModel.DuplexMode_SINGLE;
     } else {
@@ -1079,17 +1068,17 @@ struct Index {
     }
     let isBSH = this.isBiSheng(printer.printerName)
     if (isBSH) {
-      this.mediaSizeList = MediaSizeUtil.getDefaultMediaSizeByMediaType(SelectionModel.getSelectionValue<number>(this.currentMediaType.name))
+      this.mediaSizeList = MediaSizeUtil.getDefaultMediaSizeByMediaType(SelectionModel.getSelectionValue<number>(this.currentMediaType.name)!);
     } else {
       this.mediaSizeList = new Array<MediaSize>()
-      for (let index = 0; index < cap.pageSize.length; index++) {
-        this.mediaSizeList.push(MediaSizeUtil.pageSizeToMediaSize(cap.pageSize[index]))
+      for (let index = 0; index < cap!.pageSize.length; index++) {
+        this.mediaSizeList.push(MediaSizeUtil.pageSizeToMediaSize(cap!.pageSize[index]))
       }
     }
-    Log.debug(TAG,'printer.option:',printer.option)
-    let option = JSON.parse(printer.option);
-    if(!CheckEmptyUtils.isEmpty(option.supportedMediaTypes)){
-      this.supportedMediaTypes = option.supportedMediaTypes
+    Log.debug(TAG,'printer.options:',printer.options)
+    let options: PrinterCapsOptions = JSON.parse(printer.options!);
+    if(!CheckEmptyUtils.isEmpty(options?.supportedMediaTypes)){
+      this.supportedMediaTypes = options?.supportedMediaTypes
     }
     Log.debug(TAG,'supportedMediaTypes:',JSON.stringify(this.supportedMediaTypes))
     this.setMediaTypeSelect()
@@ -1100,7 +1089,7 @@ struct Index {
   updateImageSources(){
     Log.info(TAG,'updateImageSources length = '+this.imageSources.length)
     this.allPages = []
-    for (var num = 1; num <= this.imageSources.length; ) {
+    for (let num = 1; num <= this.imageSources.length; ) {
       this.allPages.push(num)
       num++
     }
@@ -1112,20 +1101,17 @@ struct Index {
   }
 
   setMediaSizesSelect() {
-    if (this.mediaSizeList !== undefined) {
-      Log.info(TAG, 'setMediaSizesSelect mediaSizeList.length:' + this.mediaSizeList.length)
+    if (CheckEmptyUtils.isEmptyArr(this.mediaSizeList)) {
+      MediaSizeUtil.initMediaSizeArray(this.mediaSizeList);
     }
-    if (this.mediaSizeList === undefined) {
-      this.mediaSizeList = new Array<MediaSize>()
-      MediaSizeUtil.initMediaSizeArray(this.mediaSizeList)
-    }
+    Log.info(TAG, 'setMediaSizesSelect mediaSizeList.length:' + this.mediaSizeList.length);
     this.mediaSizeSelectArray = new Array<SelectionModel>()
     let isNeedResetMediaSize = true
     this.mediaSizeList.forEach(mediaSize => {
       if (this.currentMediaSize.res === mediaSize.label) {
         isNeedResetMediaSize = false
       }
-      let mediaSizeSelection = SelectionModel.getSelectionModelByLabel(mediaSize.label)
+      let mediaSizeSelection = SelectionModel.getSelectionModelByLabel(mediaSize.label)!
       if(!CheckEmptyUtils.isEmpty(mediaSizeSelection)){
         this.mediaSizeSelectArray.push(mediaSizeSelection)
       }
@@ -1193,7 +1179,6 @@ struct Index {
       this.fileNum = this.jobFileList.length;
       this.imageSources = await FileUtil.initImageData(this.checkMaxPages(this.jobFileList));
     } else {
-      // @ts-ignore
       await print.queryPrintJobById(this.jobId).then(async (printJob) => {
         if (!CheckEmptyUtils.isEmpty(printJob) && !CheckEmptyUtils.isEmptyArr(printJob.fdList)) {
           this.fileNum = printJob.fdList.length;
@@ -1243,7 +1228,7 @@ struct Index {
       Log.error(TAG, 'lasted used printer is null');
       return;
     }
-    let printer = JSON.parse(printerString);
+    let printer: PrinterInfo = JSON.parse(printerString);
     this.usedPrinterId = printer.printerId
     Log.info(TAG, 'load last printer: ' + StringUtil.encodeCommonString(printer.printerName));
   }
@@ -1253,13 +1238,13 @@ struct Index {
    *
    * @param printer 打印机信息
    */
-  saveLastedUsedPrinter(printer: PrinterInfo) {
-    Log.info(TAG, 'saveLastedUsedPrinter printer: ' + StringUtil.encodeCommonString(printer.printerName));
+  saveLastedUsedPrinter(printer: PrinterInfo | undefined) {
+    Log.info(TAG, 'saveLastedUsedPrinter printer: ' + StringUtil.encodeCommonString(printer?.printerName));
     if (CheckEmptyUtils.isEmpty(printer)) {
       Log.error(TAG, 'printer is null')
       return;
     }
-    let printerString = JSON.stringify(printer)
+    let printerString = JSON.stringify(printer!)
     if (CheckEmptyUtils.checkStrIsEmpty(printerString)) {
       Log.error(TAG, 'printer string is null')
       return;
@@ -1313,17 +1298,20 @@ struct Index {
    *
    * @param printerState 打印机状态
    */
-  checkPrinterConnection(printerState: PrinterState) {
+  checkPrinterConnection(printerState: print.PrinterState) {
     Log.error(TAG, 'checkPrinterConnection printerState: ' + JSON.stringify(printerState));
+    if (CheckEmptyUtils.isEmpty(this.printer)) {
+      Log.error(TAG, 'checkPrinterConnection, invalid printer.');
+      return;
+    }
     switch (printerState) {
-      case PrinterState.PRINTER_CONNECTED:
+      case print.PrinterState.PRINTER_CONNECTED:
         this.isConnected = true
-        this.connectingPrinterName = this.printer.printerName;
-        this.connectingPrinterId = this.printer.printerId;
+        this.connectingPrinterId = this.printer!.printerId;
         clearInterval(this.ConnectTimer)
         this.connectConfirmDialogCtl.close();
         break;
-      case PrinterState.PRINTER_DISCONNECTED:
+      case print.PrinterState.PRINTER_DISCONNECTED:
         this.connectionFailed()
         break;
       default:
@@ -1334,14 +1322,14 @@ struct Index {
   /**
    * 将渲染的图片保存
    */
-  async saveImage(jobFiles: string[]) {
+  async saveImage(jobFiles: string[]): Promise<number[]> {
     Log.info(TAG, 'enter saveImage')
+    let fileList = new Array<number>();
     if (this.mediaSize === undefined) {
       Log.error(TAG, 'this.mediaSize is undefined')
-      return null
+      return fileList;
     }
     let size = this.mediaSize.get300PixelMediaSize();
-    let fileList = new Array<number>();
     let imageSourceIndexList = new Array<number>();
     let finalPrintRange = this.checkPrintRange();
     for (let index = 0; index < finalPrintRange.length; index++) {
@@ -1353,7 +1341,11 @@ struct Index {
       Log.info(TAG,'imageModel START ,this.imageSources '+JSON.stringify(this.imageSources))
       let imageModel = this.imageSources[imageSourceIndexList[index]];
       Log.info(TAG,'imageModel: '+JSON.stringify(imageModel))
-      let offCanvas, scale, offCanvasWidth, offCanvasHeight, orientation
+      let offCanvas: OffscreenCanvasRenderingContext2D | undefined = undefined;
+      let scale: number;
+      let offCanvasWidth: number;
+      let offCanvasHeight: number;
+      let orientation: PageDirection = PageDirection.AUTO;
       if (this.pageDirection === PageDirection.VERTICAL || (this.pageDirection === PageDirection.AUTO && imageModel.height >= imageModel.width)) {
         //竖向 或者 自适应且图片竖向
         Log.debug('VERTICAL');
@@ -1374,7 +1366,7 @@ struct Index {
       offCanvas = new OffscreenCanvasRenderingContext2D(offCanvasWidth, offCanvasHeight, new RenderingContextSettings(true));
       if (offCanvas === undefined) {
         Log.error(TAG, 'offCanvas is undefined');
-        return;
+        continue;
       }
       offCanvas.imageSmoothingEnabled = false;
       offCanvas.fillStyle = '#fff'
@@ -1390,35 +1382,35 @@ struct Index {
         continue;
       }
       Log.info(TAG, 'begin createPixelMap');
-      let imageSource = undefined;
-      let pixelMap = undefined;
-      let canvasPixelMap = undefined;
+      let imageSource: image.ImageSource | undefined = undefined;
+      let pixelMap: image.PixelMap | undefined = undefined;
+      let canvasPixelMap: image.PixelMap | undefined = undefined;
       try {
         imageSource = image.createImageSource(imageModel.fd);
         if (CheckEmptyUtils.isEmpty(imageSource)) {
           Log.error(TAG, 'imageSource is error')
           continue;
         };
-        const editResult: boolean = orientation === Constants.NUMBER_1 ? true : false;
-        pixelMap = await imageSource.createPixelMap({isEdit: editResult});
+        const editResult: boolean = orientation === PageDirection.LANDSCAPE ? true : false;
+        pixelMap = await imageSource!.createPixelMap({editable: editResult});
         if (CheckEmptyUtils.isEmpty(pixelMap)) {
           Log.error(TAG, 'pixelMap is error')
           continue;
         };
-        imageModel.imageSource.release();
+        imageModel.imageSource!.release();
         Log.info(TAG, 'end createPixelMap');
         offCanvas.drawImage(pixelMap, xPosition, yPosition, px2fp(imageModel.width * scale), px2fp(imageModel.height * scale)) //5184 3456 //1200 2133
         canvasPixelMap = offCanvas.getPixelMap(Constants.NUMBER_0, Constants.NUMBER_0, offCanvasWidth, offCanvasHeight);
 
         //保存图片
         Log.info(TAG, 'begin createDataShareUri');
-        if (this.firstFileName === undefined) {
+        if (CheckEmptyUtils.checkStrIsEmpty(this.firstFileName)) {
           this.firstFileName = imageModel.name;
           Log.info(TAG, 'init firstFileName:' + this.firstFileName)
         }
         let fileName = uuidGenerator() + Constants.JPEG_SUFFIX;
-        FileUtil.createJobsDir(this.abilityContext.filesDir)
-        let uri = this.abilityContext.filesDir + Constants.FILE_SEPARATOR + Constants.TEMP_JOB_FOLDER + Constants.FILE_SEPARATOR + fileName
+        FileUtil.createJobsDir(this.abilityContext?.filesDir)
+        let uri = this.abilityContext?.filesDir + Constants.FILE_SEPARATOR + Constants.TEMP_JOB_FOLDER + Constants.FILE_SEPARATOR + fileName
         await FileUtil.saveImageToJpeg(canvasPixelMap, uri, orientation);
         Log.debug(TAG, 'end saveImageToJpeg');
         jobFiles.push(uri);
@@ -1459,30 +1451,24 @@ struct Index {
 
     let jobFiles = new Array<string>()
     this.saveImage(jobFiles).then((fileList) => {
-      let state = this.adapter.getPrintJobCtl().createPrintJob(this.jobId);
       let ops: PrintJobOptions = {
         jobName: this.jobName,
-        jobNum: this.jobNum,
+        jobNum: this.jobNum * this.printCount,
         jobDescription: this.jobDes,
-        mediaType: this.getMediaType(SelectionModel.getSelectionValue<number>(this.currentMediaType.name)),
+        mediaType: this.getMediaType(SelectionModel.getSelectionValue<number>(this.currentMediaType.name)!),
         documentCategory: SelectionModel.getSelectionValue<number>(this.currentMediaType.name) === MediaType.PHOTO ? Constants.NUMBER_1 : Constants.NUMBER_0,
-        printQuality: SelectionModel.getSelectionValue<number>(this.currentQuality.name).toString(),
-        printerName: this.removeSpaces(this.printer.printerName),
+        printQuality: SelectionModel.getSelectionValue<number>(this.currentQuality.name)!.toString(),
+        printerName: this.removeSpaces(this.printer?.printerName),
         printerUri: this.getPrinterUri(),
         documentFormat: 'image/jpeg',
         files: jobFiles
       }
-      let option = JSON.stringify(ops);
+      let options = JSON.stringify(ops);
+      this.printJob = new PrintJob(jobFiles,fileList,this.jobId, this.printer!.printerId, print.PrintJobState.PRINT_JOB_PREPARE, print.PrintJobSubState.PRINT_JOB_COMPLETED_SUCCESS,
+        this.printCount,this.printerRange!,true,this.printerPageSize!,true,this.colorMode,SelectionModel.getSelectionValue<number>(this.currentDuplex.name)!,new PrintMargin(Constants.NUMBER_0, Constants.NUMBER_0, Constants.NUMBER_0, Constants.NUMBER_0),
+      new PreviewAttribute(this.printerRange!, Constants.NUMBER_1), options);
 
-      this.printJob = new PrintJob(jobFiles,fileList,this.jobId,this.printer.printerId,state,Constants.NUMBER_0,this.printCount,this.printerRange,true,this.printerPageSize,true,
-        this.colorMode,SelectionModel.getSelectionValue<number>(this.currentDuplex.name),new PrintMargin(),null,option);
-      let printMargin = new PrintMargin();
-      printMargin.top = Constants.NUMBER_0;
-      printMargin.bottom = Constants.NUMBER_0;
-      printMargin.left = Constants.NUMBER_0;
-      printMargin.right = Constants.NUMBER_0;
-
-      this.adapter.getPrintJobCtl().startPrint(this.printJob).then((result) => {
+      startPrintJob(this.printJob).then((result) => {
         if (result) {
           this.startJobAbility();
         } else { // 任务下发失败
@@ -1493,56 +1479,63 @@ struct Index {
   }
 
   startJobAbility(){
-    let jobAbilityWant = {
+    let jobAbilityWant: Want = {
       bundleName: Constants.BUNDLE_NAME,
       abilityName: Constants.JOB_MANAGER_ABILITY_NAME,
       parameters: {
         jobId: this.jobId
       },
     }
-    // @ts-ignore
-    this.abilityContext.startAbility(jobAbilityWant).then(() => {
+
+    this.abilityContext?.startAbility(jobAbilityWant).then(() => {
       Log.info(TAG,'startJobManagerAbility')
       this.canPrint = false;
-      this.abilityContext.terminateSelf().then((data) => {
+      this.abilityContext?.terminateSelf().then((data) => {
         console.info('===>terminateSelfCallBack===>: '+data);
       });
-    }).catch((err) => {
+    }).catch((err: BusinessError) => {
       Log.error(TAG, 'fail to startAbility, err =' + JSON.stringify(err));
     })
   }
 
-  removeSpaces(name: string) {
+  removeSpaces(name: string | undefined) {
     if (CheckEmptyUtils.checkStrIsEmpty(name)) {
       return "";
     }
-    return name.replace(/\s+/g, "_");
+    let regex: RegExp = new RegExp('\\s+', 'g');
+    return name!.replace(regex, '_');
   }
 
   getMediaType(selectType: number): string {
     if (MediaTypes.sCodeToStringMap.has(selectType)) {
-      return MediaTypes.sCodeToStringMap.get(selectType);
+      return MediaTypes.sCodeToStringMap.get(selectType)!;
     }
-    return MediaTypes.sCodeToStringMap.get(MediaTypeCode.MEDIA_PLAIN);
+    return MediaTypes.sCodeToStringMap.get(MediaTypeCode.MEDIA_PLAIN)!;
   }
 
   getPrinterUri(): string {
-    let option = this.printer.option;
-    let optionObject = JSON.parse(option);
-    if (!optionObject.hasOwnProperty('printerUri')) {
+    if (CheckEmptyUtils.isEmpty(this.printer)) {
+      return '';
+    }
+    let options = this.printer!.options;
+    let optionObject: PrinterCapsOptions = JSON.parse(options!);
+    if (CheckEmptyUtils.checkStrIsEmpty(optionObject.printerUri)) {
       return '';
     }
     return optionObject.printerUri;
   }
 
   connectionFailed() {
+    if (CheckEmptyUtils.isEmpty(this.printer)) {
+      Log.error(TAG, 'connectionFailed, invalid printer!');
+      return;
+    }
     clearInterval(this.ConnectTimer)
     this.alarmText = StringUtil.getString('alarm_dialog_connect_failed')
     this.alarmDialogCtl.open()
-    this.printer.printerId = Constants.STRING_NEGATIVE_ONE
+    this.printer!.printerId = Constants.STRING_NEGATIVE_ONE
     this.connectingPrinterId = Constants.DEFAULT_CONNECTING_PRINTER_ID
-    this.connectingPrinterName = undefined;
-    Log.info(TAG, 'connectCountDown setPrinterId:' + this.printer.printerId)
+    Log.info(TAG, 'connectCountDown setPrinterId:' + this.printer!.printerId)
     this.setSelectDefault(true)
   }
 
@@ -1622,11 +1615,11 @@ struct Index {
       return
     }
 
-    let prePageArray = []
-    let pageArray = []
+    let prePageArray = new Array<string>();
+    let pageArray = new Array<string>();
     prePageArray = value.split(Constants.EU_COMMA)
     prePageArray.forEach((prePage:string)=>{
-      pageArray.push.apply(pageArray,prePage.split(Constants.CN_COMMA))
+      pageArray.push(...prePage.split(Constants.CN_COMMA));
     })
 
     for (let index = 0; index < pageArray.length; index++){
@@ -1672,7 +1665,7 @@ struct Index {
     Log.info(TAG,'checkCustomRange this.cusRangeArr = ',JSON.stringify(this.cusRangeArr))
   }
 
-  checkNum(numStr:string):number{
+  checkNum(numStr:string):number | undefined{
     if (numStr.includes('.')||numStr.startsWith('0')){
       this.setInvalidRange()
       return
@@ -1762,7 +1755,7 @@ struct Index {
   checkPrintRange(): Array<number>{
     let returnList = new Array<number>();
     if (this.printRange.length>100) {
-      returnList = Array.from({length:100},(_,i)=>i+1);
+      returnList = PrintUtil.getDefaultArray(100);
     }else{
       returnList = CopyUtil.deepClone(this.printRange);
     }

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import wifi from '@ohos.wifi';
+import  wifi from '@ohos.wifiManager'
 import { Log } from '@ohos/common';
 
 const TAG = 'WifiP2pHelper';

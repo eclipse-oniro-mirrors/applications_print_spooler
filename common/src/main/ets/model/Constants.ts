@@ -58,8 +58,8 @@ export enum PrintRangeType {
 
 export enum PageDirection {
   AUTO = 0, //自适应
-  LANDSCAPE = 1, //横向
-  VERTICAL = 2 //竖向
+  VERTICAL = 1, //竖向
+  LANDSCAPE = 2 //横向
 }
 
 export enum PrintQuality {

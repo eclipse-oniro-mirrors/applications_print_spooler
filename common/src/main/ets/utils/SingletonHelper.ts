@@ -12,24 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { GlobalObject } from './GlobalObject';
+import { Log } from './Log';
 
-enum ColorModeCode {
-  COLOR_MODE_MONOCHROME = 0,
-  COLOR_MODE_COLOR = 1,
-  COLOR_MODE_AUTO = 2
-}
-
-export class ColorMode {
-  public static readonly sCodeToStringMap: Map<number, string> = new Map([
-    [ColorModeCode.COLOR_MODE_MONOCHROME, 'monochrome'],
-    [ColorModeCode.COLOR_MODE_COLOR, 'color'],
-    [ColorModeCode.COLOR_MODE_AUTO, 'auto'],
-  ]);
-
-  public static getColorCode(code: number): number {
-    if (ColorMode.sCodeToStringMap.has(code)) {
-      return code;
+const TAG: string = 'SingletonHelper';
+/**
+ * 获取单例类
+ */
+export class SingletonHelper {
+  static getInstance<T>(clazz: { new(): T }, key: string): T {
+    if (!GlobalObject.getInstance().hasObject(key)) {
+      GlobalObject.getInstance().setObject(key, new clazz());
+      Log.info(TAG, `Create key of ${key}`);
     }
-    return ColorModeCode.COLOR_MODE_AUTO;
+    return GlobalObject.getInstance().getObject(key) as T;
   }
 }

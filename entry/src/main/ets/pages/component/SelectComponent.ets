@@ -52,7 +52,7 @@ export struct PrinterSelection {
           ListItem() {
             PrinterSelectionComponent({ selection: select })
           }.key(`Selection_ListItem_${select.name}`)
-        }, select => select.name)
+        }, (select: SelectionModel) => select.name)
       }
       .edgeEffect(EdgeEffect.Spring)
       .width($r('app.float.select_comp_width'))
@@ -134,9 +134,9 @@ export struct PrinterSelection {
   }
 
   checkLoading() {
-    let printer: PrinterInfo = SelectionModel.getSelectionValue<PrinterInfo>(this.currentPrinterSelection.name);
+    let printer: PrinterInfo | undefined = SelectionModel.getSelectionValue<PrinterInfo>(this.currentPrinterSelection.name);
     if ((!CheckEmptyUtils.isEmpty(printer)
-    && printer.printerId !== '-1'
+    && printer!.printerId !== '-1'
     && !this.canPrint)) {
       return true;
     }
@@ -148,15 +148,14 @@ export struct PrinterSelection {
 struct PrinterSelectionComponent {
   @Consume('CurrentPrinter') currentPrinterSelection: SelectionModel;
   @Consume('PrinterPopup') customPopup: boolean
-  @Consume('UsedPrinterId') usedPrinterId: string
   @Consume('PrinterSelectFlag') printerSelectFlag: boolean
   @Consume('OpenWLANFlag') openWlanFlag: boolean
   @State bgColor: Resource = $r('app.color.effect_color_white');
-  private selection: SelectionModel = undefined
+  private selection?: SelectionModel;
 
   build() {
     Row() {
-      Text(this.selection.res)
+      Text(this.selection!.res)
         .textAlign(TextAlign.Start)
         .fontSize($r('app.float.font_size_body2'))
         .margin({ left: $r('app.float.select_text_margin_left'), right: $r('app.float.select_text_margin_right') })
@@ -171,7 +170,6 @@ struct PrinterSelectionComponent {
     }
     .selectItemStyle()
     .onClick(() => {
-      this.usedPrinterId = undefined;
       if (WifiP2pHelper.checkWifiActive()) {
         this.printerSelectFlag = true
       } else {
@@ -206,7 +204,7 @@ export struct MediaSizeSelection {
           ListItem() {
             MediaSizeSelectionComponent({ selection: select })
           }.key(`Selection_ListItem_${select.name}`)
-        }, select => JSON.stringify(select))
+        }, (select: SelectionModel) => JSON.stringify(select))
       }
       .edgeEffect(EdgeEffect.Spring)
       .scrollBar(this.selectArray.length > Constants.NUMBER_5 ? BarState.Auto : BarState.Off)
@@ -282,18 +280,18 @@ struct MediaSizeSelectionComponent {
   @Consume('CurrentMediaSize') currentMediaSize: SelectionModel;
   @Consume('MediaSizePopup') customPopup: boolean
   @State bgColor: Resource = $r('app.color.effect_color_white');
-  private selection: SelectionModel = undefined
+  private selection?: SelectionModel;
 
   build() {
     Row() {
-      Text(this.selection.res)
+      Text(this.selection!.res)
         .textAlign(TextAlign.Start)
         .fontSize($r('app.float.font_size_body2'))
         .margin({ left: $r('app.float.select_text_margin_left'), right: $r('app.float.select_text_margin_right') })
     }
     .selectItemStyle()
     .onClick(() => {
-      this.currentMediaSize = this.selection
+      this.currentMediaSize = this.selection!
       this.customPopup = false
     })
     .backgroundColor(this.bgColor)
@@ -319,7 +317,7 @@ struct MediaSizeSelectionComponent {
   }
 
   checkSelectedColor() {
-    if (this.selection.name === this.currentMediaSize.name) {
+    if (this.selection!.name === this.currentMediaSize.name) {
       this.bgColor = $r('app.color.selected_color')
     } else {
       this.bgColor = $r('app.color.effect_color_white')
@@ -341,7 +339,7 @@ export struct DirectionSelection {
           ListItem() {
             DirectionSelectionComponent({ selection: select })
           }.key(`Selection_ListItem_${select.name}`)
-        }, select => select.name)
+        }, (select: SelectionModel) => select.name)
       }
       .width($r('app.float.select_comp_width'))
       .padding($r('app.float.select_comp_padding'))
@@ -411,19 +409,19 @@ struct DirectionSelectionComponent {
   @Consume('CurrentDirection') currentDirection: SelectionModel;
   @Consume('DirectionPopup') customPopup: boolean
   @State bgColor: Resource = $r('app.color.effect_color_white');
-  private selection: SelectionModel = undefined
+  private selection?: SelectionModel
 
   build() {
     Row() {
-      Text(this.selection.res)
+      Text(this.selection!.res)
         .textAlign(TextAlign.Start)
         .fontSize($r('app.float.font_size_body2'))
         .margin({ left: $r('app.float.select_text_margin_left'), right: $r('app.float.select_text_margin_right') })
     }
-    .backgroundColor(this.selection.name === this.currentDirection.name ? $r('app.color.selected_color') : Color.White)
+    .backgroundColor(this.selection!.name === this.currentDirection.name ? $r('app.color.selected_color') : Color.White)
     .selectItemStyle()
     .onClick(() => {
-      this.currentDirection = this.selection
+      this.currentDirection = this.selection!
       this.customPopup = false
     })
     .backgroundColor(this.bgColor)
@@ -449,7 +447,7 @@ struct DirectionSelectionComponent {
   }
 
   checkSelectedColor() {
-    if (this.selection.name === this.currentDirection.name) {
+    if (this.selection!.name === this.currentDirection.name) {
       this.bgColor = $r('app.color.selected_color')
     } else {
       this.bgColor = $r('app.color.effect_color_white')
@@ -471,7 +469,7 @@ export struct MediaTypeSelection {
           ListItem() {
             MediaTypeSelectionComponent({ selection: select })
           }.key(`Selection_ListItem_${select.name}`)
-        }, select => select.name)
+        }, (select: SelectionModel) => select.name)
       }
       .width($r('app.float.select_comp_width'))
       .padding($r('app.float.select_comp_padding'))
@@ -541,19 +539,19 @@ struct MediaTypeSelectionComponent {
   @Consume('CurrentMediaType') currentMediaType: SelectionModel;
   @Consume('MediaTypePopup') customPopup: boolean
   @State bgColor: Resource = $r('app.color.effect_color_white')
-  private selection: SelectionModel = undefined
+  private selection?: SelectionModel;
 
   build() {
     Row() {
-      Text(this.selection.res)
+      Text(this.selection!.res)
         .textAlign(TextAlign.Start)
         .fontSize($r('app.float.font_size_body2'))
         .margin({ left: $r('app.float.select_text_margin_left'), right: $r('app.float.select_text_margin_right') })
     }
-    .backgroundColor(this.selection.name === this.currentMediaType.name ? $r('app.color.selected_color') : Color.White)
+    .backgroundColor(this.selection!.name === this.currentMediaType.name ? $r('app.color.selected_color') : Color.White)
     .selectItemStyle()
     .onClick(() => {
-      this.currentMediaType = this.selection
+      this.currentMediaType = this.selection!
       this.customPopup = false
     })
     .backgroundColor(this.bgColor)
@@ -579,7 +577,7 @@ struct MediaTypeSelectionComponent {
   }
 
   checkSelectedColor() {
-    if (this.selection.name === this.currentMediaType.name) {
+    if (this.selection!.name === this.currentMediaType.name) {
       this.bgColor = $r('app.color.selected_color')
     } else {
       this.bgColor = $r('app.color.effect_color_white')
@@ -601,7 +599,7 @@ export struct QualitySelection {
           ListItem() {
             QualitySelectionComponent({ selection: select })
           }.key(`Selection_ListItem_${select.name}`)
-        }, select => select.name)
+        }, (select: SelectionModel) => select.name)
       }
       .width($r('app.float.select_comp_width'))
       .padding($r('app.float.select_comp_padding'))
@@ -671,19 +669,19 @@ struct QualitySelectionComponent {
   @Consume('CurrentQuality') currentQuality: SelectionModel;
   @Consume('QualityPopup') customPopup: boolean
   @State bgColor: Resource = $r('app.color.effect_color_white');
-  private selection: SelectionModel = undefined
+  private selection?: SelectionModel;
 
   build() {
     Row() {
-      Text(this.selection.res)
+      Text(this.selection!.res)
         .textAlign(TextAlign.Start)
         .fontSize($r('app.float.font_size_body2'))
         .margin({ left: $r('app.float.select_text_margin_left'), right: $r('app.float.select_text_margin_right') })
     }
-    .backgroundColor(this.selection.name === this.currentQuality.name ? $r('app.color.selected_color') : Color.White)
+    .backgroundColor(this.selection!.name === this.currentQuality.name ? $r('app.color.selected_color') : Color.White)
     .selectItemStyle()
     .onClick(() => {
-      this.currentQuality = this.selection
+      this.currentQuality = this.selection!
       this.customPopup = false
     })
     .backgroundColor(this.bgColor)
@@ -709,7 +707,7 @@ struct QualitySelectionComponent {
   }
 
   checkSelectedColor() {
-    if (this.selection.name === this.currentQuality.name) {
+    if (this.selection!.name === this.currentQuality.name) {
       this.bgColor = $r('app.color.selected_color')
     } else {
       this.bgColor = $r('app.color.effect_color_white')
@@ -731,7 +729,7 @@ export struct DuplexSelection {
           ListItem() {
             DuplexSelectionComponent({ selection: select })
           }.key(`Selection_ListItem_${select.name}`)
-        }, select => select.name)
+        }, (select: SelectionModel) => select.name)
       }
       .width($r('app.float.select_comp_width'))
       .padding($r('app.float.select_comp_padding'))
@@ -811,23 +809,23 @@ struct DuplexSelectionComponent {
   @Consume('NeedDuplex') needDuplex: boolean;
   @State bgColor: Resource = $r('app.color.effect_color_white');
   @State isSingle: boolean = true;
-  private selection: SelectionModel = undefined
+  private selection?: SelectionModel;
 
   build() {
     Row() {
       Image(this.getImage()).width(48).height(48).margin({right:16}).objectFit(ImageFit.Contain)
       Column(){
-        Text(SelectionModel.getSelectionValue<number>(this.selection.name) === Duplex.SINGLE?$r('app.string.DuplexMode_SINGLE'):$r('app.string.DuplexMode_DOUBLE'))
+        Text(SelectionModel.getSelectionValue<number>(this.selection!.name)! === Duplex.SINGLE?$r('app.string.DuplexMode_SINGLE'):$r('app.string.DuplexMode_DOUBLE'))
           .textAlign(TextAlign.Start)
           .fontSize($r('app.float.font_size_body1'))
           .fontColor('#E5000000')
-        Text(this.selection.res)
+        Text(this.selection!.res)
           .textAlign(TextAlign.Start)
           .fontSize($r('app.float.font_size_body2'))
           .fontColor('#99000000')
       }.alignItems(HorizontalAlign.Start)
     }
-    .backgroundColor(this.selection.name === this.currentDuplex.name ? $r('app.color.selected_color') : Color.White)
+    .backgroundColor(this.selection!.name === this.currentDuplex.name ? $r('app.color.selected_color') : Color.White)
     .width($r('app.float.select_item_width'))
     .height($r('app.float.duplex_select_item_height'))
     .justifyContent(FlexAlign.Start)
@@ -838,7 +836,7 @@ struct DuplexSelectionComponent {
     .enabled(this.isSingle||this.needDuplex)
     .opacity(this.isSingle||this.needDuplex?1:0.4)
     .onClick(() => {
-      this.currentDuplex = this.selection
+      this.currentDuplex = this.selection!
       this.customPopup = false
     })
     .backgroundColor(this.bgColor)
@@ -861,12 +859,12 @@ struct DuplexSelectionComponent {
 
   aboutToAppear() {
     Log.info(TAG,'DuplexSelectionComponent: ',JSON.stringify(this.currentDuplex))
-    this.isSingle = (SelectionModel.getSelectionValue<number>(this.selection.name) === Duplex.SINGLE);
+    this.isSingle = (SelectionModel.getSelectionValue<number>(this.selection!.name) === Duplex.SINGLE);
     this.checkSelectedColor()
   }
 
   checkSelectedColor() {
-    if (this.selection.name === this.currentDuplex.name) {
+    if (this.selection!.name === this.currentDuplex.name) {
       this.bgColor = $r('app.color.selected_color')
     } else {
       this.bgColor = $r('app.color.effect_color_white')
@@ -874,13 +872,13 @@ struct DuplexSelectionComponent {
   }
 
   getImage(){
-    Log.info(TAG,'getImage: ',this.selection.name)
+    Log.info(TAG,'getImage: ',this.selection!.name)
     let res = $r('app.media.ic_single');
-    if (SelectionModel.getSelectionValue<number>(this.selection.name) === Duplex.LONG) {
-      Log.info(TAG,'getImage: app.media.ic_long',this.selection.name)
+    if (SelectionModel.getSelectionValue<number>(this.selection!.name) === Duplex.LONG) {
+      Log.info(TAG,'getImage: app.media.ic_long',this.selection!.name)
       res = $r('app.media.ic_long')
-    } else if(SelectionModel.getSelectionValue<number>(this.selection.name) === Duplex.SHORT) {
-      Log.info(TAG,'getImage: app.media.ic_short',this.selection.name)
+    } else if(SelectionModel.getSelectionValue<number>(this.selection!.name) === Duplex.SHORT) {
+      Log.info(TAG,'getImage: app.media.ic_short',this.selection!.name)
       res = $r('app.media.ic_short')
     }
     return res

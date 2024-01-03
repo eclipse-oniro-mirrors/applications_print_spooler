@@ -13,13 +13,11 @@
  * limitations under the License.
  */
 
-// @ts-nocheck
 import print from '@ohos.print';
-import { Log } from '@ohos/common';
+import { Log, PrinterExtensionInfo } from '@ohos/common';
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper';
 import {AppStorageKeyName} from '@ohos/common';
 import {PrintExtensionModel} from '../Model/PrintExtensionModel';
-import { PrinterExtensionInfo } from '@ohos/common';
 
 const TAG = '[PrintExtensionController]:';
 

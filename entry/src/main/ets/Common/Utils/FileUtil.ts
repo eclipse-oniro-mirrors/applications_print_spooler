@@ -16,14 +16,11 @@
 import Fileio from '@ohos.file.fs';
 import image from '@ohos.multimedia.image';
 import type common from '@ohos.app.ability.common';
-import { Log } from '@ohos/common';
+import { Log, PageDirection } from '@ohos/common';
 import CheckEmptyUtils from '@ohos/common';
 import FileModel from '../../Model/FileModel';
-import { AppStorageKeyName, Constants } from '@ohos/common';
+import { Constants } from '@ohos/common';
 import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
-import FileAccess from '@ohos.file.fileAccess';
-import AppStorageHelper from '../Adapter/AppStorageHelper';
-import { StringUtil } from '@ohos/common';
 
 
 const FILE_SEPARATOR = '/';
@@ -151,8 +148,7 @@ export default class FileUtil {
     let imageArray: FileModel[] = new Array<FileModel>();
     if (CheckEmptyUtils.isEmptyArr(fileList)) {
       Log.error(TAG, 'fileList is empty');
-      // @ts-ignore
-      return <object[]> imageArray;
+      return imageArray;
     }
     for (let uri of fileList) {
       let uriArr = uri.split(FILE_SEPARATOR);
@@ -237,9 +233,8 @@ export default class FileUtil {
    * @param orientation
    */
   static async saveImageToJpeg(pixelMap: image.PixelMap, imagePath: string, orientation: number): Promise<void> {
-
     let imagePacker = image.createImagePacker();
-    let rotation = orientation === Constants.NUMBER_1 ? Constants.NUMBER_90 : Constants.NUMBER_0;
+    let rotation = orientation == PageDirection.LANDSCAPE ? Constants.NUMBER_90 : Constants.NUMBER_0;
     Log.info(TAG, `rotation: ${rotation}`);
     await pixelMap.rotate(rotation);
     Log.info(TAG, 'rotation end');

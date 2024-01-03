@@ -13,34 +13,36 @@
  * limitations under the License.
  */
 
-// @ts-nocheck
 import UIAbility from '@ohos.app.ability.UIAbility';
-import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
-import { MediaSizeUtil } from '@ohos/common';
+import { configMgr, GlobalThisHelper, GlobalThisStorageKey, MediaSizeHelper } from '@ohos/common';
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper';
 import { Log } from '@ohos/common';
-import { Constants, AppStorageKeyName, PreferencesKey, HiTraceEvent } from '@ohos/common';
+import { Constants, AppStorageKeyName, PreferencesKey } from '@ohos/common';
 import type common from '@ohos.app.ability.common';
 import PreferencesAdapter from '../Common/Adapter/PreferencesAdapter';
 import bundleManager from '@ohos.bundle.bundleManager';
+import PrintAdapter from '../Common/Adapter/PrintAdapter';
+import { Configuration } from '@ohos.app.ability.Configuration';
+import image from '@ohos.multimedia.image';
+import Want from '@ohos.app.ability.Want';
+import AbilityConstant from '@ohos.app.ability.AbilityConstant';
+import window from '@ohos.window';
 
 const TAG = '[MainAbility]:';
 
 export default class MainAbility extends UIAbility {
   private readonly PRIVACY_STATEMENT_STORE: string = 'privacyStatementStore';
-  onCreate(want, launchParam) {
+  private storage: LocalStorage = new LocalStorage();
+  onCreate(want: Want, launchParam: AbilityConstant.LaunchParam) {
     Log.info(TAG, 'onCreate: ' + JSON.stringify(want) + ' launchParam : ' + JSON.stringify(launchParam));
-    let jobId = want.parameters[Constants.WANT_JOB_ID_KEY];
-    let fileList = want.parameters[Constants.WANT_FILE_LIST_KEY];
-    let callerPid = want.parameters[Constants.WANT_CALLERPID_KEY];
-    let pkgName: string = want.parameters[Constants.WANT_PKG_NAME_KEY];
+    let jobId = want.parameters[Constants.WANT_JOB_ID_KEY] as string;
+    let fileList = want.parameters[Constants.WANT_FILE_LIST_KEY] as Array<string>;
+    let pkgName = want.parameters[Constants.WANT_PKG_NAME_KEY] as string;
     Log.info(TAG, 'fileList = ' + JSON.stringify(fileList));
     GlobalThisHelper.createValue<common.UIAbilityContext>(this.context, GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT, true);
-    MediaSizeUtil.initMediaSizeLabel()
-    this.context.eventHub.on(Constants.EVENT_GET_ABILITY_DATA, (data) => {
-      data.wantJobId = jobId;
-      data.wantFileList = fileList;
-    });
+    MediaSizeHelper.init(this.context);
+    this.storage.setOrCreate<string>(Constants.WANT_JOB_ID_KEY, jobId);
+    this.storage.setOrCreate<Array<string>>(Constants.WANT_FILE_LIST_KEY, fileList);
     this.context.resourceManager.getConfiguration((error, value) => {
       AppStorageHelper.createValue<string>(<string> value.locale, AppStorageKeyName.CONFIG_LANGUAGE);
     });
@@ -50,13 +52,14 @@ export default class MainAbility extends UIAbility {
       .then((bundleInfo) => {
         AppStorageHelper.createValue<string>(<string> bundleInfo.versionName, AppStorageKeyName.APP_VERSION);
       });
+    configMgr.onStart(this.context);
   }
 
   onDestroy() {
     Log.info(TAG, 'onDestroy');
   }
 
-  onWindowStageCreate(windowStage) {
+  onWindowStageCreate(windowStage: window.WindowStage) {
     // Main window is created, set main page for this ability
     Log.info(TAG, 'onWindowStageCreate');
 
@@ -69,9 +72,9 @@ export default class MainAbility extends UIAbility {
 
       Log.info(TAG, 'onWindowStageCreate flag: ' + JSON.stringify(flag));
       if (flag) {
-        windowStage.setUIContent(this.context, 'pages/PrivacyStatementPage', null);
+        windowStage.loadContent('pages/PrivacyStatementPage', this.storage);
       } else {
-        windowStage.setUIContent(this.context, 'pages/PrintPage', null);
+        windowStage.loadContent('pages/PrintPage', this.storage);
       }
     });
 
@@ -83,13 +86,14 @@ export default class MainAbility extends UIAbility {
     Log.info(TAG, 'onWindowStageDestroy');
     let adapter = GlobalThisHelper.getValue<PrintAdapter>(GlobalThisStorageKey.KEY_PRINT_ADAPTER);
     adapter.getPrinterDiscCtl().stopDiscovery('');
-    let pixelMap = GlobalThisHelper.getValue<PixelMap>(GlobalThisStorageKey.KEY_CURRENT_PIXELMAP);
+    let pixelMap = GlobalThisHelper.getValue<image.PixelMap>(GlobalThisStorageKey.KEY_CURRENT_PIXELMAP);
     if (pixelMap !== undefined) {
       pixelMap.release().then(() => {
-        Log.log(TAG, 'onWindowStageDestroy currentPixelMap release success');
+        Log.info(TAG, 'onWindowStageDestroy currentPixelMap release success');
       });
     }
-
+    this.storage.clear();
+    configMgr.onStop();
   }
 
   onConfigurationUpdated(config: Configuration): void {
@@ -107,7 +111,7 @@ export default class MainAbility extends UIAbility {
     Log.info(TAG, 'onBackground');
   }
 
-  async isFirstUsePrint(): boolean {
+  async isFirstUsePrint(): Promise<boolean> {
     Log.info(TAG, 'isFirstUsePrint start');
     const success = await PreferencesAdapter.getInstance().getOrCreatePreferencesSync(this.PRIVACY_STATEMENT_STORE);
     Log.info(TAG, 'isFirstUsePrint getOrCreatePreferencesSync success: ' + success);

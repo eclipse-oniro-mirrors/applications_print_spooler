@@ -14,8 +14,6 @@
  */
 
 import { PrinterDiscController } from '../../Controller/PrinterDiscController';
-import { PrintJobController } from '../../Controller/PrintJobController';
-import { PrintPreviewController } from '../../Controller/PrintPreviewController';
 import { PrintExtensionController } from '../../Controller/PrintExtensionController';
 import { Log } from '@ohos/common';
 import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
@@ -23,10 +21,8 @@ import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
 const TAG: string = '[PrintAdapter]:';
 
 export default class PrintAdapter {
-  private mPrinterDiscController: PrinterDiscController;
-  private mPrintJobController: PrintJobController;
-  private mPrintExtensionController: PrintExtensionController;
-  private mPrintPreviewController: PrintPreviewController;
+  private mPrinterDiscController?: PrinterDiscController;
+  private mPrintExtensionController?: PrintExtensionController;
 
   constructor() {
     this.init();
@@ -41,9 +37,6 @@ export default class PrintAdapter {
 
   init(): void {
     Log.info(TAG, 'PrintAdapter init');
-    this.mPrintPreviewController = new PrintPreviewController();
-    this.mPrintJobController = new PrintJobController();
-    this.mPrintJobController.init();
     this.mPrinterDiscController = new PrinterDiscController();
     this.mPrinterDiscController.init();
     this.mPrintExtensionController = new PrintExtensionController();
@@ -52,9 +45,6 @@ export default class PrintAdapter {
 
   public destroy(): void {
     Log.info(TAG, 'onDestroy');
-    if (this.mPrintJobController !== undefined) {
-      this.mPrintJobController.destroy();
-    }
     if (this.mPrinterDiscController !== undefined) {
       this.mPrinterDiscController.destroy();
     }
@@ -65,26 +55,8 @@ export default class PrintAdapter {
    *
    * @return DeviceDiscController
    */
-  public getPrinterDiscCtl(): PrinterDiscController {
+  public getPrinterDiscCtl(): PrinterDiscController | undefined {
     return this.mPrinterDiscController;
-  }
-
-  /**
-   * get print preview controller
-   *
-   * @return PrintPreviewController
-   */
-  public getPrintPreviewCtl(): PrintPreviewController {
-    return this.mPrintPreviewController;
-  }
-
-  /**
-   * get printJob controller
-   *
-   * @return PrintJobController
-   */
-  public getPrintJobCtl(): PrintJobController {
-    return this.mPrintJobController;
   }
 
   /**
@@ -92,7 +64,7 @@ export default class PrintAdapter {
    *
    * @return PrintExtensionController
    */
-  public getPrintExtensionCtl(): PrintExtensionController {
+  public getPrintExtensionCtl(): PrintExtensionController | undefined {
     return this.mPrintExtensionController;
   }
 }

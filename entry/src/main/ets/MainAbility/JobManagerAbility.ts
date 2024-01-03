@@ -13,46 +13,38 @@
  * limitations under the License.
  */
 
-// @ts-nocheck
 import UIAbility from '@ohos.app.ability.UIAbility';
 import { Log } from '@ohos/common';
 import type common from '@ohos.app.ability.common';
 import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
-import { Constants } from '@ohos/common';
+import { printJobMgr } from '../Controller/PrintJobManager';
+import Want from '@ohos.app.ability.Want';
+import AbilityConstant from '@ohos.app.ability.AbilityConstant';
+import window from '@ohos.window';
 
 const TAG = 'JobManagerAbility';
 
 export default class JobManagerAbility extends UIAbility {
-  onCreate(want, launchParam): void {
+  onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     Log.info(TAG, 'onCreate');
     GlobalThisHelper.createValue<common.UIAbilityContext>(this.context, GlobalThisStorageKey.KEY_JOB_MANAGER_ABILITY_CONTEXT, true);
-    let jobId = want.parameters[Constants.WANT_JOB_ID_KEY];
-    this.context.eventHub.on(Constants.EVENT_GET_ABILITY_DATA, (data) => {
-      data.wantJobId = jobId;
-    });
+    printJobMgr.onStart();
   }
 
   onDestroy(): void {
     Log.info(TAG, 'onDestroy');
   }
 
-  onWindowStageCreate(windowStage): void {
+  onWindowStageCreate(windowStage: window.WindowStage): void {
     // Main window is created, set main page for this ability
     Log.info(TAG, 'onWindowStageCreate');
-    // windowStage.getMainWindow().then((window) => {
-    //   window.resetSize(vp2px(Constants.MAIN_WINDOW_WIDTH), vp2px(Constants.MAIN_WINDOW_HEIGHT));
-    // }).catch((err) => {
-    //   Log.error(TAG, 'Failed to obtain the main window. Cause: ' + JSON.stringify(err));
-    // });
-
-    windowStage.setUIContent(this.context, 'pages/JobManagerPage', null);
+    windowStage.loadContent('pages/JobManagerPage');
   }
 
   onWindowStageDestroy(): void {
     // Main window is destroyed, release UI related resources
     Log.info(TAG, 'onWindowStageDestroy');
-    let adapter = GlobalThisHelper.getValue<PrintAdapter>(GlobalThisStorageKey.KEY_PRINT_ADAPTER);
-    adapter.destroy();
+    printJobMgr.onStop();
   }
 
   onForeground(): void {

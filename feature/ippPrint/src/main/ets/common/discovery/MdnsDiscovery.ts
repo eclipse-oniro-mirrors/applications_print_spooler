@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-// @ts-ignore
 import mdns from '@ohos.net.mdns';
 import DiscoveredPrinter from '../discovery/DiscoveredPrinter';
 import { Log } from '@ohos/common';
@@ -69,10 +68,8 @@ export class MdnsDiscovery extends Discovery {
       path === path.substring(1);
     }
     const uuid = MdnsDiscovery.getServiceAttribute(info, 'UUID');
-    Log.debug(TAG, 'uuid is: ' + uuid);
     const printerId = `mdns://${uuid}`;
     let printer: DiscoveredPrinter = new DiscoveredPrinter(<string>info.serviceName, printerId, 0, uuid);
-    Log.debug(TAG, 'host is: ' + JSON.stringify(info.host));
     printer.setUri(<string>info.host.address, <number>info.host.port, path);
     return printer;
   }

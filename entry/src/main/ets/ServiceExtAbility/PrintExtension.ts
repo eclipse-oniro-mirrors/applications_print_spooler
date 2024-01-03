@@ -15,7 +15,7 @@
 
 import type Want from '@ohos.application.Want';
 // @ts-ignore
-import PrintExtensionAbility from '@ohos.PrintExtension';
+import PrintExtensionAbility from '@ohos.app.ability.PrintExtensionAbility';
 import {LocalDiscoverySession} from '@ohos/ippprint';
 import { P2PDiscovery } from '@ohos/ippprint';
 import { P2PMonitor } from '@ohos/ippprint';
@@ -23,12 +23,13 @@ import { MdnsDiscovery } from '@ohos/ippprint';
 import {PrintServiceAdapter} from '@ohos/ippprint';
 import { Backend } from '@ohos/ippprint';
 import { CapabilitiesCache } from '@ohos/ippprint';
-import { Log } from '@ohos/common';
+import { Log, MediaSizeHelper } from '@ohos/common';
 import { WifiModel } from '@ohos/ippprint';
 import type { PrintJob } from '@ohos/common';
 import { SERVICE_IPP } from '@ohos/common';
 import { checkWifiEnable } from '@ohos/common';
 import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
+import print from '@ohos.print';
 
 const TAG = 'PrintExtension';
 
@@ -56,6 +57,8 @@ export default class PrintExtension extends PrintExtensionAbility {
     this.mPrintServiceAdapter.p2pMonitor = <P2PMonitor> new P2PMonitor();
     this.mPrintServiceAdapter.mdnsDiscovery = <MdnsDiscovery> new MdnsDiscovery(SERVICE_IPP);
     this.mPrintServiceAdapter.localDiscoverySession = <LocalDiscoverySession> new LocalDiscoverySession(this.mPrintServiceAdapter);
+    // @ts-ignore
+    MediaSizeHelper.init(this.context);
   }
 
   /**
@@ -89,11 +92,14 @@ export default class PrintExtension extends PrintExtensionAbility {
   /**
    * connect to printer
    */
-  onConnectPrinter(printerId: string): void {
+  onConnectPrinter(printerId: string | number): void {
     Log.info(TAG, 'onConnectPrinter enter');
     if (printerId === undefined || printerId === null) {
       Log.error(TAG, 'printerId is undefined');
       return;
+    }
+    if (typeof printerId === 'number') {
+      printerId = printerId.toString();
     }
     if (this.mLocalDiscoverySession === undefined) {
       Log.error(TAG, 'mLocalDiscoverySession is undefined');
@@ -105,11 +111,14 @@ export default class PrintExtension extends PrintExtensionAbility {
   /**
    * disconnect to printer
    */
-  onDisconnectPrinter(printerId: string): void {
+  onDisconnectPrinter(printerId: string | number): void {
     Log.info(TAG, 'onDisconnectPrinter enter');
     if (printerId === undefined || printerId === null) {
       Log.error(TAG, 'printerId is undefined');
       return;
+    }
+    if (typeof printerId === 'number') {
+      printerId = printerId.toString();
     }
     if (this.mLocalDiscoverySession === undefined) {
       Log.error(TAG, 'mLocalDiscoverySession is undefined');
@@ -142,11 +151,14 @@ export default class PrintExtension extends PrintExtensionAbility {
    *
    * @param printerId
    */
-  onRequestPrinterCapability(printerId: string): void {
+  onRequestPrinterCapability(printerId: string | number): print.PrinterCapability {
     Log.info(TAG, 'onRequestPrinterCapability enter');
     if (printerId === undefined || printerId === null) {
       Log.error(TAG, 'printerId is undefined');
       return;
+    }
+    if (typeof printerId === 'number') {
+      printerId = printerId.toString();
     }
     if (this.mLocalDiscoverySession === undefined) {
       Log.error(TAG, 'mLocalDiscoverySession is undefined');

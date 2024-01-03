@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+import type common from '@ohos.app.ability.common';
 import { StringUtil } from '../utils/StringUtil';
 const ISO_A3_WIDTH: number = 11690;
 const ISO_A3_HEIGHT: number = 16540;
@@ -119,67 +120,6 @@ export class MediaSize {
   private static readonly MILS_PER_INCH:number = 1000;
   public static readonly THREE_HUNDRED_DPI: number = 300;
 
-  public static readonly ISO_A3: MediaSize = new MediaSize(MediaSizeCode.ISO_A3.toString(),
-    'iso_a3_297x420mm', 'A3', ISO_A3_WIDTH, ISO_A3_HEIGHT, ISO_A3_WIDTH_MM, ISO_A3_HEIGHT_MM);
-  public static readonly ISO_A4: MediaSize = new MediaSize(MediaSizeCode.ISO_A4.toString(),
-    'iso_a4_210x297mm', 'A4', ISO_A4_WIDTH, ISO_A4_HEIGHT, ISO_A4_WIDTH_MM, ISO_A4_HEIGHT_MM);
-  public static readonly ISO_A5: MediaSize = new MediaSize(MediaSizeCode.ISO_A5.toString(),
-    'iso_a5_148x210mm', 'A5', ISO_A5_WIDTH, ISO_A5_HEIGHT, ISO_A5_WIDTH_MM, ISO_A5_HEIGHT_MM);
-  public static readonly ISO_C5: MediaSize = new MediaSize(MediaSizeCode.ISO_C5.toString(),
-    'iso_c5_162x229mm', StringUtil.getString('ISO_C5'), ISO_C5_WIDTH, ISO_C5_HEIGHT, ISO_C5_WIDTH_MM, ISO_C5_HEIGHT_MM);
-  public static readonly ISO_DL: MediaSize = new MediaSize(MediaSizeCode.ISO_DL.toString(),
-    'iso_dl_110x220mm', StringUtil.getString('ISO_DL'), ISO_DL_WIDTH, ISO_DL_HEIGHT, ISO_DL_WIDTH_MM, ISO_DL_HEIGHT_MM);
-  public static readonly LEGAL: MediaSize = new MediaSize(MediaSizeCode.US_LEGAL.toString(),
-    'na_legal_8.5x14in', 'Legal', LEGAL_WIDTH, LEGAL_HEIGHT, LEGAL_WIDTH_MM, LEGAL_HEIGHT_MM);
-  public static readonly LETTER: MediaSize = new MediaSize(MediaSizeCode.US_LETTER.toString(),
-    'na_letter_8.5x11in', 'Letter', LETTER_WIDTH, LETTER_HEIGHT, LETTER_WIDTH_MM, LETTER_HEIGHT_MM);
-  public static readonly JIS_B5: MediaSize = new MediaSize(MediaSizeCode.JIS_B5.toString(),
-    'jis_b5_182x257mm', 'B5', JIS_B5_WIDTH, JIS_B5_HEIGHT, JIS_B5_WIDTH_MM, JIS_B5_HEIGHT_MM);
-  public static readonly JIS_B4: MediaSize = new MediaSize(MediaSizeCode.JIS_B4.toString(),
-    'jis_b4_257x364mm', 'B4', JIS_B4_WIDTH, JIS_B4_HEIGHT, JIS_B4_WIDTH_MM, JIS_B4_HEIGHT_MM);
-  public static readonly PHOTO_5x7: MediaSize = new MediaSize(MediaSizeCode.INDEX_CARD_5X7.toString(),
-    'na_5x7_5x7in', StringUtil.getString('PHOTO_5x7'), PHOTO_5R_WIDTH, PHOTO_5R_HEIGHT, PHOTO_5R_WIDTH_MM, PHOTO_5R_HEIGHT_MM);
-  public static readonly PHOTO_4x6: MediaSize = new MediaSize(MediaSizeCode.INDEX_CARD_4X6.toString(),
-    'na_index-4x6_4x6in', StringUtil.getString('PHOTO_4x6'), PHOTO_4R_WIDTH, PHOTO_4R_HEIGHT, PHOTO_4R_WIDTH_MM, PHOTO_4R_HEIGHT_MM);
-  public static readonly NA_GOVT_LETTER: MediaSize = new MediaSize(MediaSizeCode.US_GOVERNMENT_LETTER.toString(),
-    'na_govt-letter_8x10in', 'NA_GOVT_LETTER', NA_GOVT_LETTER_8IN_WIDTH, NA_GOVT_LETTER_8IN_HEIGHT, NA_GOVT_LETTER_8IN_WIDTH_MM, NA_GOVT_LETTER_8IN_HEIGHT_MM);
-  public static readonly NA_LEDGER_11X17: MediaSize = new MediaSize(MediaSizeCode.LEDGER.toString(),
-    'na_ledger_11x17in', 'Ledger', NA_LEDGER_11IN_WIDTH, NA_LEDGER_11IN_HEIGHT, NA_LEDGER_11IN_WIDTH_MM, NA_LEDGER_11IN_HEIGHT_MM);
-  public static readonly JPN_HAGAKI: MediaSize = new MediaSize(MediaSizeCode.JPN_HAGAKI_PC.toString(),
-    'jpn_hagaki_100x148mm', 'JPN_HAGAKI', JPN_HAGAKI_WIDTH, JPN_HAGAKI_HEIGHT, JPN_HAGAKI_WIDTH_MM, JPN_HAGAKI_HEIGHT_MM);
-  public static readonly OM_DSC_PHOTO: MediaSize = new MediaSize(MediaSizeCode.PHOTO_89X119.toString(),
-    'om_dsc-photo_89x119mm', 'OM_DSC_PHOTO', OM_SDC_PHOTO_WIDTH, OM_SDC_PHOTO_HEIGHT, OM_SDC_PHOTO_WIDTH_MM, OM_SDC_PHOTO_HEIGHT_MM);
-  public static readonly OM_CARD: MediaSize = new MediaSize(MediaSizeCode.CARD_54X86.toString(),
-    'om_card_54x86mm', 'OM_CARD', OM_CARD_WIDTH, OM_CARD_HEIGHT, OM_CARD_WIDTH_MM, OM_CARD_HEIGHT_MM);
-  public static readonly OE_PHOTO_L: MediaSize = new MediaSize(MediaSizeCode.OE_PHOTO_L.toString(),
-    'oe_photo-l_3.5x5in', 'OE_PHOTO_L', OE_PHOTO_L_WIDTH, OE_PHOTO_L_HEIGHT, OE_PHOTO_L_WIDTH_MM, OE_PHOTO_L_HEIGHT_MM);
-  public static readonly INT_DL_ENVELOPE: MediaSize = new MediaSize(MediaSizeCode.INT_DL_ENVELOPE.toString(),
-    "INT_DL_ENVELOPE", "Envelope", INT_DL_ENVELOPE_WIDTH, INT_DL_ENVELOPE_HEIGHT, INT_DL_ENVELOPE_WIDTH_MM, INT_DL_ENVELOPE_HEIGHT_MM);
-  public static readonly B_TABLOID: MediaSize = new MediaSize(MediaSizeCode.B_TABLOID.toString(),
-    "B_TABLOID", "Tabloid", B_TABLOID_L_WIDTH, B_TABLOID_L_HEIGHT, B_TABLOID_L_WIDTH_MM, B_TABLOID_L_HEIGHT_MM);
-
-  public static readonly sCodeToStringMap: Map<number, MediaSize> = new Map([
-    [MediaSizeCode.US_LETTER, MediaSize.LETTER],
-    [MediaSizeCode.US_LEGAL, MediaSize.LEGAL],
-    [MediaSizeCode.US_GOVERNMENT_LETTER, MediaSize.NA_GOVT_LETTER],
-    [MediaSizeCode.LEDGER, MediaSize.NA_LEDGER_11X17],
-    [MediaSizeCode.ISO_A5, MediaSize.ISO_A5],
-    [MediaSizeCode.ISO_A4, MediaSize.ISO_A4],
-    [MediaSizeCode.ISO_A3, MediaSize.ISO_A3],
-    [MediaSizeCode.JIS_B5, MediaSize.JIS_B5],
-    [MediaSizeCode.JIS_B4, MediaSize.JIS_B4],
-    [MediaSizeCode.JPN_HAGAKI_PC, MediaSize.JPN_HAGAKI],
-    [MediaSizeCode.INDEX_CARD_4X6, MediaSize.PHOTO_4x6],
-    [MediaSizeCode.INDEX_CARD_5X7, MediaSize.PHOTO_5x7],
-    [MediaSizeCode.ISO_C5, MediaSize.ISO_C5],
-    [MediaSizeCode.ISO_DL, MediaSize.ISO_DL],
-    [MediaSizeCode.PHOTO_89X119, MediaSize.OM_DSC_PHOTO],
-    [MediaSizeCode.CARD_54X86, MediaSize.OM_CARD],
-    [MediaSizeCode.OE_PHOTO_L, MediaSize.OE_PHOTO_L],
-    [MediaSizeCode.INT_DL_ENVELOPE, MediaSize.INT_DL_ENVELOPE],
-    [MediaSizeCode.B_TABLOID, MediaSize.B_TABLOID]
-  ]);
-
   private _id: string;
   private _name: string;
   private _label: string;
@@ -188,18 +128,19 @@ export class MediaSize {
   private _realWidth: number;
   private _realHeight: number;
 
-  constructor(id: string, name: string, label: string, widthMils: number, heightMils: number, realWidth: number, realHeight: number) {
+  constructor(id: string, name: string, label: string, widthMils: number, heightMils: number, realWidth: number, realHeight: number,
+              context: common.Context) {
     this._id = id;
     this._name = name;
     this._widthMils = widthMils;
     this._heightMils = heightMils;
     this._realWidth = realWidth;
     this._realHeight = realHeight;
-    this._label = MediaSize.getLabel(label,realWidth,realHeight)
+    this._label = MediaSize.getLabel(label, realWidth, realHeight, context)
   }
 
-  public static getLabel(label: string, realWidth: number, realHeight: number): string {
-    return label+' '+StringUtil.getString('media_size_suffix',realWidth,realHeight)
+  public static getLabel(label: string, realWidth: number, realHeight: number, context: common.Context): string {
+    return label+' '+StringUtil.getStringByName('media_size_suffix', context, realWidth,realHeight)
   }
 
   get id(): string {
@@ -274,5 +215,92 @@ export class Size {
 
   get height(): number {
     return this._height;
+  }
+}
+
+export class MediaSizeHelper {
+  public static ISO_A3: MediaSize;
+  public static ISO_A4: MediaSize;
+  public static ISO_A5: MediaSize;
+  public static ISO_C5: MediaSize;
+  public static ISO_DL: MediaSize;
+  public static LEGAL: MediaSize;
+  public static LETTER: MediaSize;
+  public static JIS_B5: MediaSize;
+  public static JIS_B4: MediaSize;
+  public static PHOTO_5x7: MediaSize;
+  public static PHOTO_4x6: MediaSize;
+  public static NA_GOVT_LETTER: MediaSize;
+  public static NA_LEDGER_11X17: MediaSize;
+  public static JPN_HAGAKI: MediaSize;
+  public static OM_DSC_PHOTO: MediaSize;
+  public static OM_CARD: MediaSize;
+  public static OE_PHOTO_L: MediaSize;
+  public static INT_DL_ENVELOPE: MediaSize;
+  public static B_TABLOID: MediaSize;
+
+  public static readonly sCodeToStringMap: Map<number, MediaSize> = new Map();
+  private constructor() {
+  }
+
+  static init(context: common.Context): void {
+    MediaSizeHelper.ISO_A3 = new MediaSize(MediaSizeCode.ISO_A3.toString(), 'iso_a3_297x420mm', 'A3', ISO_A3_WIDTH, ISO_A3_HEIGHT,
+      ISO_A3_WIDTH_MM, ISO_A3_HEIGHT_MM, context);
+    MediaSizeHelper.ISO_A4 = new MediaSize(MediaSizeCode.ISO_A4.toString(), 'iso_a4_210x297mm', 'A4', ISO_A4_WIDTH, ISO_A4_HEIGHT,
+      ISO_A4_WIDTH_MM, ISO_A4_HEIGHT_MM, context);
+    MediaSizeHelper.ISO_A5 = new MediaSize(MediaSizeCode.ISO_A5.toString(), 'iso_a5_148x210mm', 'A5', ISO_A5_WIDTH, ISO_A5_HEIGHT,
+      ISO_A5_WIDTH_MM, ISO_A5_HEIGHT_MM, context);
+    MediaSizeHelper.ISO_C5 = new MediaSize(MediaSizeCode.ISO_C5.toString(), 'iso_c5_162x229mm', StringUtil.getStringByName('ISO_C5', context),
+      ISO_C5_WIDTH, ISO_C5_HEIGHT, ISO_C5_WIDTH_MM, ISO_C5_HEIGHT_MM, context);
+    MediaSizeHelper.ISO_DL = new MediaSize(MediaSizeCode.ISO_DL.toString(), 'iso_dl_110x220mm', StringUtil.getStringByName('ISO_DL', context),
+      ISO_DL_WIDTH, ISO_DL_HEIGHT, ISO_DL_WIDTH_MM, ISO_DL_HEIGHT_MM, context);
+    MediaSizeHelper.LEGAL = new MediaSize(MediaSizeCode.US_LEGAL.toString(), 'na_legal_8.5x14in', 'Legal', LEGAL_WIDTH, LEGAL_HEIGHT,
+      LEGAL_WIDTH_MM, LEGAL_HEIGHT_MM, context);
+    MediaSizeHelper.LETTER = new MediaSize(MediaSizeCode.US_LETTER.toString(), 'na_letter_8.5x11in', 'Letter', LETTER_WIDTH, LETTER_HEIGHT,
+      LETTER_WIDTH_MM, LETTER_HEIGHT_MM, context);
+    MediaSizeHelper.JIS_B5 = new MediaSize(MediaSizeCode.JIS_B5.toString(), 'jis_b5_182x257mm', 'B5', JIS_B5_WIDTH, JIS_B5_HEIGHT,
+      JIS_B5_WIDTH_MM, JIS_B5_HEIGHT_MM, context);
+    MediaSizeHelper.JIS_B4 = new MediaSize(MediaSizeCode.JIS_B4.toString(), 'jis_b4_257x364mm', 'B4', JIS_B4_WIDTH, JIS_B4_HEIGHT,
+      JIS_B4_WIDTH_MM, JIS_B4_HEIGHT_MM, context);
+    MediaSizeHelper.PHOTO_5x7 = new MediaSize(MediaSizeCode.INDEX_CARD_5X7.toString(), 'na_5x7_5x7in', StringUtil.getStringByName('PHOTO_5x7', context),
+      PHOTO_5R_WIDTH, PHOTO_5R_HEIGHT, PHOTO_5R_WIDTH_MM, PHOTO_5R_HEIGHT_MM, context);
+    MediaSizeHelper.PHOTO_4x6 = new MediaSize(MediaSizeCode.INDEX_CARD_4X6.toString(), 'na_index-4x6_4x6in', StringUtil.getStringByName('PHOTO_4x6', context),
+      PHOTO_4R_WIDTH, PHOTO_4R_HEIGHT, PHOTO_4R_WIDTH_MM, PHOTO_4R_HEIGHT_MM, context);
+    MediaSizeHelper.NA_GOVT_LETTER = new MediaSize(MediaSizeCode.US_GOVERNMENT_LETTER.toString(), 'na_govt-letter_8x10in',
+      'NA_GOVT_LETTER', NA_GOVT_LETTER_8IN_WIDTH, NA_GOVT_LETTER_8IN_HEIGHT, NA_GOVT_LETTER_8IN_WIDTH_MM, NA_GOVT_LETTER_8IN_HEIGHT_MM, context);
+    MediaSizeHelper.NA_LEDGER_11X17 = new MediaSize(MediaSizeCode.LEDGER.toString(), 'na_ledger_11x17in', 'Ledger', NA_LEDGER_11IN_WIDTH,
+      NA_LEDGER_11IN_HEIGHT, NA_LEDGER_11IN_WIDTH_MM, NA_LEDGER_11IN_HEIGHT_MM, context);
+    MediaSizeHelper.JPN_HAGAKI = new MediaSize(MediaSizeCode.JPN_HAGAKI_PC.toString(), 'jpn_hagaki_100x148mm', 'JPN_HAGAKI',
+      JPN_HAGAKI_WIDTH, JPN_HAGAKI_HEIGHT, JPN_HAGAKI_WIDTH_MM, JPN_HAGAKI_HEIGHT_MM, context);
+    MediaSizeHelper.OM_DSC_PHOTO = new MediaSize(MediaSizeCode.PHOTO_89X119.toString(), 'om_dsc-photo_89x119mm', 'OM_DSC_PHOTO',
+      OM_SDC_PHOTO_WIDTH, OM_SDC_PHOTO_HEIGHT, OM_SDC_PHOTO_WIDTH_MM, OM_SDC_PHOTO_HEIGHT_MM, context);
+    MediaSizeHelper.OM_CARD = new MediaSize(MediaSizeCode.CARD_54X86.toString(), 'om_card_54x86mm', 'OM_CARD', OM_CARD_WIDTH,
+      OM_CARD_HEIGHT, OM_CARD_WIDTH_MM, OM_CARD_HEIGHT_MM, context);
+    MediaSizeHelper.OE_PHOTO_L = new MediaSize(MediaSizeCode.OE_PHOTO_L.toString(), 'oe_photo-l_3.5x5in', 'OE_PHOTO_L',
+      OE_PHOTO_L_WIDTH, OE_PHOTO_L_HEIGHT, OE_PHOTO_L_WIDTH_MM, OE_PHOTO_L_HEIGHT_MM, context);
+    MediaSizeHelper.INT_DL_ENVELOPE = new MediaSize(MediaSizeCode.INT_DL_ENVELOPE.toString(), 'INT_DL_ENVELOPE', 'Envelope',
+      INT_DL_ENVELOPE_WIDTH, INT_DL_ENVELOPE_HEIGHT, INT_DL_ENVELOPE_WIDTH_MM, INT_DL_ENVELOPE_HEIGHT_MM, context)
+    MediaSizeHelper.B_TABLOID = new MediaSize(MediaSizeCode.B_TABLOID.toString(), 'B_TABLOID', 'Tabloid', B_TABLOID_L_WIDTH,
+      B_TABLOID_L_HEIGHT, B_TABLOID_L_WIDTH_MM, B_TABLOID_L_HEIGHT_MM, context);
+
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.US_LETTER, MediaSizeHelper.LETTER);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.US_LEGAL, MediaSizeHelper.LEGAL);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.US_GOVERNMENT_LETTER, MediaSizeHelper.NA_GOVT_LETTER);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.LEDGER, MediaSizeHelper.NA_LEDGER_11X17);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.ISO_A5, MediaSizeHelper.ISO_A5);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.ISO_A4, MediaSizeHelper.ISO_A4);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.ISO_A3, MediaSizeHelper.ISO_A3);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.JIS_B5, MediaSizeHelper.JIS_B5);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.JIS_B4, MediaSizeHelper.JIS_B4);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.JPN_HAGAKI_PC, MediaSizeHelper.JPN_HAGAKI);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.INDEX_CARD_4X6, MediaSizeHelper.PHOTO_4x6);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.INDEX_CARD_5X7, MediaSizeHelper.PHOTO_5x7);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.ISO_C5, MediaSizeHelper.ISO_C5);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.ISO_DL, MediaSizeHelper.ISO_DL);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.PHOTO_89X119, MediaSizeHelper.OM_DSC_PHOTO);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.CARD_54X86, MediaSizeHelper.OM_CARD);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.OE_PHOTO_L, MediaSizeHelper.OE_PHOTO_L);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.INT_DL_ENVELOPE, MediaSizeHelper.INT_DL_ENVELOPE);
+    MediaSizeHelper.sCodeToStringMap.set(MediaSizeCode.B_TABLOID, MediaSizeHelper.B_TABLOID);
   }
 }

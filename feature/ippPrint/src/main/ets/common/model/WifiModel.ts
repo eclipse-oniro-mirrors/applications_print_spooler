@@ -15,7 +15,6 @@
 
 import wifi from '@ohos.wifi';
 import { Log } from '@ohos/common';
-// @ts-ignore
 import print from '@ohos.print';
 import { P2P_SERVICE_ERROR } from '@ohos/common';
 import CommonEventManager from '@ohos.commonEventManager';

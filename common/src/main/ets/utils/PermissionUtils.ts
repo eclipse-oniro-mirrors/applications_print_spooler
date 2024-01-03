@@ -13,11 +13,8 @@
  * limitations under the License.
  */
 
-// @ts-ignore
 import print from '@ohos.print';
-import wifi from '@ohos.wifi';
-import abilityAccessCtrl from '@ohos.abilityAccessCtrl';
-import bundleManager from '@ohos.bundle.bundleManager';
+import wifi from '@ohos.wifiManager';
 import { Log } from './Log';
 import { WIFI_INACTIVE } from '../model/ErrorMessage';
 

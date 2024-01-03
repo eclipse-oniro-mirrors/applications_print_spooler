@@ -15,7 +15,7 @@
 
 import wifi from '@ohos.wifi';
 import P2PUtils from './utils/P2pUtils';
-import CheckEmptyUtils, { Log, PrinterCapability, PrinterInfo, PrinterState, IPP_CONNECT_ERROR } from '@ohos/common';
+import CheckEmptyUtils, { Log, PrinterCapability, PrinterInfo, IPP_CONNECT_ERROR } from '@ohos/common';
 import type { PrintServiceAdapter } from './PrintServiceAdapter';
 import type { LocalDiscoverySession } from './LocalDiscoverySession';
 import type DiscoveredPrinter from './discovery/DiscoveredPrinter';
@@ -23,7 +23,6 @@ import LocalPrinterCapabilities from './napi/LocalPrinterCapabilities';
 import type ConnectionListener from './connect/ConnectionListener';
 import P2PPrinterConnection from './connect/P2pPrinterConnection';
 import type { CapabilitiesCache, OnLocalPrinterCapabilities } from './ipp/CapabilitiesCache';
-// @ts-ignore
 import print from '@ohos.print';
 
 const TAG = 'LocalPrinter';
@@ -73,10 +72,7 @@ export default class LocalPrinter implements ConnectionListener, OnLocalPrinterC
    */
   createPrinterInfo(): PrinterInfo {
     //创建PrinterInfo对象 返回给打印框架
-    let printerInfo: PrinterInfo = new PrinterInfo();
-    printerInfo.printerId = this.mPrinterId;
-    printerInfo.printerName = this.mDiscoveredPrinter.getDeviceName();
-    printerInfo.printerState = PrinterState.PRINTER_ADDED;
+    let printerInfo: PrinterInfo = new PrinterInfo(this.mPrinterId, this.mDiscoveredPrinter.getDeviceName(), print.PrinterState.PRINTER_ADDED);
     if (!CheckEmptyUtils.isEmpty(this.mCapabilities)) {
       let printerCapability: PrinterCapability = new PrinterCapability();
       LocalPrinterCapabilities.buildPrinterCapability(printerCapability, this.mCapabilities);
@@ -85,7 +81,7 @@ export default class LocalPrinter implements ConnectionListener, OnLocalPrinterC
       LocalPrinter.descriptionSplit +
       this.mDiscoveredPrinter.getUri().host;
       let options: string = LocalPrinterCapabilities.buildExtraCaps(this.mCapabilities, this.mDiscoveredPrinter.getUri().toString());
-      printerInfo.option = options;
+      printerInfo.options = options;
     }
     return printerInfo;
   }
@@ -226,8 +222,7 @@ export default class LocalPrinter implements ConnectionListener, OnLocalPrinterC
     this.mP2pPrinterConnection = undefined;
     // 通知打印框架连接失败
     Log.error(TAG, 'connect delay');
-    // @ts-ignore
-    print.updatePrinterState(this.mPrinterId, PrinterState.PRINTER_DISCONNECTED);
+    print.updatePrinterState(this.mPrinterId, print.PrinterState.PRINTER_DISCONNECTED);
     this.mSession.removeConnectedId(this.mPrinterId);
   }
 }
