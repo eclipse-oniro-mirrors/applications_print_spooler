@@ -97,7 +97,7 @@ PrintSpooler应用是OpenHarmony中预置的系统应用，为用户提供打印
 - 动态变量imageSorce数组更新时，触发handleImage，调用parseImageSize，
 - fdToPixelMap生成pixelMap更新this.currentPixelMap，Image组件显示图片
 - 彩色、无边距等设置项使用组件属性完成动态刷新；
-- 其他设置项变化事件中调用parseImageSize调整或重新加载图片。
+- 其它设置项变化事件中调用parseImageSize调整或重新加载图片。
   ```
   @Link @Watch('handleImage')  imageSources: Array<FileModel>
   @State currentPixelMap: PixelMap = undefined;
@@ -354,7 +354,7 @@ hdc shell
 reboot
 （不可以直接执行hdc reboot，命令是无效的)
 ```
-> 注意，如果设备之前安装过系统应用，则需要执行如下两条命令清除设备中存储的应用信息才能够在设备重启的时候将我们装入设备的新 hap 包正常拉起。
+> 注意，如果设备之前安装过系统应用，则需要执行如下两条命令清除设备中存储的应用信息才能够在设备重启的时候将其装入设备的新 hap 包正常拉起。
 > ```
 > hdc  shell rm -rf  /data/misc_de/0/mdds/0/default/bundle_manager_service
 > hdc  shell rm -rf  /data/accounts
@@ -401,7 +401,7 @@ hilog │ grep Label
 3. Fork 成功之后，会在自己的账号下看见 fork 的代码仓库。
 
 ### 提交代码
-1. 访问我们自己在码云账号上 fork 的代码仓库，点击“克隆/下载”按钮，选择 SSH/HTTPS，点击“复制”按钮。
+1. 访问开发者在码云账号上 fork 的代码仓库，点击“克隆/下载”按钮，选择 SSH/HTTPS，点击“复制”按钮。
 
 2. 在本地新建 PrintSpooler 目录，在 PrintSpooler 目录中执行如下命令
    ```
@@ -412,11 +412,11 @@ hilog │ grep Label
 
    > 将代码引入工程，以及编译工程等相关内容请参见 **3. 代码使用** 部分的相关内容。
 4. 提交代码到 fork 仓库。
-   > 修改后的代码，首先执行 `git add` 命令，然后执行 `git commit` 命令与 `git push` 命令，将代码 push 到我们自己的 fork 仓中。
+   > 修改后的代码，首先执行 `git add` 命令，然后执行 `git commit` 命令与 `git push` 命令，将代码 push 到开发者的 fork 仓中。
    > 关于代码提交的这部分内容涉及 git 的使用，可以参照 [git官网](https://git-scm.com/) 的内容，在此不再赘述。
 
 ### 发起 Pull Request (PR)
-在将代码提交到 fork 仓之后，我们可以通过发起 Pull Request（PR）的方式来为 OpenHarmony 的相关项目贡献代码。
+在将代码提交到 fork 仓之后，开发者可以通过发起 Pull Request（PR）的方式来为 OpenHarmony 的相关项目贡献代码。
 
 1. 打开 fork 仓库。选择 `Pull Requests` → `新建 Pull Request`
 
