@@ -37,7 +37,8 @@ struct PrivacyStatementPage {
   })
 
   aboutToAppear() {
-    this.abilityContext = GlobalThisHelper.getValue<common.UIAbilityContext>(GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT)
+    this.abilityContext = GlobalThisHelper.getValue<common.UIAbilityContext>(
+      GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT)
   }
 
   build() {
@@ -46,7 +47,7 @@ struct PrivacyStatementPage {
         Column() {
           Image($r('app.media.logo'))
             .width($r('app.float.privacy_statement_print_log_width_height'))
-            .height($r("app.float.privacy_statement_print_log_width_height"))
+            .height($r('app.float.privacy_statement_print_log_width_height'))
             .margin({top: $r('app.float.print_log_margin_top')})
           Text($r('app.string.welcome'))
             .margin({ top: $r('app.float.privacy_statement_text_relative_img_margin_top')})
@@ -117,7 +118,7 @@ struct PrivacyStatementPage {
                 this.abilityContext?.terminateSelf();
               }
             })
-            .margin({right: $r('app.float.privacy_statement_button_space')})
+              .margin({right: $r('app.float.privacy_statement_button_space')})
             Button($r('app.string.Agree'))
               .onClick(() => {
                 this.agreePrivacyStatement();
@@ -127,8 +128,8 @@ struct PrivacyStatementPage {
               .height($r('app.float.privacy_statement_button_height'))
           }
           .margin({
-              top: $r('app.float.privacy_statement_button_to_text_margin_top'),
-              bottom: $r('app.float.privacy_statement_button_margin_bottom'),
+            top: $r('app.float.privacy_statement_button_to_text_margin_top'),
+            bottom: $r('app.float.privacy_statement_button_margin_bottom'),
           })
         }
       }
@@ -138,22 +139,23 @@ struct PrivacyStatementPage {
   }
 
   async agreePrivacyStatement() {
-    Log.info(TAG, "agreePrivacyStatement");
+    Log.info(TAG, 'agreePrivacyStatement');
     PreferencesAdapter.getInstance().getOrCreatePreferencesSync(this.PRIVACY_STATEMENT_STORE).then((successGet) => {
       Log.info(TAG, 'agreePrivacyStatement getOrCreatePreferencesSync successGet: ' + successGet);
       if (successGet) {
-        PreferencesAdapter.getInstance().putValue(PreferencesKey.KEY_PRIVACY_STATEMENT_PREFERENCES, true).then((successPut) => {
-          Log.info(TAG, 'agreePrivacyStatement putValue successPut: ' + successPut);
-          if (successPut) {
-            PreferencesAdapter.getInstance().flush();
-          }
-        })
+        PreferencesAdapter.getInstance().putValue(PreferencesKey.KEY_PRIVACY_STATEMENT_PREFERENCES, true)
+          .then((successPut) => {
+            Log.info(TAG, 'agreePrivacyStatement putValue successPut: ' + successPut);
+            if (successPut) {
+              PreferencesAdapter.getInstance().flush();
+            }
+          })
       }
     });
   }
 
   private getPrivacyStatementText() : Array<string> {
-    let privacyStatementTextList = new Array<string>();
+    let privacyStatementTextList: string[] = [];
     if (CheckEmptyUtils.isEmpty(this.abilityContext)) {
       Log.warn(TAG, 'getPrivacyStatementText abilityContext is invalid.');
       return privacyStatementTextList;

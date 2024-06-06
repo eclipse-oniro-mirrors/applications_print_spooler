@@ -24,7 +24,7 @@ const TAG = '[JobManagerPage]'
 @Component
 struct JobManagerPage {
   @Provide('Context') abilityContext : common.UIAbilityContext | undefined = undefined;
-  @State uiJobQueue: Array<PrintJobItem> = new Array<PrintJobItem>();
+  @State uiJobQueue: PrintJobItem[] = [];
   @State tips: ShowTips = new ShowTips();
   private viewModel: PrintJobViewModel = printJobMgrVM;
   private delayCloseTimer: number = -1;
@@ -47,26 +47,26 @@ struct JobManagerPage {
       .width($r('app.float.print_job_comp_width'))
       .height($r('app.float.print_job_title_height'))
       .margin({left:$r('app.float.print_job_margin_left'),right:$r('app.float.print_job_margin_right')})
-        Row(){
-          Image($r('app.media.ic_printer_tips')).key('JobManagerPage_Image_printerTips')
-            .width($r('app.float.image_comp_width'))
-            .height($r('app.float.image_comp_height'))
-            .margin({right:$r('app.float.print_job_tips_image_margin_right')})
-          Text(StringUtil.getStringByName(this.tips.showTipsText, this.abilityContext)).key('JobManagerPage_Text_blockedReason')
-            .fontSize($r('app.float.font_size_body2'))
-            .fontColor(this.tips.fontColor)
-            .fontWeight(FontWeight.Regular)
-        }
-        .width($r('app.float.print_job_comp_width'))
-        .margin({left:$r('app.float.print_job_margin_left'),right:$r('app.float.print_job_margin_right')})
-        .visibility(this.tips.isShowTips?Visibility.Visible:Visibility.None)
+      Row(){
+        Image($r('app.media.ic_printer_tips')).key('JobManagerPage_Image_printerTips')
+          .width($r('app.float.image_comp_width'))
+          .height($r('app.float.image_comp_height'))
+          .margin({right:$r('app.float.print_job_tips_image_margin_right')})
+        Text(StringUtil.getStringByName(this.tips.showTipsText, this.abilityContext)).key('JobManagerPage_Text_blockedReason')
+          .fontSize($r('app.float.font_size_body2'))
+          .fontColor(this.tips.fontColor)
+          .fontWeight(FontWeight.Regular)
+      }
+      .width($r('app.float.print_job_comp_width'))
+      .margin({left:$r('app.float.print_job_margin_left'),right:$r('app.float.print_job_margin_right')})
+      .visibility(this.tips.isShowTips?Visibility.Visible:Visibility.None)
 
       Row() {
         List() {
           ForEach(this.uiJobQueue, (jobItem: PrintJobItem)=>{
             ListItem(){
               printJobComponent({ item: jobItem,
-              compId: 'JobManagerPage_printJobComponent_'+ jobItem.jobId,
+                compId: 'JobManagerPage_printJobComponent_'+ jobItem.jobId,
                 action: () => {
                   this.viewModel.cancelPrintJob(jobItem.jobId);
                 }
@@ -102,7 +102,8 @@ struct JobManagerPage {
   }
 
   aboutToAppear() {
-    this.abilityContext = GlobalThisHelper.getValue<common.UIAbilityContext>(GlobalThisStorageKey.KEY_JOB_MANAGER_ABILITY_CONTEXT);
+    this.abilityContext = GlobalThisHelper.getValue<common.UIAbilityContext>(
+      GlobalThisStorageKey.KEY_JOB_MANAGER_ABILITY_CONTEXT);
   }
 
   onPageShow() {

@@ -69,9 +69,9 @@ export default class SelectionModel {
     , $r('app.string.DuplexMode_LONG'))
   public static readonly DuplexMode_SHORT: SelectionModel = new SelectionModel('DuplexMode_SHORT'
     , $r('app.string.DuplexMode_SHORT'))
-  public static MediaSizeSelections: Array<SelectionModel> = [];
-  name: string; // 选项名称
-  res: Resource | string;
+  public static MediaSizeSelections: SelectionModel[] = [];
+  public name: string; // 选项名称
+  public res: Resource | string;
 
   constructor(name: string, res: Resource | string) {
     this.name = name;
@@ -132,7 +132,7 @@ export default class SelectionModel {
   }
 
   public static initMediaSizeSelections(){
-    SelectionModel.MediaSizeSelections = new Array<SelectionModel>()
+    SelectionModel.MediaSizeSelections = [];
     SelectionModel.MediaSizeSelections.push(SelectionModel.MediaSize_ISO_A3);
     SelectionModel.MediaSizeSelections.push(SelectionModel.MediaSize_ISO_A4);
     SelectionModel.MediaSizeSelections.push(SelectionModel.MediaSize_ISO_A5);

@@ -88,9 +88,9 @@ struct PrivacyStatementWebPage {
                 router.back({ url: 'pages/PrintPage' });
               }
             })
-            .margin({
-              top: $r('app.float.privacy_statement_button_to_text_margin_top')
-            })
+              .margin({
+                top: $r('app.float.privacy_statement_button_to_text_margin_top')
+              })
           }
           .width('100%')
           .alignItems(HorizontalAlign.Center)
@@ -98,7 +98,7 @@ struct PrivacyStatementWebPage {
       }
       .margin({
         bottom: this.privacyStatementFlag ? 0
-                                          : $r('app.float.privacy_statement_button_margin_bottom')
+          : $r('app.float.privacy_statement_button_margin_bottom')
       })
       .width('100%')
       .height('100%')
@@ -116,7 +116,7 @@ struct PrivacyStatementWebPage {
         Log.info(TAG, 'page index = ' + page.index);
         Log.info(TAG, 'page name = ' + page.name);
         Log.info(TAG, 'page path = ' + page.path);
-        Log.info(TAG, "onBack parseInt(router.getLength()): " + parseInt(router.getLength()));
+        Log.info(TAG, 'onBack parseInt(router.getLength()): ' + parseInt(router.getLength()));
         if (parseInt(router.getLength()) > 1) {
           router.back({url: 'pages/AboutPage'})
         } else {
@@ -142,7 +142,7 @@ struct PrivacyStatementWebPage {
       languageCode = 'zh-CN';
     }
     this.baseUrl = this.abilityContext.resourceManager.getStringByNameSync('privacy_statement_web_base_url');
-    Log.info(TAG, "languageToWebUrl baseUrl: " + this.baseUrl);
+    Log.info(TAG, 'languageToWebUrl baseUrl: ' + this.baseUrl);
     this.url = this.baseUrl + languageCode;
   }
 }

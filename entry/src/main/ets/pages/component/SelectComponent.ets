@@ -21,7 +21,8 @@ import { Constants, Duplex, PrinterInfo } from '@ohos/common';
 
 const TAG = 'SelectComponent'
 
-@Extend(Row) function selectStyle() {
+@Extend(Row) function selectStyle()
+{
   .width($r('app.float.select_comp_width'))
   .height($r('app.float.params_comp_height'))
   .margin({ top: $r('app.float.select_comp_margin_top'), bottom: $r('app.float.select_comp_margin_bottom')
@@ -29,7 +30,8 @@ const TAG = 'SelectComponent'
   .border({ width: $r('app.float.border_width'), radius: $r('app.float.radius_s'), color: $r('app.color.border_line') })
 }
 
-@Extend(Row) function selectItemStyle() {
+@Extend(Row) function selectItemStyle()
+{
   .width($r('app.float.select_item_width'))
   .height($r('app.float.select_item_height'))
   .justifyContent(FlexAlign.Start)
@@ -134,10 +136,9 @@ export struct PrinterSelection {
   }
 
   checkLoading() {
-    let printer: PrinterInfo | undefined = SelectionModel.getSelectionValue<PrinterInfo>(this.currentPrinterSelection.name);
-    if ((!CheckEmptyUtils.isEmpty(printer)
-    && printer!.printerId !== '-1'
-    && !this.canPrint)) {
+    let printer: PrinterInfo | undefined =
+      SelectionModel.getSelectionValue<PrinterInfo>(this.currentPrinterSelection.name);
+    if ((!CheckEmptyUtils.isEmpty(printer) && printer!.printerId !== '-1' && !this.canPrint)) {
       return true;
     }
     return false;

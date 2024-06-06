@@ -76,7 +76,7 @@ struct Index {
   @Provide('UsedPrinterId') usedPrinterId: string | undefined = undefined;
   @Provide('PrintAdapter') adapter: PrintAdapter | undefined = undefined;
   @Provide('ConnectCountDown') connectCount: number = Constants.CONNECT_COUNT;
-  @Provide('ConnectCountDownTimer') ConnectTimer: number | undefined = undefined;
+  @Provide('ConnectCountDownTimer') connectTimer: number | undefined = undefined;
   @Provide('CanPrint') canPrint: boolean = false;
   @Provide('WLANFlag') wlanFlag: boolean = false;
   @Provide('IsNeedListenWlan') isNeedListenWlan: boolean = false;
@@ -98,7 +98,7 @@ struct Index {
   @Provide('IsBorderless') isBorderless: boolean = false //是否无边距
   @Provide('IsPreviewFailed') isPreviewFailed: boolean = false //是否需要显示预览失败图示
   private abilityContext: common.UIAbilityContext | undefined = undefined;
-  @State @Watch('updateImageSources')imageSources: Array<FileModel> = new Array();
+  @State @Watch('updateImageSources')imageSources: FileModel[] = [];
   @State startPage: number = Constants.NUMBER_1 //打印范围起始页
   @State startPageStr: string = Constants.STRING_ONE //打印范围起始页
   @State endPage: number = Constants.NUMBER_1 //打印范围终止页
@@ -129,7 +129,7 @@ struct Index {
   @State errorMessage: Resource | undefined = undefined;
   @State isCusRangeError: boolean = false;
   @State isCusRangeMax: boolean = false;
-  @State cusRangeArr: Array<number> = [];
+  @State cusRangeArr: number[] = [];
   @State cusRangeText: string | undefined = undefined;
   @State isRangeRadioEnable: boolean = false;
   @State isCustomRadioEnable: boolean = false;
@@ -140,7 +140,7 @@ struct Index {
   @Provide('PrinterSelectFlag') @Watch('openPrinterSelectDialog') printerSelectFlag: boolean = false;
   @Provide('OpenWLANFlag') @Watch('openWLANDialog') openWlanFlag: boolean = true;
   @Provide('ConnectFlag') @Watch('connectAlarm') connectFlag: boolean = true;
-  @StorageLink('JobQueue') jobQueue: Array<PrintJob> = new Array();
+  @StorageLink('JobQueue') jobQueue: PrintJob[] = [];
   private usedPrinterFileName: string = 'lastUsedPrinter'
   private firstFileName: string = Constants.STRING_NONE;
   private totalPage: number = Constants.NUMBER_1//总页数
@@ -402,7 +402,8 @@ struct Index {
                       this.checkCustomRangeTextInput(true)
                       Log.info(TAG, 'Radio_range_pageRange onChange: '+ this.endPage)
                       this.printRangeType = PrintRangeType.RANGE;
-                      this.editCusRangeFlag = false;this.cusRangeText = Constants.NUMBER_1+Constants.HYPHEN+Constants.MAX_PAGES.toString()
+                      this.editCusRangeFlag = false;this.cusRangeText = Constants.NUMBER_1+Constants.HYPHEN +
+                      Constants.MAX_PAGES.toString()
                       this.isRangeRadioEnable = true
                       this.updatePrintRange()
                     }else{
@@ -769,7 +770,7 @@ struct Index {
   aboutToDisappear() {
     this.unsubscribe()
     this.abilityContext = undefined
-    clearInterval(this.ConnectTimer)
+    clearInterval(this.connectTimer)
     this.releaseResource();
   }
 
@@ -797,7 +798,8 @@ struct Index {
   }
 
   private getWant() {
-    this.abilityContext = GlobalThisHelper.getValue<common.UIAbilityContext>(GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT)
+    this.abilityContext = GlobalThisHelper.getValue<common.UIAbilityContext>(
+      GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT)
     if (CheckEmptyUtils.isEmpty<LocalStorage>(storage)) {
       storage = router.getParams() as LocalStorage;
     }
@@ -816,8 +818,8 @@ struct Index {
         Log.error(TAG, 'emitter callback this printer is null or printers is null, return');
         return
       }
-      Log.info(TAG, 'emitter PRINTER_STATE_CHANGE_EVENT callback this.printer: '
-      + StringUtil.encodeCommonString(this.printer.printerName));
+      Log.info(TAG, 'emitter PRINTER_STATE_CHANGE_EVENT callback this.printer: ' +
+      StringUtil.encodeCommonString(this.printer.printerName));
       for (let index = 0; index < printers.length; index++) {
         if (printers[index].printerId === this.printer.printerId) {
           this.checkPrinterConnection(printers[index].printerState)
@@ -839,7 +841,7 @@ struct Index {
       }
       for (let index = 0; index < printers.length; index++) {
         if (printers[index].printerId === this.printer.printerId) {
-          clearInterval(this.ConnectTimer)
+          clearInterval(this.connectTimer)
           this.connectConfirmDialogCtl.close()
           this.printer.capability = printers[index].capability
           this.printer.options = printers[index].options
@@ -854,7 +856,8 @@ struct Index {
     emitter.on(inactiveWlanEvent, (eventData) => {
       Log.info(TAG, 'WLAN_INACTIVE_EVENT')
       this.isNeedListenWlan = true
-      let isPrinterSelectDialogOpen = GlobalThisHelper.getValue<boolean>(GlobalThisStorageKey.KEY_PRINTER_SELECT_DIALOG_OPEN);
+      let isPrinterSelectDialogOpen = GlobalThisHelper.getValue<boolean>(
+        GlobalThisStorageKey.KEY_PRINTER_SELECT_DIALOG_OPEN);
       Log.info(TAG, 'isPrinterSelectDialogOpen: ' + isPrinterSelectDialogOpen)
       if (isPrinterSelectDialogOpen) {
         this.PrintingSelectDialogCtl.close()
@@ -958,7 +961,8 @@ struct Index {
 
   initParams() {
     this.printButtonFlag = true
-    this.printerPageSize = MediaSizeUtil.mediaSizeToPageSize(SelectionModel.getSelectionValue<MediaSize>(SelectionModel.MediaSize_ISO_A4.name))
+    this.printerPageSize = MediaSizeUtil.mediaSizeToPageSize(
+      SelectionModel.getSelectionValue<MediaSize>(SelectionModel.MediaSize_ISO_A4.name))
   }
 
   setSelect() {
@@ -1025,7 +1029,8 @@ struct Index {
     if (this.printer !== undefined) {
       let isBSH = this.isBiSheng(this.printer.printerName)
       if (isBSH) {
-        this.mediaSizeList = MediaSizeUtil.getDefaultMediaSizeByMediaType(SelectionModel.getSelectionValue<number>(this.currentMediaType.name)!);
+        this.mediaSizeList = MediaSizeUtil.getDefaultMediaSizeByMediaType(
+          SelectionModel.getSelectionValue<number>(this.currentMediaType.name)!);
       }
       this.setMediaSizesSelect()
     }
@@ -1068,9 +1073,10 @@ struct Index {
     }
     let isBSH = this.isBiSheng(printer.printerName)
     if (isBSH) {
-      this.mediaSizeList = MediaSizeUtil.getDefaultMediaSizeByMediaType(SelectionModel.getSelectionValue<number>(this.currentMediaType.name)!);
+      this.mediaSizeList = MediaSizeUtil.getDefaultMediaSizeByMediaType(
+        SelectionModel.getSelectionValue<number>(this.currentMediaType.name)!);
     } else {
-      this.mediaSizeList = new Array<MediaSize>()
+      this.mediaSizeList = [];
       for (let index = 0; index < cap!.pageSize.length; index++) {
         this.mediaSizeList.push(MediaSizeUtil.pageSizeToMediaSize(cap!.pageSize[index]))
       }
@@ -1105,7 +1111,7 @@ struct Index {
       MediaSizeUtil.initMediaSizeArray(this.mediaSizeList);
     }
     Log.info(TAG, 'setMediaSizesSelect mediaSizeList.length:' + this.mediaSizeList.length);
-    this.mediaSizeSelectArray = new Array<SelectionModel>()
+    this.mediaSizeSelectArray = [];
     let isNeedResetMediaSize = true
     this.mediaSizeList.forEach(mediaSize => {
       if (this.currentMediaSize.res === mediaSize.label) {
@@ -1123,12 +1129,13 @@ struct Index {
   }
 
   setDirectionSelect() {
-    this.directionSelectArray = new Array<SelectionModel>()
-    this.directionSelectArray.push(SelectionModel.Direction_AUTO, SelectionModel.Direction_LANDSCAPE, SelectionModel.Direction_VERTICAL)
+    this.directionSelectArray = [];
+    this.directionSelectArray.push(SelectionModel.Direction_AUTO,
+      SelectionModel.Direction_LANDSCAPE, SelectionModel.Direction_VERTICAL);
   }
 
   setMediaTypeSelect() {
-    this.mediaTypeSelectArray = new Array<SelectionModel>()
+    this.mediaTypeSelectArray = [];
     if(this.supportedMediaTypes.length === Constants.NUMBER_1){
       this.isPhotoEnabled = false
       this.mediaTypeSelectArray.push(SelectionModel.MediaType_NORMAL)
@@ -1142,12 +1149,13 @@ struct Index {
   }
 
   setPrintQualitySelect() {
-    this.qualitySelectArray = new Array<SelectionModel>()
+    this.qualitySelectArray = [];
     if (SelectionModel.getSelectionValue<number>(this.currentMediaType.name) === MediaType.NORMAL) {
-      this.qualitySelectArray.push(SelectionModel.PrintQuality_BEST, SelectionModel.PrintQuality_STANDARD, SelectionModel.PrintQuality_ECONOMY);
+      this.qualitySelectArray.push(SelectionModel.PrintQuality_BEST, SelectionModel.PrintQuality_STANDARD,
+        SelectionModel.PrintQuality_ECONOMY);
     } else {
       this.qualitySelectArray.push(SelectionModel.PrintQuality_BEST, SelectionModel.PrintQuality_STANDARD);
-      if (this.currentQuality = SelectionModel.PrintQuality_ECONOMY) {
+      if (this.currentQuality == SelectionModel.PrintQuality_ECONOMY) {
         this.currentQuality = SelectionModel.PrintQuality_STANDARD
       }
     }
@@ -1155,8 +1163,9 @@ struct Index {
 
 
   setDuplexSelect() {
-    this.duplexSelectArray = new Array<SelectionModel>()
-    this.duplexSelectArray.push(SelectionModel.DuplexMode_SINGLE, SelectionModel.DuplexMode_LONG, SelectionModel.DuplexMode_SHORT)
+    this.duplexSelectArray = [];
+    this.duplexSelectArray.push(SelectionModel.DuplexMode_SINGLE, SelectionModel.DuplexMode_LONG,
+      SelectionModel.DuplexMode_SHORT)
   }
 
   isPrintRangeAll(): boolean {
@@ -1187,7 +1196,7 @@ struct Index {
         }
       })
     }
-    Log.debug(TAG, "loadImageSources imageSources: ", JSON.stringify(this.imageSources))
+    Log.debug(TAG, 'loadImageSources imageSources: ', JSON.stringify(this.imageSources))
     this.totalPage = this.imageSources.length === 0 ? 1 : this.imageSources.length
     this.imageCount = this.totalPage
     this.rangeInputLimit = this.totalPage.toString().length
@@ -1195,7 +1204,7 @@ struct Index {
     let errorName: string = GlobalThisHelper.getValue<string>(GlobalThisStorageKey.KEY_IMAGE_ERROR_NAME)
     if (this.imageSources.length !== 0){
       if (errorCount === 1) {
-        Log.info(TAG, "loadImageSources this.showToast ")
+        Log.info(TAG, 'loadImageSources this.showToast ')
         setTimeout(() => {//延迟弹窗，否则会概率弹窗失败
           this.showToast($r('app.string.toast_preview_failed',errorName))
         }, Constants.SHOW_TOAST_TIMEOUT);
@@ -1267,10 +1276,10 @@ struct Index {
   }
 
   connectAlarm() {
-    clearInterval(this.ConnectTimer)
+    clearInterval(this.connectTimer)
     this.connectConfirmDialogCtl.open()
     this.connectCount = Constants.CONNECT_COUNT
-    this.ConnectTimer = setInterval(() => {
+    this.connectTimer = setInterval(() => {
       this.connectCountDown()
     }, Constants.COUNTDOWN_INTERVAL);
   }
@@ -1308,7 +1317,7 @@ struct Index {
       case print.PrinterState.PRINTER_CONNECTED:
         this.isConnected = true
         this.connectingPrinterId = this.printer!.printerId;
-        clearInterval(this.ConnectTimer)
+        clearInterval(this.connectTimer)
         this.connectConfirmDialogCtl.close();
         break;
       case print.PrinterState.PRINTER_DISCONNECTED:
@@ -1324,13 +1333,13 @@ struct Index {
    */
   async saveImage(jobFiles: string[]): Promise<number[]> {
     Log.info(TAG, 'enter saveImage')
-    let fileList = new Array<number>();
+    let fileList: number[] = [];
     if (this.mediaSize === undefined) {
       Log.error(TAG, 'this.mediaSize is undefined')
       return fileList;
     }
     let size = this.mediaSize.get300PixelMediaSize();
-    let imageSourceIndexList = new Array<number>();
+    let imageSourceIndexList: number[] = [];
     let finalPrintRange = this.checkPrintRange();
     for (let index = 0; index < finalPrintRange.length; index++) {
       imageSourceIndexList.push(finalPrintRange[index] - 1);
@@ -1346,13 +1355,15 @@ struct Index {
       let offCanvasWidth: number;
       let offCanvasHeight: number;
       let orientation: PageDirection = PageDirection.AUTO;
-      if (this.pageDirection === PageDirection.VERTICAL || (this.pageDirection === PageDirection.AUTO && imageModel.height >= imageModel.width)) {
+      if (this.pageDirection === PageDirection.VERTICAL ||
+        (this.pageDirection === PageDirection.AUTO && imageModel.height >= imageModel.width)) {
         //竖向 或者 自适应且图片竖向
         Log.debug('VERTICAL');
         offCanvasWidth = px2fp(size.width);
         offCanvasHeight = px2fp(size.height);
         orientation = PageDirection.VERTICAL
-      } else if (this.pageDirection === PageDirection.LANDSCAPE || (this.pageDirection === PageDirection.AUTO && imageModel.height <= imageModel.width)) {
+      } else if (this.pageDirection === PageDirection.LANDSCAPE ||
+        (this.pageDirection === PageDirection.AUTO && imageModel.height <= imageModel.width)) {
         //横向 自适应且图片横向
         Log.debug('LANDSCAPE');
         offCanvasWidth = px2fp(size.height);
@@ -1363,7 +1374,8 @@ struct Index {
         offCanvasHeight = px2fp(size.height);
         Log.error('set offCanvas size error');
       }
-      offCanvas = new OffscreenCanvasRenderingContext2D(offCanvasWidth, offCanvasHeight, new RenderingContextSettings(true));
+      offCanvas = new OffscreenCanvasRenderingContext2D(offCanvasWidth, offCanvasHeight,
+        new RenderingContextSettings(true));
       if (offCanvas === undefined) {
         Log.error(TAG, 'offCanvas is undefined');
         continue;
@@ -1371,7 +1383,8 @@ struct Index {
       offCanvas.imageSmoothingEnabled = false;
       offCanvas.fillStyle = '#fff'
       offCanvas.fillRect(Constants.NUMBER_0, Constants.NUMBER_0, offCanvasWidth, offCanvasHeight);
-      scale = this.isBorderless ? Math.max(offCanvasWidth / px2fp(imageModel.width), offCanvasHeight / px2fp(imageModel.height)) :
+      scale = this.isBorderless ? Math.max(offCanvasWidth /
+      px2fp(imageModel.width), offCanvasHeight / px2fp(imageModel.height)) :
       Math.min(offCanvasWidth / px2fp(imageModel.width), offCanvasHeight / px2fp(imageModel.height));
       let xPosition = (offCanvasWidth - px2fp(imageModel.width * scale)) / Constants.NUMBER_2;
       let yPosition = (offCanvasHeight - px2fp(imageModel.height * scale)) / Constants.NUMBER_2;
@@ -1399,7 +1412,8 @@ struct Index {
         };
         imageModel.imageSource!.release();
         Log.info(TAG, 'end createPixelMap');
-        offCanvas.drawImage(pixelMap, xPosition, yPosition, px2fp(imageModel.width * scale), px2fp(imageModel.height * scale)) //5184 3456 //1200 2133
+        offCanvas.drawImage(pixelMap, xPosition, yPosition, px2fp(imageModel.width * scale),
+          px2fp(imageModel.height * scale)) //5184 3456 //1200 2133
         canvasPixelMap = offCanvas.getPixelMap(Constants.NUMBER_0, Constants.NUMBER_0, offCanvasWidth, offCanvasHeight);
 
         //保存图片
@@ -1410,7 +1424,8 @@ struct Index {
         }
         let fileName = uuidGenerator() + Constants.JPEG_SUFFIX;
         FileUtil.createJobsDir(this.abilityContext?.filesDir)
-        let uri = this.abilityContext?.filesDir + Constants.FILE_SEPARATOR + Constants.TEMP_JOB_FOLDER + Constants.FILE_SEPARATOR + fileName
+        let uri = this.abilityContext?.filesDir + Constants.FILE_SEPARATOR +
+        Constants.TEMP_JOB_FOLDER + Constants.FILE_SEPARATOR + fileName
         await FileUtil.saveImageToJpeg(canvasPixelMap, uri, orientation);
         Log.debug(TAG, 'end saveImageToJpeg');
         jobFiles.push(uri);
@@ -1449,14 +1464,15 @@ struct Index {
       this.checkCustomRangeTextInput(false)
     }
 
-    let jobFiles = new Array<string>()
+    let jobFiles: string[] = [];
     this.saveImage(jobFiles).then((fileList) => {
       let ops: PrintJobOptions = {
         jobName: this.jobName,
         jobNum: this.jobNum * this.printCount,
         jobDescription: this.jobDes,
         mediaType: this.getMediaType(SelectionModel.getSelectionValue<number>(this.currentMediaType.name)!),
-        documentCategory: SelectionModel.getSelectionValue<number>(this.currentMediaType.name) === MediaType.PHOTO ? Constants.NUMBER_1 : Constants.NUMBER_0,
+        documentCategory: SelectionModel.getSelectionValue<number>(this.currentMediaType.name) ===
+        MediaType.PHOTO ? Constants.NUMBER_1 : Constants.NUMBER_0,
         printQuality: SelectionModel.getSelectionValue<number>(this.currentQuality.name)!.toString(),
         printerName: this.removeSpaces(this.printer?.printerName),
         printerUri: this.getPrinterUri(),
@@ -1464,9 +1480,12 @@ struct Index {
         files: jobFiles
       }
       let options = JSON.stringify(ops);
-      this.printJob = new PrintJob(jobFiles,fileList,this.jobId, this.printer!.printerId, print.PrintJobState.PRINT_JOB_PREPARE, print.PrintJobSubState.PRINT_JOB_COMPLETED_SUCCESS,
-        this.printCount,this.printerRange!,true,this.printerPageSize!,true,this.colorMode,SelectionModel.getSelectionValue<number>(this.currentDuplex.name)!,new PrintMargin(Constants.NUMBER_0, Constants.NUMBER_0, Constants.NUMBER_0, Constants.NUMBER_0),
-      new PreviewAttribute(this.printerRange!, Constants.NUMBER_1), options);
+      this.printJob = new PrintJob(jobFiles,fileList,this.jobId, this.printer!.printerId,
+        print.PrintJobState.PRINT_JOB_PREPARE, print.PrintJobSubState.PRINT_JOB_COMPLETED_SUCCESS,
+        this.printCount,this.printerRange!,true,this.printerPageSize!,true,
+        this.colorMode,SelectionModel.getSelectionValue<number>(this.currentDuplex.name)!,
+        new PrintMargin(Constants.NUMBER_0, Constants.NUMBER_0, Constants.NUMBER_0, Constants.NUMBER_0),
+        new PreviewAttribute(this.printerRange!, Constants.NUMBER_1), options);
 
       startPrintJob(this.printJob).then((result) => {
         if (result) {
@@ -1500,7 +1519,7 @@ struct Index {
 
   removeSpaces(name: string | undefined) {
     if (CheckEmptyUtils.checkStrIsEmpty(name)) {
-      return "";
+      return '';
     }
     let regex: RegExp = new RegExp('\\s+', 'g');
     return name!.replace(regex, '_');
@@ -1615,8 +1634,8 @@ struct Index {
       return
     }
 
-    let prePageArray = new Array<string>();
-    let pageArray = new Array<string>();
+    let prePageArray: string[] = [];
+    let pageArray: string[] = [];
     prePageArray = value.split(Constants.EU_COMMA)
     prePageArray.forEach((prePage:string)=>{
       pageArray.push(...prePage.split(Constants.CN_COMMA));
@@ -1709,7 +1728,7 @@ struct Index {
    *
    */
   checkMaxPages(fileList: Array<string>):  Array<string>{
-    let returnList:  Array<string>;
+    let returnList: string[] = [];
     if (fileList.length > Constants.MAX_PAGES) {
       returnList = fileList.slice(0,Constants.MAX_PAGES);
       setTimeout(() => {//延迟弹窗，否则会概率弹窗失败
@@ -1753,7 +1772,7 @@ struct Index {
   }
 
   checkPrintRange(): Array<number>{
-    let returnList = new Array<number>();
+    let returnList: number = [];
     if (this.printRange.length>100) {
       returnList = PrintUtil.getDefaultArray(100);
     }else{
@@ -1773,4 +1792,3 @@ struct Index {
     return returnList;
   }
 }
-

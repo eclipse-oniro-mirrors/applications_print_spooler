@@ -26,7 +26,7 @@ const TAG = 'CusDialogComp'
 
 @CustomDialog
 export struct PrintingSelectDialog{
-  @StorageLink('PrinterQueue') printerList: Array<PrinterInfo> = new Array();
+  @StorageLink('PrinterQueue') printerList: PrinterInfo[] = [];
   @Consume('PrintAdapter') adapter:PrintAdapter;
   @Consume('PrinterSelectFlag') printerSelectFlag:boolean;
   @Consume('WLANFlag') wlanFlag:boolean;
@@ -152,13 +152,13 @@ struct printerItem{
   }
 
   async handleToConnect(){
-    let result:Array<PrintJob> = await queryAllPrintJobs(this.usedPrinterId)
+    let result:PrintJob[] = await queryAllPrintJobs(this.usedPrinterId)
     Log.info(TAG,'handleToConnect after queryAllPrintJobs')
     Log.info(TAG,'handleToConnect typeof result'+typeof result)
     Log.info(TAG,'handleToConnect this.currentPrinter.printerId'+this.currentPrinter?.printerId)
-    if (this.usedPrinterId !== this.currentPrinter?.printerId
-        && result!==undefined && result.length!==0
-        && !this.checkPrintingPrinter(this.currentPrinter!.printerId,result)){
+    if (this.usedPrinterId !== this.currentPrinter?.printerId &&
+      result!==undefined && result.length!==0 &&
+      !this.checkPrintingPrinter(this.currentPrinter!.printerId,result)){
       this.printingSelectDialogCtl?.close()
       GlobalThisHelper.createValue<boolean>(false, GlobalThisStorageKey.KEY_PRINTER_SELECT_DIALOG_OPEN, true)
       this.showToast($r('app.string.toast_cannot_connect_while_printing'))
@@ -166,8 +166,8 @@ struct printerItem{
       Log.info(TAG,'handleToConnect result.length==0 ')
       clearInterval(this.timer)
       if (this.printer === undefined ||
-      this.printer.printerId === Constants.STRING_NEGATIVE_ONE ||
-      this.printer.printerId !== this.currentPrinter!.printerId) {
+        this.printer.printerId === Constants.STRING_NEGATIVE_ONE ||
+        this.printer.printerId !== this.currentPrinter!.printerId) {
         this.checkConnectingPrinter()
         if (this.canPrint) {
           this.canPrint = false
@@ -240,7 +240,7 @@ export struct alarmDialog{
         .fontWeight(FontWeight.Medium)
         .fontSize($r('app.float.font_size_headline8'))
         .margin({top:$r('app.float.alarm_dialog_text_margin_top'),left:$r('app.float.alarm_dialog_text_margin_left')
-                ,right:$r('app.float.alarm_dialog_text_margin_right'),bottom:$r('app.float.alarm_dialog_text_margin_bottom')})
+        ,right:$r('app.float.alarm_dialog_text_margin_right'),bottom:$r('app.float.alarm_dialog_text_margin_bottom')})
       Button($r('app.string.confirm')).key('AlarmDialog_Button_confirm')
         .width($r('app.float.dialog_button_width'))
         .height($r('app.float.dialog_button_height'))
@@ -269,7 +269,7 @@ export struct WLANConfirmDialog{
         .fontWeight(FontWeight.Regular)
         .fontSize($r('app.float.font_size_body1'))
         .margin({top:$r('app.float.wlan_dialog_text_margin_top'),left:$r('app.float.wlan_dialog_text_margin_left')
-                ,right:$r('app.float.wlan_dialog_text_margin_right'),bottom:$r('app.float.wlan_dialog_text_margin_bottom')})
+        ,right:$r('app.float.wlan_dialog_text_margin_right'),bottom:$r('app.float.wlan_dialog_text_margin_bottom')})
       Row(){
         CancelButton({
           cancelLabel: $r('app.string.JobManagerPage_ok'),
@@ -282,7 +282,7 @@ export struct WLANConfirmDialog{
           .margin({right:$r('app.float.wlan_dialog_button_cancel_margin_right')})
           .key('WLANConfirmDialog_Button_cancel')
       }.margin({left:$r('app.float.wlan_dialog_buttons_margin_left'),right:$r('app.float.wlan_dialog_buttons_margin_right')
-                ,bottom:$r('app.float.wlan_dialog_buttons_margin_bottom')})
+      ,bottom:$r('app.float.wlan_dialog_buttons_margin_bottom')})
     }
     .width($r('app.float.dialog_width'))
     .backgroundColor($r('app.color.white'))
@@ -290,9 +290,7 @@ export struct WLANConfirmDialog{
     .alignItems(HorizontalAlign.Center)
   }
 
-  aboutToAppear(){
-//    this.isNeedListenWlan = true
-  }
+  aboutToAppear(){}
 
   showToast(message: Resource) {
     try {
@@ -321,12 +319,12 @@ export struct connectConfirmDialog{
         .maxLines(Constants.NUMBER_2)
         .textOverflow({overflow:TextOverflow.Ellipsis})
         .margin({top:$r('app.float.connect_dialog_text_margin_top'),left:$r('app.float.connect_dialog_text_margin_left')
-                ,right:$r('app.float.connect_dialog_text_margin_right'),bottom:$r('app.float.connect_dialog_text_margin_bottom')})
+        ,right:$r('app.float.connect_dialog_text_margin_right'),bottom:$r('app.float.connect_dialog_text_margin_bottom')})
       Text($r('app.string.connect_confirm_dialog_tips')).key('ConnectConfirmDialog_Text_tips')
         .fontWeight(FontWeight.Medium)
         .fontSize($r('app.float.font_size_body1'))
         .margin({left:$r('app.float.connect_dialog_confirm_text_margin_left'),right:$r('app.float.connect_dialog_confirm_text_margin_right')
-                ,bottom:$r('app.float.connect_dialog_confirm_text_margin_bottom')})
+        ,bottom:$r('app.float.connect_dialog_confirm_text_margin_bottom')})
       Button($r('app.string.connectConfirmDialog_countDown',this.count-Constants.COUNTDOWN_TO_FAIL))
         .key('ConnectConfirmDialog_Button_confirmed')
         .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
