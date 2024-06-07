@@ -124,7 +124,8 @@ export class PrintJobViewModel {
       Log.info(TAG, `onAddPrintJob jobId:${job.jobId}, blockedSubState:${blockedSubState}`);
       let jobStateStrName: string = this.getJobStateStrName(job.jobState as number, job.jobSubstate);
       let jobStateFontColor: Resource = this.getJobStateFontColor(job.jobState as number, job.jobSubstate);
-      let jobItem: PrintJobItem = new PrintJobItem(job, this.isHideCancelBtn(job.jobState as number), jobStateFontColor, jobStateStrName);
+      let jobItem: PrintJobItem = new PrintJobItem(job, this.isHideCancelBtn(job.jobState as number),
+        jobStateFontColor, jobStateStrName);
       Log.debug(TAG, `onAddPrintJob ${jobItem.toString()}`);
       this.uiJobsMap.set(job.jobId, jobItem);
       // 刷新横幅提示状态
@@ -191,7 +192,7 @@ export class PrintJobViewModel {
     if (this.listener == null) {
       return;
     }
-    let jobList: Array<PrintJobItem> = new Array();
+    let jobList: PrintJobItem[] = [];
     this.uiJobsMap.forEach((value, key) => {
       jobList.push(value);
     })

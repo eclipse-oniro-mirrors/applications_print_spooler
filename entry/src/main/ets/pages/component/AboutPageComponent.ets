@@ -31,11 +31,11 @@ export struct AboutPageComponent {
       })
       .backgroundColor(this.bckColor)
       .clip(new Circle({width: 24, height: 24})).onTouch((event) => {
-      Log.info("ClickableImage", "event.type: " + JSON.stringify(event.type));
+      Log.info('ClickableImage', 'event.type: ' + JSON.stringify(event.type));
       if (event.type === TouchType.Down) {
         this.bckColor = $r('sys.color.ohos_fa_click_effect')
       } else if (event.type === TouchType.Up) {
-        Log.info("ClickableImage", "onTouch is Up");
+        Log.info('ClickableImage', 'onTouch is Up');
         this.bckColor = $r('app.color.preview_background_color');
       }
     })

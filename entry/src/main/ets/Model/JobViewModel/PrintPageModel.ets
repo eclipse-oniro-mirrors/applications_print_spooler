@@ -22,31 +22,31 @@ export class PrintJobItem {
   /**
    * jobId
    */
-  jobId: string = '';
+  public jobId: string = '';
   /**
    * 文件数量
    */
-  fileNum: number = 1;
+  public fileNum: number = 1;
   /**
    * 打印任务Title-文件名称
    */
-  jobTitleText: string = '';
+  public jobTitleText: string = '';
   /**
    * 打印任务详情-参数项
    */
-  jobDescriptionText: string = '';
+  public jobDescriptionText: string = '';
   /**
    * 任务状态描述
    */
-  jobStateStrName: string = '';
+  public jobStateStrName: string = '';
   /**
    * 打印任务删除按钮是否隐藏
    */
-  isHideCancelBtn: boolean = true;
+  public isHideCancelBtn: boolean = true;
   /**
    * 打印任务是否block
    */
-  jobStateColor: Resource;
+  public jobStateColor: Resource;
 
   constructor(job: PrintJob, isHideCancelBtn: boolean, jobStateColor: Resource, jobStateStrName: string) {
     this.jobId = job.jobId;
@@ -79,19 +79,19 @@ export class ShowTips {
   /**
    * 是否显示横幅提示
    */
-  isShowTips: boolean = false;
+  public isShowTips: boolean = false;
   /**
    * 横幅提示内容
    */
-  showTipsText: string = '';
+  public showTipsText: string = '';
   /**
    * 横幅提示文本字体颜色
    */
-  fontColor: Resource = $r('sys.color.ohos_id_color_warning');
+  public fontColor: Resource = $r('sys.color.ohos_id_color_warning');
   /**
    * 横幅提示图标
    */
-  icon: Resource = $r('app.media.ic_printer_tips');
+  public icon: Resource = $r('app.media.ic_printer_tips');
 
   toString(): string {
     return `[ShowTips isShowTips:${this.isShowTips}, showTipsText:${this.showTipsText} ]`;
@@ -102,8 +102,8 @@ export class ShowTips {
  * 任务列表界面数据
  */
 export class PageData {
-  tips: ShowTips;
-  uiJobQueue: Array<PrintJobItem> = [];
+  public tips: ShowTips;
+  public uiJobQueue: Array<PrintJobItem> = [];
 
   constructor(tips: ShowTips, uiJobQueue: Array<PrintJobItem>) {
     this.tips = tips;
