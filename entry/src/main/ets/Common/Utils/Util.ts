@@ -95,4 +95,14 @@ export default class Util {
       return null;
     }
   }
+
+  /**
+   * getPreviewDialogId
+   *
+   * @param startId startId
+   * @returns PreviewDialogId
+   */
+  public static getPreviewDialogId(startId: string): string {
+    return Constants.PRINT_PREVIEW_WINDOW_PREFIX + startId;
+  }
 }

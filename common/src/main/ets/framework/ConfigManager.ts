@@ -32,7 +32,7 @@ class ConfigManager {
   /**
    * 应用上下文
    */
-  private mContext?: common.UIAbilityContext;
+  private mContext?: common.UIAbilityContext | common.UIExtensionContext;
   /**
    * EnviornmentCallback id
    */
@@ -57,7 +57,7 @@ class ConfigManager {
    *
    * @param context context
    */
-  onStart(context: common.UIAbilityContext) :void {
+  onStart(context: common.UIAbilityContext | common.UIExtensionContext) :void {
     if (this.isStarted) {
       return;
     }

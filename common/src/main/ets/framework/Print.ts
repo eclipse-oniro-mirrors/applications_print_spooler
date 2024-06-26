@@ -21,6 +21,39 @@ import { CustomPrintJobState } from '../model/PrintBean';
 import { StringUtil } from '../utils/StringUtil';
 
 const TAG: string = 'print_fwk';
+
+/**
+ * defines print attributes.
+ */
+export class PrintAttributes implements print.PrintAttributes {
+  copyNumber?: number;
+  pageRange?: PrinterRange;
+  pageSize?: PrintPageSize;
+  colorMode?: print.PrintColorMode;
+  duplexMode?: print.PrintDuplexMode;
+  directionMode?: print.PrintDirectionMode;
+  isSequential: boolean; /* Add a Variable */
+  isLandscape: boolean; /* Add a Variable */
+  options: string; /* Add a Variable */
+  margin: PrintMargin;
+
+  constructor(copyNumber: number, pageRange: PrinterRange,
+              isSequential: boolean, pageSize: PrintPageSize, isLandscape: boolean,
+              colorMode: print.PrintColorMode, duplexMode: print.PrintDuplexMode, margin: PrintMargin,
+              directionMode: print.PrintDirectionMode, options: string) {
+    this.copyNumber = copyNumber;
+    this.pageRange = pageRange;
+    this.pageSize = pageSize;
+    this.colorMode = colorMode;
+    this.duplexMode = duplexMode;
+    this.directionMode = directionMode;
+    this.isSequential = isSequential;
+    this.isLandscape = isLandscape;
+    this.margin = margin;
+    this.options = options;
+  }
+}
+
 /**
  * defines print margin.
  */

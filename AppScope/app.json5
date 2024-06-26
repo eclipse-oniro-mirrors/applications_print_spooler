@@ -2,8 +2,8 @@
   "app": {
     "bundleName": "com.ohos.spooler",
     "vendor": "ohos",
-    "versionCode": 10000008,
-    "versionName": "1.0.0.8",
+    "versionCode": 10000010,
+    "versionName": "1.0.0.10",
     "icon": "$media:app_icon",
     "label": "$string:app_name",
     "distributedNotificationEnabled": true

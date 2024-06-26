@@ -26,7 +26,7 @@
         "startWindowIcon": "$media:icon",
         "startWindowBackground": "$color:color_ffffff",
         "name": "MainAbility",
-        "srcEntrance": "./ets/MainAbility/MainAbility.ts",
+        "srcEntrance": "./ets/MainAbility/MainAbility.ets",
         "description": "$string:MainAbility_desc",
         "icon": "$media:icon",
         "label": "$string:MainAbility_label",
@@ -53,6 +53,13 @@
         "description": "service",
         "type": "print",
         "visible": false
+      },
+      {
+        "icon": "$media:icon",
+        "name": "PrintServiceExtAbility",
+        "srcEntry": "./ets/MainAbility/MainAbility.ets",
+        "type": "sysDialog/common",
+        "exported": true
       }
     ],
     "requestPermissions": [
