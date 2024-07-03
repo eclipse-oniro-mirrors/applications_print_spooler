@@ -13,7 +13,18 @@
  * limitations under the License.
  */
 
-import { ErrorMessage, MediaSizeHelper, MediaTypeCode, MediaTypes, PreviewAttribute, PrinterCapsOptions, PrintJob, PrintJobOptions, PrintUtil, startPrintJob } from '@ohos/common';
+import {
+  ErrorMessage,
+  MediaSizeHelper,
+  MediaTypeCode,
+  MediaTypes,
+  PreviewAttribute,
+  PrinterCapsOptions,
+  PrintJob,
+  PrintJobOptions,
+  PrintUtil,
+  startPrintJob
+} from '@ohos/common';
 import WifiP2pHelper from '../Common/Adapter/WifiP2pHelper';
 import FileModel from '../Model/FileModel';
 import SelectionModel from '../Model/SelectionModel';
@@ -60,6 +71,7 @@ import { AboutPageComponent } from './component/AboutPageComponent';
 import router from '@ohos.router';
 import Want from '@ohos.app.ability.Want';
 import { BusinessError } from '@ohos.base';
+import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 
 const TAG = 'PrintPage';
 
@@ -97,7 +109,7 @@ struct Index {
   @Provide('NeedDuplex') @Watch('needDuplexChange')needDuplex: boolean = true;
   @Provide('IsBorderless') isBorderless: boolean = false //是否无边距
   @Provide('IsPreviewFailed') isPreviewFailed: boolean = false //是否需要显示预览失败图示
-  private abilityContext: common.UIAbilityContext | undefined = undefined;
+  private abilityContext: common.UIExtensionContext | undefined = undefined;
   @State @Watch('updateImageSources')imageSources: Array<FileModel> = new Array();
   @State startPage: number = Constants.NUMBER_1 //打印范围起始页
   @State startPageStr: string = Constants.STRING_ONE //打印范围起始页
@@ -159,7 +171,7 @@ struct Index {
   private firstPrinterDiscoveredFlag: boolean = false;
   private changeRangeTypeFlag: boolean = true;//范围框radio选中是否让startPage输入框获焦
   private fileNum: number = Constants.NUMBER_0;
-
+  private session?: UIExtensionContentSession = undefined;
   WLANConfirmDialogCtl: CustomDialogController = new CustomDialogController({
     builder: WLANConfirmDialog(),
     alignment: DialogAlignment.Center,
@@ -691,8 +703,8 @@ struct Index {
             cancelWidth: $r('app.float.button_index_width'),
             cancelHeight: $r('app.float.button_index_height'),
             cancelClick: () => {
-              this.abilityContext?.terminateSelf().then((data) => {
-                console.info('===>terminateSelfCallBack===>: ' + data);
+              this.session?.terminateSelf().then(() => {
+                console.info('===>terminateSelfCallBack===>: ');
               });
             }
           })
@@ -717,6 +729,8 @@ struct Index {
         })
       }.width($r('app.float.print_setting_width'))
     }
+    .padding({ top: 32, bottom: 32 })
+    .backgroundColor($r('sys.color.ohos_id_color_panel_bg'))
     .onTouch((event:TouchEvent)=>{
       if (event.type === TouchType.Down) {
         Log.info(TAG,'requestFocus')
@@ -797,12 +811,13 @@ struct Index {
   }
 
   private getWant() {
-    this.abilityContext = GlobalThisHelper.getValue<common.UIAbilityContext>(GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT)
+    this.abilityContext = GlobalThisHelper.getValue<common.UIExtensionContext>(GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT)
     if (CheckEmptyUtils.isEmpty<LocalStorage>(storage)) {
       storage = router.getParams() as LocalStorage;
     }
     this.jobId = storage.get<string>(Constants.WANT_JOB_ID_KEY)!;
     this.jobFileList = storage.get<Array<string>>(Constants.WANT_FILE_LIST_KEY)!;
+    this.session = storage.get<UIExtensionContentSession>(Constants.SESSION);
     Log.debug(TAG, 'aboutToAppear jobId: ' + JSON.stringify(this.jobId) + ', fileList: ' + JSON.stringify(this.jobFileList));
   }
 
@@ -1153,7 +1168,6 @@ struct Index {
     }
   }
 
-
   setDuplexSelect() {
     this.duplexSelectArray = new Array<SelectionModel>()
     this.duplexSelectArray.push(SelectionModel.DuplexMode_SINGLE, SelectionModel.DuplexMode_LONG, SelectionModel.DuplexMode_SHORT)
@@ -1175,7 +1189,7 @@ struct Index {
    */
   async loadImageSources() {
     Log.info(TAG, 'loadImageSources start')
-    if (this.jobFileList) {
+    if (this.jobFileList && this.jobFileList.length !== 0) {
       this.fileNum = this.jobFileList.length;
       this.imageSources = await FileUtil.initImageData(this.checkMaxPages(this.jobFileList));
     } else {
@@ -1490,8 +1504,8 @@ struct Index {
     this.abilityContext?.startAbility(jobAbilityWant).then(() => {
       Log.info(TAG,'startJobManagerAbility')
       this.canPrint = false;
-      this.abilityContext?.terminateSelf().then((data) => {
-        console.info('===>terminateSelfCallBack===>: '+data);
+      this.session?.terminateSelf().then(() => {
+        console.info('===>terminateSelfCallBack===>: ');
       });
     }).catch((err: BusinessError) => {
       Log.error(TAG, 'fail to startAbility, err =' + JSON.stringify(err));

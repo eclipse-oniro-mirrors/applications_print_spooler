@@ -148,6 +148,8 @@ export class Constants {
   static readonly WANT_FILE_LIST_KEY: string = 'fileList';
   static readonly WANT_CALLERPID_KEY: string = 'ohos.aafwk.param.callerUid';
   static readonly WANT_PKG_NAME_KEY: string = 'caller.pkgName';
+  static readonly WANT_DOCUMENT_NAME_KEY: string = 'documentName';
+  static readonly wantPrintAttributeKey = 'printAttributes';
   static readonly EVENT_GET_ABILITY_DATA: string = 'getAbilityData';
   static readonly DEFAULT_CONNECTING_PRINTER_ID: string = 'noNeedDisconnect';
   static readonly WINDOW_FLOAT_MODE: number = 102;
@@ -161,6 +163,13 @@ export class Constants {
   static readonly MDNS_PRINTER = 'mdns:';
   static readonly TEMP_JOB_FOLDER = 'jobs';
   static readonly JPEG_SUFFIX = '.jpeg';
+  static readonly PRINT_PREVIEW_WINDOW_PREFIX: string = 'PrintPreviewWindow_';
+  static readonly PRINT_PREVIEW_PAGE_URL: string = 'pages/PrintPage';
+  static readonly PRIVACY_STATEMENT_PAGE_URL: string = 'pages/PrivacyStatementPage';
+  static readonly PREVIEW_DIALOG_COUNT: string = 'PreviewDialogCount';
+  static readonly WINDOW_ID = 'windowId';
+  static readonly SESSION = 'session';
+  static readonly PREVIEW_IS_VERTICAL: string = 'PreviewIsVertical';
 }
 
 export class AppStorageKeyName {
@@ -171,6 +180,9 @@ export class AppStorageKeyName {
   static readonly START_PRINT_TIME: string = 'startPrintTime';
   static readonly INGRESS_PACKAGE: string = 'ingressPackage';
   static readonly APP_VERSION: string = 'appVersion';
+  static readonly DOCUMENT_NAME: string = 'documentName';
+  static readonly PREVIEW_PAGE_INSTANCE: string = 'PreviewPageInstance';
+  static readonly imageSourcesName: string = 'ImageSources';
 }
 
 export class GlobalThisStorageKey {

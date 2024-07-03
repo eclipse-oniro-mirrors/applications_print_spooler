@@ -52,7 +52,7 @@ export default class PreferencesAdapter {
    */
   public async getOrCreatePreferencesSync(preferencesName: string): Promise<boolean> {
     Log.info(TAG, 'getOrCreatePreferencesSync start');
-    const ABILITY_CONTEXT = GlobalThisHelper.getValue<common.UIAbilityContext>(GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT);
+    const ABILITY_CONTEXT = GlobalThisHelper.getValue<common.UIExtensionContext>(GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT);
     if (preferencesName) {
       try {
         Log.info(TAG, 'getOrCreatePreferencesSync getValue');

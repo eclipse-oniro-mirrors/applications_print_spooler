@@ -31,7 +31,7 @@ export class StringUtil {
    * @return {string} - string from res
    */
   public static getString(name: string, ...args: Array<string | number>): string {
-    let abilityContext = GlobalThisHelper.getValue<common.UIAbilityContext>(GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT);
+    let abilityContext = GlobalThisHelper.getValue<common.UIExtensionContext>(GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT);
     Log.info('getString abilityContext: ' +abilityContext)
     if (abilityContext !== undefined && !CheckEmptyUtils.checkStrIsEmpty(name)) {
       return <string> abilityContext?.resourceManager?.getStringByNameSync(name, ...args) ?? '';

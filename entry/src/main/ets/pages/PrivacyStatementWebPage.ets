@@ -27,8 +27,8 @@ const TAG = 'PrivacyStatementWebPage';
 @Component
 struct PrivacyStatementWebPage {
   @State @Watch('languageChange') language: string = configMgr.getConfiguration().language ?? '';
-  private abilityContext: common.UIAbilityContext = GlobalThisHelper
-    .getValue<common.UIAbilityContext>(GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT);
+  private abilityContext: common.UIExtensionContext = GlobalThisHelper
+    .getValue<common.UIExtensionContext>(GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT);
   private webController: webview.WebviewController = new webview.WebviewController();
   private privacyStatementFlag: boolean = false;
   private baseUrl: string = Constants.STRING_NONE;

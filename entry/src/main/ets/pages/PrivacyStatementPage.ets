@@ -14,13 +14,14 @@
  */
 
 import router from '@ohos.router';
-import CheckEmptyUtils, { Log } from '@ohos/common';
+import CheckEmptyUtils, { Constants, Log } from '@ohos/common';
 import common from '@ohos.app.ability.common';
 import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
 import { PreferencesKey} from '@ohos/common';
 import PreferencesAdapter from '../Common/Adapter/PreferencesAdapter';
 import {PrivacyStatementDialog} from './PrivacyStatementDialog';
 import {CancelButton} from './component/BaseComponent';
+import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 
 const TAG = 'PrivacyStatementPage';
 
@@ -29,7 +30,8 @@ let storage = LocalStorage.getShared();
 @Component
 struct PrivacyStatementPage {
   private readonly PRIVACY_STATEMENT_STORE: string = 'privacyStatementStore';
-  private abilityContext: common.UIAbilityContext | undefined = undefined
+  private abilityContext: common.UIExtensionContext | undefined = undefined;
+  private session?: UIExtensionContentSession = undefined;
   private dialogController: CustomDialogController = new CustomDialogController({
     builder: PrivacyStatementDialog(),
     autoCancel: false,
@@ -37,7 +39,9 @@ struct PrivacyStatementPage {
   })
 
   aboutToAppear() {
-    this.abilityContext = GlobalThisHelper.getValue<common.UIAbilityContext>(GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT)
+    this.abilityContext = GlobalThisHelper.getValue<common.UIExtensionContext>(
+      GlobalThisStorageKey.KEY_MAIN_ABILITY_CONTEXT);
+    this.session = storage.get<UIExtensionContentSession>(Constants.SESSION);
   }
 
   build() {
@@ -114,7 +118,7 @@ struct PrivacyStatementPage {
               cancelWidth: $r('app.float.privacy_statement_button_width'),
               cancelHeight: $r('app.float.privacy_statement_button_height'),
               cancelClick: () => {
-                this.abilityContext?.terminateSelf();
+                this.session?.terminateSelf();
               }
             })
             .margin({right: $r('app.float.privacy_statement_button_space')})

@@ -82,7 +82,8 @@ export { RequestCode,
 
 export { StringUtil } from './src/main/ets/utils/StringUtil'
 
-export { PrintMargin,
+export { PrintAttributes,
+  PrintMargin,
   PrinterRange,
   PreviewAttribute,
   PrintResolution,

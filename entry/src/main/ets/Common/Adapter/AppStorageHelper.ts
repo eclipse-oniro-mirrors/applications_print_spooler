@@ -31,7 +31,10 @@ export default class AppStorageHelper {
     AppStorageKeyName.CONFIG_LANGUAGE,
     AppStorageKeyName.START_PRINT_TIME,
     AppStorageKeyName.INGRESS_PACKAGE,
-    AppStorageKeyName.APP_VERSION
+    AppStorageKeyName.APP_VERSION,
+    AppStorageKeyName.DOCUMENT_NAME,
+    AppStorageKeyName.PREVIEW_PAGE_INSTANCE,
+    AppStorageKeyName.imageSourcesName,
   ];
 
   /**
@@ -74,6 +77,25 @@ export default class AppStorageHelper {
       return true
     }
     return false
+  }
+
+  /**
+   * 清除AppStorage对象的值，key需要先注册到registerKeys，否则挂载失败
+   * 如果AppStorage中有对应的属性，且该属性已经没有订阅者，则删除成功，返回true。如果属性不存在，或者该属性还存在订阅者，则返回false
+   *
+   * @returns 删除成功返回true，失败返回false
+   */
+  public static deleteValue<T>(storageKey: string): boolean {
+    const element = AppStorageHelper.registerKeys.find((ele) => ele === storageKey);
+    if (element === undefined) {
+      Log.error(TAG, 'Can not find register storageKey: ' + JSON.stringify(storageKey));
+      return false;
+    }
+    if (AppStorage.has(storageKey)) {
+      AppStorage.delete(storageKey);
+      return true;
+    }
+    return false;
   }
 
   /**
