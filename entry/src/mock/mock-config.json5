@@ -1,0 +1,5 @@
+{
+  '@ohos.print': {
+    'source': 'src/mock/PrintMock.ets'
+  }
+}

@@ -15,7 +15,7 @@
 
 import wifi from '@ohos.wifi';
 import { Log } from '@ohos/common';
-import print from '@ohos.print';
+import { print } from '@kit.BasicServicesKit';
 import { P2P_SERVICE_ERROR } from '@ohos/common';
 import CommonEventManager from '@ohos.commonEventManager';
 import ArrayList from '@ohos.util.ArrayList';

@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import print from '@ohos.print';
+import { print } from '@kit.BasicServicesKit';
 import { BusinessError } from '@ohos.base';
 import CheckEmptyUtils from '../utils/CheckEmptyUtils';
 import { Log } from '../utils/Log';

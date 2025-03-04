@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import print from '@ohos.print';
+import { print } from '@kit.BasicServicesKit';
 import { cancelPrintJob, CustomPrintJobState, Log, PrintItemChangeListener, PrintJob, SingletonHelper } from '@ohos/common';
 import { printJobMgr } from '../../Controller/PrintJobManager';
 import { PageData, PrintJobItem, ShowTips } from './PrintPageModel';

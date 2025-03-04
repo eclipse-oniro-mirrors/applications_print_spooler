@@ -26,7 +26,7 @@ import CommonUtils from '../utils/CommonUtils';
 import type { WifiListener } from '../model/WifiModel';
 import CommonEventManager from '@ohos.commonEventManager';
 // @ts-ignore
-import print from '@ohos.print';
+import { print } from '@kit.BasicServicesKit';
 
 const TAG: string = 'P2PPrinterConnection';
 const CONNECT_DELAYED_TIME: number = 30000;

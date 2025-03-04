@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import CheckEmptyUtils, { Constants, convertToSpoolerPrintJob, isValidPrintJob, Log, PrintJob, PrintJobChangeListener, queryAllPrintJobs, SingletonHelper } from '@ohos/common';
-import print from '@ohos.print';
+import { print } from '@kit.BasicServicesKit';
 import FileUtil from '../Common/Utils/FileUtil';
 
 const TAG: string = 'PrintJobManager';

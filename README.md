@@ -253,7 +253,7 @@ PrintSpooler应用是OpenHarmony中预置的系统应用，为用户提供打印
 - `feature/ippPrint/src/main/ets/common/napi/NativeApi.ts`
 - p2p打印机连接成功之后调用print_print_fwk的接口获取打印机支持的ipp协议能力，并调用print_print_fwk接口向cupsd服务配置一台无驱动打印机（支持Mopria协议）
   ```
-  import print from '@ohos.print';
+  import { print } from '@kit.BasicServicesKit';
   
   public getCapabilities(uri: string, printerName: string, getCapsCallback: (result) => void): void {
     Log.debug(TAG, 'getCapabilities enter');

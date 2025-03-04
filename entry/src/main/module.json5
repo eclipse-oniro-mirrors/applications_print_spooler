@@ -26,16 +26,16 @@
         "startWindowIcon": "$media:icon",
         "startWindowBackground": "$color:color_ffffff",
         "name": "MainAbility",
-        "srcEntrance": "./ets/MainAbility/MainAbility.ets",
+        "srcEntry": "./ets/MainAbility/MainAbility.ets",
         "description": "$string:MainAbility_desc",
         "icon": "$media:icon",
         "label": "$string:MainAbility_label",
         "launchType": "singleton",
-        "visible": false,
+        "visible": false
       },
       {
         "name": "JobManagerAbility",
-        "srcEntrance": "./ets/MainAbility/JobManagerAbility.ts",
+        "srcEntry": "./ets/MainAbility/JobManagerAbility.ts",
         "description": "$string:JobManagerAbility_desc",
         "icon": "$media:icon",
         "label": "$string:JobManagerAbility_label",
@@ -121,7 +121,7 @@
         "reason": '$string:print_security_guard_require',
         "usedScene": {
           "abilities": [
-            "com.ohos.spooler.MainAbility",
+            "com.ohos.spooler.MainAbility"
           ],
           "when": "inuse"
         }
@@ -132,7 +132,7 @@
         "reason": '$string:print_security_guard_require',
         "usedScene": {
           "abilities": [
-            "com.ohos.spooler.MainAbility",
+            "com.ohos.spooler.MainAbility"
           ],
           "when": "inuse"
         }
@@ -142,7 +142,7 @@
         "reason": '$string:print_file_name_require',
         "usedScene": {
           "abilities": [
-            "com.ohos.spooler.MainAbility",
+            "com.ohos.spooler.MainAbility"
           ],
           "when": "inuse"
         }
@@ -152,7 +152,7 @@
         "reason": '$string:print_file_name_require',
         "usedScene": {
           "abilities": [
-            "com.ohos.spooler.MainAbility",
+            "com.ohos.spooler.MainAbility"
           ],
           "when": "inuse"
         }

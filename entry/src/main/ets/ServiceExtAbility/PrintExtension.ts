@@ -29,7 +29,7 @@ import type { PrintJob } from '@ohos/common';
 import { SERVICE_IPP } from '@ohos/common';
 import { checkWifiEnable } from '@ohos/common';
 import { GlobalThisHelper, GlobalThisStorageKey} from '@ohos/common';
-import print from '@ohos.print';
+import { print } from '@kit.BasicServicesKit';
 
 const TAG = 'PrintExtension';
 
