@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import print from '@ohos.print';
+import { print } from '@kit.BasicServicesKit';
 import commonEvent from '@ohos.commonEventManager';
 import {
   AppCommonEvent,

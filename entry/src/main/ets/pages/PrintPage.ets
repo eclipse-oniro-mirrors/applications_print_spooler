@@ -62,7 +62,7 @@ import { Log } from '@ohos/common';
 import { uuidGenerator } from '@ohos/common';
 import { BISHENG_PRINTER } from '@ohos/common';
 import emitter from '@ohos.events.emitter';
-import print from '@ohos.print';
+import { print } from '@kit.BasicServicesKit';
 import promptAction from '@ohos.promptAction';
 import common from '@ohos.app.ability.common';
 import {CancelButton} from './component/BaseComponent';

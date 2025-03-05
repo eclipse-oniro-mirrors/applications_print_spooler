@@ -23,7 +23,7 @@ import LocalPrinterCapabilities from './napi/LocalPrinterCapabilities';
 import type ConnectionListener from './connect/ConnectionListener';
 import P2PPrinterConnection from './connect/P2pPrinterConnection';
 import type { CapabilitiesCache, OnLocalPrinterCapabilities } from './ipp/CapabilitiesCache';
-import print from '@ohos.print';
+import { print } from '@kit.BasicServicesKit';
 
 const TAG = 'LocalPrinter';
 

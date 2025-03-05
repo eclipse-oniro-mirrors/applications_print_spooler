@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import print from '@ohos.print';
+import { print } from '@kit.BasicServicesKit';
 import wifi from '@ohos.wifiManager';
 import { Log } from './Log';
 import { WIFI_INACTIVE } from '../model/ErrorMessage';

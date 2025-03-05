@@ -14,7 +14,7 @@
  */
 
 // @ts-ignore
-import print from '@ohos.print';
+import { print } from '@kit.BasicServicesKit';
 import CheckEmptyUtils, { Log } from '@ohos/common';
 
 const TAG = 'NativeApi';

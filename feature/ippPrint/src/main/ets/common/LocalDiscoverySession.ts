@@ -21,7 +21,7 @@ import P2pUtils from './utils/P2pUtils';
 import { Log } from '@ohos/common';
 import type { PrintServiceAdapter } from './PrintServiceAdapter';
 import LocalPrinter from './LocalPrinter';
-import print from '@ohos.print';
+import { print } from '@kit.BasicServicesKit';
 import type { WifiListener } from './model/WifiModel';
 import CommonEventManager from '@ohos.commonEventManager';
 import HashSet from '@ohos.util.HashSet';

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import print from '@ohos.print';
+import { print } from '@kit.BasicServicesKit';
 import { Log, PrinterExtensionInfo } from '@ohos/common';
 import AppStorageHelper from '../Common/Adapter/AppStorageHelper';
 import {AppStorageKeyName} from '@ohos/common';

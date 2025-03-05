@@ -22,7 +22,7 @@ import LocalPrinterCapabilities from '../napi/LocalPrinterCapabilities';
 import type { OnLocalPrinterCapabilities } from '../ipp/CapabilitiesCache';
 import type uri from '@ohos.uri';
 // @ts-ignore
-import print from '@ohos.print';
+import { print } from '@kit.BasicServicesKit';
 import CommonUtils from '../utils/CommonUtils';
 import { WorkerUtil } from '../utils/WorkerUtil';
 import type { WorkerResponse } from '../model/WorkerData';
