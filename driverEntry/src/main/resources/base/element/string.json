@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "DriverEntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "DriverEntryAbility_label",
+      "value": "label"
+    }
+  ]
+}

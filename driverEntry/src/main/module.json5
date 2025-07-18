@@ -1,0 +1,55 @@
+{
+  "module": {
+    "name": "driverEntry",
+    "type": "feature",
+    "description": "$string:module_desc",
+    "mainElement": "DriverEntryAbility",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "abilities": [],
+    "extensionAbilities": [
+      {
+        "name": "DriverExtensionAbility",
+        "srcEntry": "./ets/driverentryability/MyDriverExtensionAbility.ts",
+        "label": "$string:DriverEntryAbility_label",
+        "description": "driver",
+        "type": "driver", // type must be driver
+        "exported": false,
+        "metadata": [
+          {
+            "name": "desc",
+            "value": "xxx printer driver"
+          },
+          {
+            "name": "vendor",
+            "value": "xx company"
+          },
+          {
+            "name": "cupsFilter",
+            "value": "/print_service/cups/serverbin/filter", //filter 驱动配置路径，固定写法
+            "resource": "/libs/arm64-v8a/rastertopwg" // filter 名称
+          },
+          {
+            "name": "cupsPpd",
+            "value": "/print_service/cups/datadir/model", // ppd 配置路径，固定写法
+            "resource": "/libs/arm64-v8a/HUAWEI_PixLab_xxx.ppd" // ppd 名称
+          },
+          {
+            "name": "saneBackend",
+            "value": "/print_service/sane/backend", // sanebackend 配置路径，固定写法
+            "resource": "/libs/arm64-v8a/libsane-pantumxxx.so" // backend 名称
+          },
+          {
+            "name": "cupsBackend",
+            "value": "/print_service/cups/serverbin/backend", // cupsbackend 配置路径，固定写法
+            "resource": "/libs/arm64-v8a/lpd" // sanebackend 名称
+          }
+        ]
+      }
+    ]
+  }
+}
