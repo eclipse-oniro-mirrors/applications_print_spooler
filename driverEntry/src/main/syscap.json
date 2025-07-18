@@ -7,12 +7,12 @@
   },
   "development": {
     "addedSysCaps": [
-      "SystemCapability.Print.PrintFramework"
+      "SystemCapability.Driver.ExternalDevice"
     ]
   },
   "production": {
     "addedSysCaps": [
-      "SystemCapability.Print.PrintFramework"
+      "SystemCapability.Driver.ExternalDevice"
     ]
   }
 }

@@ -1,0 +1,10 @@
+{
+  "name": "driverentry",
+  "version": "1.0.0",
+  "description": "printer and scanner driver demo for openharmony",
+  "main": "",
+  "author": "",
+  "license": "",
+  "dependencies": {
+  }
+}

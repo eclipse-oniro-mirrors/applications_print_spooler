@@ -146,7 +146,6 @@ export default class MainAbility extends UIExtensionAbility {
       (GlobalObject.getInstance().getObject(Constants.PREVIEW_DIALOG_COUNT) as number) + 1);
 
     this.session?.loadContent(pageUrl, storage);
-    this.session?.setWindowBackgroundColor('#40000000');
     AppStorageHelper.createValue<number>(previewPageInstances + 1, AppStorageKeyName.PREVIEW_PAGE_INSTANCE);
     callback(dialogId);
     Log.debug(TAG, 'handleDialogRequest end.');
