@@ -155,7 +155,7 @@ export default class FileUtil {
       let fileName = uriArr[uriArr.length-1];
       let file = undefined;
       try {
-        file = Fileio.openSync(uri, Constants.READ_WRITE);
+        file = Fileio.openSync(uri, Fileio.OpenMode.READ_ONLY);
       } catch (error) {
         Log.error(TAG, 'open fail: ' + JSON.stringify(error));
         errorFileName = fileName;
