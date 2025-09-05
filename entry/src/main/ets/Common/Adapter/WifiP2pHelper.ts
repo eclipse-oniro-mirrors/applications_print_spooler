@@ -35,7 +35,12 @@ export default class WifiP2pHelper {
   }
 
   public static checkWifiActive(): boolean {
-    let wifiState: boolean = wifi.isWifiActive();
+    let wifiState: boolean = false;
+    try {
+      wifiState = wifi.isWifiActive();
+    } catch(e) {
+      Log.error(TAG, `checkWifiActive error: ${e?.message}`);
+    }
     return wifiState;
   }
 
