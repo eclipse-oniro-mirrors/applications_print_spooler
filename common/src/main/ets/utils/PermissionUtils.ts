@@ -21,12 +21,17 @@ import { WIFI_INACTIVE } from '../model/ErrorMessage';
 const TAG: string = 'Permission';
 
 export function checkWifiEnable(): boolean {
-  let wifiStatus: boolean = wifi.isWifiActive();
-  if (!wifiStatus) {
-    //wifi 关闭
-    Log.error(TAG, 'wifi is inactive');
-    //wifi关闭了, 上报异常
-    print.updateExtensionInfo(JSON.stringify(WIFI_INACTIVE));
+  let wifiStatus: boolean = false;
+  try {
+    wifiStatus = wifi.isWifiActive();
+    if (!wifiStatus) {
+      //wifi 关闭
+      Log.error(TAG, 'wifi is inactive');
+      //wifi关闭了, 上报异常
+      print.updateExtensionInfo(JSON.stringify(WIFI_INACTIVE));
+    }
+  } catch(e) {
+    Log.error(TAG, `checkWifiEnable error: ${e?.message}`);
   }
   return wifiStatus;
 }

@@ -58,8 +58,9 @@
         "icon": "$media:icon",
         "name": "PrintServiceExtAbility",
         "srcEntry": "./ets/MainAbility/MainAbility.ets",
-        "type": "sysDialog/common",
-        "exported": true
+        "type": "sysDialog/print",
+        "exported": true,
+        "permissions": ["ohos.permission.PRINT"]
       }
     ],
     "requestPermissions": [
