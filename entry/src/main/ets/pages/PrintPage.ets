@@ -72,6 +72,7 @@ import router from '@ohos.router';
 import Want from '@ohos.app.ability.Want';
 import { BusinessError } from '@ohos.base';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
+import { PrintDuplexMode } from '@ohos/common/src/main/ets/framework/Print';
 
 const TAG = 'PrintPage';
 
@@ -1074,19 +1075,22 @@ struct Index {
     }else{
       this.isColorEnabled = true
     }
-
-    if (cap!.duplexMode === Duplex.SINGLE) {
+    //只支持单面时，隐藏单双面选项
+    Log.info(TAG, 'caps-supportedDuplexModes' + cap!.supportedDuplexModes);
+    let isDuplexEnabled = cap!.supportedDuplexModes?.some((item) =>
+    (item === PrintDuplexMode.DUPLEX_MODE_LONG_EDGE || item === PrintDuplexMode.DUPLEX_MODE_SHORT_EDGE));
+    if (isDuplexEnabled){
+      this.isDuplexEnabled = true;
+    } else {
       this.isDuplexEnabled = false;
       this.currentDuplex = SelectionModel.DuplexMode_SINGLE;
-    } else {
-      this.isDuplexEnabled = true;
     }
     let isBSH = this.isBiSheng(printer.printerName)
     if (isBSH) {
       this.mediaSizeList = MediaSizeUtil.getDefaultMediaSizeByMediaType(SelectionModel.getSelectionValue<number>(this.currentMediaType.name)!);
     } else {
-      this.mediaSizeList = new Array<MediaSize>()
-      for (let index = 0; index < cap!.pageSize.length; index++) {
+      this.mediaSizeList = [];
+      for (let index = 0; index < cap!.supportedPageSizes.length; index++) {
         this.mediaSizeList.push(MediaSizeUtil.pageSizeToMediaSize(cap!.pageSize[index]))
       }
     }

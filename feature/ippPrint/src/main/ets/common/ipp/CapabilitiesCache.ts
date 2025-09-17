@@ -51,7 +51,7 @@ export class CapabilitiesCache {
     }
     let uri = printer.getUri();
     Log.debug(TAG, 'caps not in cache, request from printer');
-    let request = new Request(this.mBackend, uri, printer.getDeviceName(), onLocalPrinterCapabilities);
+    let request = new Request(this.mBackend, printer.getId(), uri, printer.getDeviceName(), onLocalPrinterCapabilities);
     this.requestVector.add(request);
     this.startNextRequest();
   }
@@ -84,15 +84,17 @@ export class CapabilitiesCache {
 }
 
 class Request {
-  constructor(private backend: Backend, private uri: uri.URI, private printerName: string, private capsCallback: OnLocalPrinterCapabilities) {
+  constructor(private backend: Backend, private printerId: string, private uri: uri.URI, private printerName: string,
+    private capsCallback: OnLocalPrinterCapabilities) {
     this.backend = backend;
     this.uri = uri;
     this.printerName = printerName;
     this.capsCallback = capsCallback;
+    this.printerId = printerId;
   }
 
   public start(requestCallback: () => void): void {
-    this.backend.getCapabilities(this.uri, this.printerName, this.capsCallback, requestCallback);
+    this.backend.getCapabilities(this.uri, this.printerId, this.printerName, this.capsCallback, requestCallback);
   }
 }
 
