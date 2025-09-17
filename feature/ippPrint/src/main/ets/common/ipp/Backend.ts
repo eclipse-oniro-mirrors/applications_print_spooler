@@ -51,7 +51,8 @@ export class Backend {
    * @param timeout
    * @param onLocalPrinterCapabilities
    */
-  public getCapabilities(uri: uri.URI, printerName: string, onLocalPrinterCapabilities: OnLocalPrinterCapabilities, requestCallback: () => void): void {
+  public getCapabilities(uri: uri.URI, id: string, printerName: string,
+    onLocalPrinterCapabilities: OnLocalPrinterCapabilities, requestCallback: () => void): void {
     Log.debug(TAG, `getCapabilities, uri is: ${uri.scheme}://${CommonUtils.getSecurityIp(uri.host)}:**${uri.path}`);
     if (uri === undefined) {
       Log.error(TAG, 'uri is undefined');
@@ -62,7 +63,8 @@ export class Backend {
     let getCapsRequest: WorkerRequest = new WorkerRequest(RequestCode.GET_CAPS);
     getCapsRequest.data = {
       uri: uri.toString(),
-      printerName: printerName
+      printerName: printerName,
+      printerId: id
     };
     WorkerUtil.postMessageToWorkerThread(this.mWorker, getCapsRequest);
   }

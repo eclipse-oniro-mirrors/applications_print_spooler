@@ -48,7 +48,7 @@ parentPort.onmessage = function (messageEvent) {
 
 function getCapabilities(data) {
   Log.debug(TAG, 'data: ' + JSON.stringify(data));
-  nativeApi.getCapabilities(data.uri, data.printerName, (result) => {
+  nativeApi.getCapabilities(data.printerId, data.uri, data.printerName, (result) => {
     let response;
     if (typeof result === 'number') {
       response = new WorkerResponse(RequestCode.GET_CAPS, ResponseCode.ERROR);

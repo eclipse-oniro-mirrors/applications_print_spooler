@@ -108,8 +108,12 @@ export class MdnsDiscovery extends Discovery {
       return;
     }
     Log.info(TAG, 'register callback');
-    this._discoveryService.on('serviceFound', this.onServiceFound);
-    this._discoveryService.on('serviceLost', this.onServiceLost);
+    try {
+      this._discoveryService.on('serviceFound', this.onServiceFound);
+      this._discoveryService.on('serviceLost', this.onServiceLost);
+    } catch (e) {
+      Log.error(TAG, 'register callback discoveryService' + JSON.stringify(e));
+    }
     Log.info(TAG, 'startSearchingMDNS');
     this._discoveryService.startSearchingMDNS();
   }
@@ -137,17 +141,21 @@ export class MdnsDiscovery extends Discovery {
 
   private resolveService = (eventData: emitter.EventData): void => {
     Log.debug(TAG, 'resolveService enter');
-    mdns.resolveLocalService(this.context, <mdns.LocalServiceInfo>eventData.data).then((data) => {
-      Log.debug(`${TAG}, resolveLocalService, host is ${CommonUtils.getSecurityIp(data.host.address)}`);
-      if (CheckEmptyUtils.checkStrIsEmpty(data.serviceName)) {
-        Log.info(TAG, 'serviceName is empty');
-        data.serviceName = eventData.data.serviceName;
-      }
-      let printer = MdnsDiscovery.toMdnsPrinter(data);
-      this.printerFound(printer);
-    }).catch((error) => {
-      Log.error(TAG, `resolveLocalService, err is ${JSON.stringify(error)}`);
-    });
+    try {
+      mdns.resolveLocalService(this.context, <mdns.LocalServiceInfo> eventData.data).then((data) => {
+        Log.debug(`${TAG}, resolveLocalService, host is ${CommonUtils.getSecurityIp(data.host.address)}`);
+        if (CheckEmptyUtils.checkStrIsEmpty(data.serviceName)) {
+          Log.info(TAG, 'serviceName is empty');
+          data.serviceName = eventData.data.serviceName;
+        }
+        let printer = MdnsDiscovery.toMdnsPrinter(data);
+        this.printerFound(printer);
+      }).catch((error) => {
+        Log.error(TAG, `resolveLocalService, err is ${JSON.stringify(error)}`);
+      });
+    } catch (e) {
+      Log.error(TAG, 'resolveService resolveLocalService' + JSON.stringify(e));
+    }
     Log.debug(TAG, 'resolveService end');
   };
 

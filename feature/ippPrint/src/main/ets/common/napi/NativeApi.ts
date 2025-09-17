@@ -31,7 +31,7 @@ export class NativeApi {
     return this.instance;
   }
 
-  public getCapabilities(uri: string, printerName: string, getCapsCallback: (result) => void): void {
+  public getCapabilities(id: string, uri: string, printerName: string, getCapsCallback: (result) => void): void {
     Log.debug(TAG, 'getCapabilities enter');
     if (print === undefined) {
       Log.error(TAG, 'print is undefined');
@@ -40,7 +40,7 @@ export class NativeApi {
     }
     Log.debug(TAG, 'getCapabilities start');
     // @ts-ignore
-    print.queryPrinterCapabilityByUri(uri).then((result) => {
+    print.queryPrinterCapabilityByUri(uri, id).then((result) => {
       Log.debug(TAG, 'queryPrinterCapabilityByUri result: ' + JSON.stringify(result));
       try {
         let options = JSON.parse(result.options);

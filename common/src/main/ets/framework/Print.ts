@@ -132,6 +132,11 @@ export class PrinterCapability implements print.PrinterCapability {
   resolution?: Array<PrintResolution>;
   minMargin?: PrintMargin;
   options?: string; /* Change Type*/
+  supportedPageSizes: PrintPageSize[];
+  supportedColorModes: PrintColorMode[];
+  supportedDuplexModes: PrintDuplexMode[];
+  supportedMediaTypes?: string[];
+  supportedQualities?: PrintQuality[];
 }
 
 /**
@@ -145,6 +150,8 @@ export class PrinterInfo implements print.PrinterInfo {
   description?: string;
   capability?: PrinterCapability;
   options?: string;
+  uri?: string;
+  printerMake?: String;
 
   constructor(printerId: string, printerName: string, printerState: print.PrinterState, printerIcon?: number, description?: string,
               capability?: PrinterCapability, options?: string) {
@@ -371,4 +378,21 @@ export function convertToPrinterInfo(info: print.PrinterInfo): PrinterInfo {
   let printerInfo: PrinterInfo = new PrinterInfo(info.printerId, info.printerName, info.printerState, info.printerIcon, info.description,
     info.capability as PrinterCapability, info.options as string);
   return printerInfo;
+}
+
+export enum PrintColorMode {
+  COLOR_MODE_MONOCHROME,
+  COLOR_MODE_COLOR
+}
+
+export enum PrintDuplexMode {
+  DUPLEX_MODE_NONE,
+  DUPLEX_MODE_LONG_EDGE,
+  DUPLEX_MODE_SHORT_EDGE
+}
+
+export enum PrintQuality {
+  QUALITY_DRAFT = 3,
+  QUALITY_NORMAL = 4,
+  QUALITY_HIGH = 5
 }

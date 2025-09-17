@@ -73,6 +73,7 @@ export default class LocalPrinter implements ConnectionListener, OnLocalPrinterC
   createPrinterInfo(): PrinterInfo {
     //创建PrinterInfo对象 返回给打印框架
     let printerInfo: PrinterInfo = new PrinterInfo(this.mPrinterId, this.mDiscoveredPrinter.getDeviceName(), print.PrinterState.PRINTER_ADDED);
+    printerInfo.uri = this.mDiscoveredPrinter.getUri()?.toString() ?? '';
     if (!CheckEmptyUtils.isEmpty(this.mCapabilities)) {
       let printerCapability: PrinterCapability = new PrinterCapability();
       LocalPrinterCapabilities.buildPrinterCapability(printerCapability, this.mCapabilities);
@@ -82,6 +83,13 @@ export default class LocalPrinter implements ConnectionListener, OnLocalPrinterC
       this.mDiscoveredPrinter.getUri().host;
       let options: string = LocalPrinterCapabilities.buildExtraCaps(this.mCapabilities, this.mDiscoveredPrinter.getUri().toString());
       printerInfo.options = options;
+      let obj = undefined;
+      try {
+        obj = JSON.parse(this.mCapabilities.options);
+      } catch (e) {
+        Log.error(TAG, 'parse err:' + e);
+      }
+      printerInfo.printerMake = obj?.make;
     }
     return printerInfo;
   }
@@ -202,7 +210,7 @@ export default class LocalPrinter implements ConnectionListener, OnLocalPrinterC
     this.mSession.updateLocalPrinter(printer);
     // 上报打印机机连接成功的状态
     // @ts-ignore
-    print.updatePrinterState(this.mPrinterId, PrinterState.PRINTER_CONNECTED);
+    print.updatePrinterState(this.mPrinterId, print.PrinterState.PRINTER_CONNECTED);
     this.mSession.removeConnectedId(this.mPrinterId);
 
     //连接成功获取打印机能力
