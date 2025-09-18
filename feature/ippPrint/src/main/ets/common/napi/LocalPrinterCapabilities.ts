@@ -28,12 +28,12 @@ export default class LocalPrinterCapabilities {
   static buildPrinterCapability(printerCapability: PrinterCapability, caps: PrinterCapability): void {
     printerCapability.colorMode = caps.colorMode;
     printerCapability.duplexMode = caps.duplexMode;
-    //set printPageSize
-    let sizeList: string[] = caps.pageSize.map((size) => {
-      return size.name;
-    });
-    const codes: number[] = MediaSizeUtil.getCodesBySizes(sizeList);
-    printerCapability.pageSize = MediaSizeUtil.getMediaSizeArrayByCodes(LocalPrinterCapabilities.removeDuplicates(codes));
+    printerCapability.supportedColorModes = caps.supportedColorModes;
+    printerCapability.supportedDuplexModes = caps.supportedDuplexModes;
+    printerCapability.supportedMediaTypes = caps.supportedMediaTypes;
+    printerCapability.supportedQualities = caps.supportedQualities;
+    printerCapability.options = caps.options;
+    printerCapability.supportedPageSizes = caps.supportedPageSizes;
   }
 
   /**
