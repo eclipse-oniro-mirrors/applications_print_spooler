@@ -1091,7 +1091,7 @@ struct Index {
     } else {
       this.mediaSizeList = [];
       for (let index = 0; index < cap!.supportedPageSizes.length; index++) {
-        this.mediaSizeList.push(MediaSizeUtil.pageSizeToMediaSize(cap!.pageSize[index]))
+        this.mediaSizeList.push(MediaSizeUtil.pageSizeToMediaSize(cap!.supportedPageSizes[index]))
       }
     }
     Log.debug(TAG,'printer.options:',printer.options)
