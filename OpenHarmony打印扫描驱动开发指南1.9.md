@@ -1,4 +1,4 @@
-# OpenHarmony打印&扫描驱动开发指南1.8
+# OpenHarmony打印&扫描驱动开发指南1.9
 
 **文档版本记录**
 
@@ -12,7 +12,7 @@
 | 1.5  | 刘昊苏          | 2024.12.2     | 第五章新增扫描仪驱动编译配置脚本 |
 | 1.6  | 刘昊苏          | 2025.1.7      | 第五章新增OpenHarmony驱动规范和驱动日志打印内容 |
 | 1.7  | 包泽伟          | 2025.7.22     | 第四章新增OpenHarmony打印驱动backend编译配置 |
-| 1.8  | 刘昊苏          | 2025.7.24     | 第五章补充扫描驱动安装相关内容 |
+| 1.9  | 杨抑            | 2026.7.2      | 第三章改为 Docker 环境搭建 |
 
 ## 目录
 
@@ -36,9 +36,9 @@
 
 开发OpenHarmony打印&扫描驱动需要两个设备，工作电脑和样机；工作电脑的主要任务是进行驱动二进制文件的编译生成和驱动安装应用的开发，样机的主要任务是推送或者安装打印&扫描驱动后验证驱动在OpenHarmony系统上的打印能力，验收驱动的OpenHarmony化适配的效果。
 
-工作电脑通过创建ubuntu虚拟机，在ubuntu环境下配置OpenHarmony系统组件代码编译环境，置入厂商驱动代码，编译生成驱动二进制文件。同时工作电脑安装OpenHarmony应用开发工具DevEco，基于OpenHarmony应用开发工具DevEco开发驱动安装应用，驱动安装应用的主要功能是将驱动二进制文件推送入样机中，实现OpenHarmony系统的打印能力扩展。
+工作电脑通过 Docker 容器配置 OpenHarmony 系统组件代码编译环境，置入厂商驱动代码，编译生成驱动二进制文件。同时工作电脑安装OpenHarmony应用开发工具DevEco，基于OpenHarmony应用开发工具DevEco开发驱动安装应用，驱动安装应用的主要功能是将驱动二进制文件推送入样机中，实现OpenHarmony系统的打印能力扩展。
 
-工作电脑需要尽量高的配置，内存推荐16GB以上，硬盘可用存储推荐300G以上，配置高低决定了编译整个OpenHarmony系统组件的时间，影响开发效率。同时，也可以使用纯ubuntu系统的工作电脑进行环境搭建和编译，可以提升一点编译速度，但是开发OpenHarmony应用仍然需要windows系统。
+工作电脑需要尽量高的配置，内存推荐16GB以上，硬盘可用存储推荐300G以上，配置高低决定了编译整个OpenHarmony系统组件的时间，影响开发效率。开发OpenHarmony应用仍然需要windows系统。
 
 ## 第二章 OpenHarmony打印&扫描子系统介绍
 
@@ -107,208 +107,49 @@ SANE驱动：安装驱动可以由三方安装到设备中
 
 ### 3.2. 预备工作
 
-1. 安装虚拟机工具VMware或者VirtualBox。
-2. 新建虚拟机，内存16GB及以上，硬盘300GB及以上。
-3. 安装Ubuntu，推荐使用20.04版本。用户名不能包含中文。
-4. 启动并进入Ubuntu虚拟机，以下步骤将在Ubuntu虚拟机中进行操作。
+1. 工作电脑安装 Docker Desktop。
+2. 工作电脑内存推荐16GB及以上，硬盘可用存储推荐300GB及以上。
+3. 后续 Windows 宿主机命令在 PowerShell 执行，容器内命令在 Docker 容器的 bash 中执行。
 
-### 3.3. 将Shell环境修改为bash
+### 3.3. 创建 Docker 数据卷并启动容器
 
-打开终端工具，执行如下命令，输入密码，然后选择No，将Ubuntu shell由dash修改为bash。
+在 Windows PowerShell 中执行：
+
+```powershell
+docker volume create oh_code_volume
+docker run -it --name oh_builder -v oh_code_volume:/home/openharmony swr.cn-south-1.myhuaweicloud.com/openharmony-docker/docker_oh_standard:3.2 /bin/bash
+```
+
+### 3.4. 获取源码
+
+进入容器后执行：
 
 ```bash
-sudo dpkg-reconfigure dash
+cd /home/openharmony
+git config --global user.name "Your Name"
+git config --global user.email "your-email@example.com"
 ```
 
-选择"No"。
-![](figures/打印扫描驱动开发指南/图片4.png)
-
-### 3.4. 替换Ubuntu软件源
-
-在"[https://mirrors.ustc.edu.cn/repogen/](https://mirrors.ustc.edu.cn/repogen/)"下载对应版本。
-
-![](figures/打印扫描驱动开发指南/图片5.png)
-
-在下载好的文件（sources.list）所在的位置开启一个终端窗口，执行下列命令。
-
-备份原始文件：
+如果容器内未配置 GitCode SSH Key，推荐使用 HTTPS 地址拉取：
 
 ```bash
-sudo cp /etc/apt/sources.list /etc/apt/source.list.bak
+repo init -u https://gitcode.com/openharmony/manifest.git -b OpenHarmony-6.0-Release --no-repo-verify
+repo sync -c
+repo forall -c 'git lfs pull'
 ```
 
-替换源：
+如果容器内已配置 GitCode SSH Key，可使用 SSH 地址拉取指定 Release 分支：
 
 ```bash
-sudo mv -f sources.list /etc/apt/
+mkdir OpenHarmony-6.0-Release
+cd OpenHarmony-6.0-Release
+
+repo init -u git@gitcode.com:openharmony/manifest.git -b OpenHarmony-6.0-Release --no-repo-verify
+repo sync -c
+repo forall -c 'git lfs pull'
 ```
 
-更新软件包索引：
-
-```bash
-sudo apt update
-```
-
-### 3.5. 安装必要的库和工具
-
-打开终端工具，执行如下命令
-
-参考"[build仓](https://gitee.com/openharmony/build)"安装编译所需的程序包。
-
-### 3.6. 配置Python
-
-设置默认Python解释器，python和python3软链接为python3.8：
-
-```bash
-sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1
-sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
-python --version
-```
-
-安装python包管理工具（pip3）：
-
-```bash
-sudo apt install python3-pip
-```
-
-配置pip软件包更新源：
-
-```bash
-mkdir ~/.pip
-pip3 config set global.index-url https://mirrors.huaweicloud.com/repository/pypi/simple
-pip3 config set global.trusted-host mirrors.huaweicloud.com
-pip3 config set global.timeout 120
-```
-
-### 3.7. 远程访问准备
-
-当在Windows下进行开发时，开发者需要访问Ubuntu环境下的源码和镜像文件。您可以使用习惯的文件传输或共享工具实现文件的共享或传输。
-
-此处介绍通过Samba服务器进行连接的操作方法。
-
-#### 3.7.1. 配置Samba服务器
-
-在Ubuntu终端工具下进行以下操作：
-
-（1）安装Samba软件包。
-
-```bash
-sudo apt-get install samba samba-common
-```
-
-（2）修改Samba配置文件，配置共享信息。打开配置文件：
-
-```bash
-sudo gedit /etc/samba/smb.conf
-```
-
-（3）在配置文件末尾添加以下配置信息（根据实际需要配置相关内容）：
-
-```
-[Share] #在Windows中映射的根文件夹名称（此处以"Share"为例）
-comment = Shared Folder #共享信息说明
-path = /home/share #共享目录
-valid users = username #可以访问该共享目录的用户（Ubuntu的用户名）
-directory mask = 0775 #默认创建的目录权限
-create mask = 0775 #默认创建的文件权限
-public = yes #是否公开
-writable = yes #是否可写
-available = yes #是否可获取
-browseable = yes #是否可浏览
-```
-
-注意事项：实际配置时"#"及其后面的注释需要去掉。
-
-（4）添加Samba服务器用户和访问密码。
-
-```bash
-sudo smbpasswd -a username #username替换为Ubuntu用户名。输入命令后，根据提示设置密码。
-```
-
-（5）重启Samba服务。
-
-```bash
-sudo service smbd restart
-```
-
-#### 3.7.2. 设置Windows映射
-
-在Windows环境下进行以下操作：
-
-（1）右键计算机选择映射网络驱动器，输入共享文件夹信息。在文件夹输入框填入Ubuntu设备的IP地址和Ubuntu共享文件夹的路径。
-![](figures/打印扫描驱动开发指南/图片6.png)
-
-（2）输入Samba服务器的访问用户名和密码（在配置Samba服务器时已完成配置）。
-![](figures/打印扫描驱动开发指南/图片7.png)
-
-1. 用户名和密码输入完成后即可在Windows下看到Linux的共享目录，并可对其进行访问。
-
-### 3.8. 获取源码
-
-在Ubuntu环境下通过以下步骤获取OpenHarmony源码。
-
-#### 3.8.1. 准备工作
-
-（1）注册码云gitee帐号。
-
-（2）注册码云SSH公钥，请参考[码云帮助中心](https://gitee.com/help/articles/4191)。
-
-（3）安装git客户端和git-lfs。
-
-更新软件源：
-
-```bash
-sudo apt-get update
-```
-
-通过以下命令安装：
-
-```bash
-sudo apt-get install git git-lfs
-```
-
-（4）配置用户信息。
-
-```bash
-git config --global user.name "yourname"
-git config --global user.email "your-email-address"
-git config --global credential.helper store
-```
-
-注意事项：标黄部分需替换成自己的用户名和邮箱地址
-
-（5）执行如下命令安装码云repo工具。
-
-下述命令中的安装路径以"~/bin"为例，请用户自行创建所需目录。
-
-```bash
-mkdir ~/bin
-curl https://gitee.com/oschina/repo/raw/fork_flow/repo-py3 -o ~/bin/repo
-chmod a+x ~/bin/repo
-pip3 install -i https://repo.huaweicloud.com/repository/pypi/simple requests
-```
-
-（6）将repo添加到环境变量。
-
-```bash
-vim ~/.bashrc # 编辑环境变量
-export PATH=~/bin:$PATH # 在环境变量添加repo路径信息
-source ~/.bashrc # 应用环境变量
-```
-
-#### 3.8.2. 获取方式
-
-发布分支代码相对比较稳定，开发者可基于发布分支代码进行商用功能开发。主干为开发分支，开发者可通过主干获取新特性。
-
-（1）OpenHarmony发布分支代码获取
-
-OpenHarmony各个版本发布分支的源码获取方式请参考[Release-Notes](https://docs.openharmony.cn/pages/v4.1/zh-cn/OpenHarmony-Overview_zh.md)。
-
-（2）OpenHarmony主干代码获取
-
-通过repo + ssh下载（需注册公钥，请参考[码云帮助中心](https://gitee.com/help/articles/4191)）。
-
-#### 3.8.3. 执行prebuilts
+### 3.5. 执行prebuilts
 
 在源码根目录下执行prebuilts脚本，安装编译器及二进制工具。
 
@@ -316,15 +157,46 @@ OpenHarmony各个版本发布分支的源码获取方式请参考[Release-Notes]
 bash build/prebuilts_download.sh
 ```
 
-### 3.9. 编译
+### 3.6. 编译
 
 使用build.sh。命令格式为：
 
 ```bash
-./build.sh --product-name {product_name} --ccache --build-target {build_target}
+./build.sh --product-name {product_name} --build-target {build_target}
+```
+
+编译 CUPS-Filters：
+
+```bash
+./build.sh --product-name rk3568 --build-target cups_filters
 ```
 
 注意事项：product_name一般使用rk3568,如果编译后的产物需要推送到64位样机上，还需在编译指令后添加`--target-cpu arm64`
+
+### 3.7. 导出编译产物
+
+编译成功后，产物会生成在容器内的 `/home/openharmony/out/` 路径下。
+
+在 Windows PowerShell 中执行：
+
+```powershell
+docker cp oh_builder:/home/openharmony/out/rk3568/packages/phone/system/lib/libcupsfilters.z.so D:\dist
+```
+
+### 3.8. 重新进入容器
+
+退出容器：
+
+```bash
+exit
+```
+
+重新进入容器：
+
+```powershell
+docker start oh_builder
+docker exec -it oh_builder /bin/bash
+```
 
 ## 第四章 打印厂商驱动代码置入系统组件内编译
 
@@ -338,9 +210,9 @@ OpenHarmony打印系统基于 CUPS 构建打印能力，打印机厂商可以基
 
 ### 4.2. OpenHarmony 编译环境搭建（详细步骤见第三章）
 
-（1）准备 ubuntu20.04的编译环境
+（1）准备 Docker 编译环境
 
-（2）获取 OpenHamony源码：[获取链接](https://gitee.com/openharmony)
+（2）获取 OpenHarmony 源码：[获取链接](https://gitee.com/openharmony)
 
 （3）编译 CUPS-Filters 默认的 filter，编译命令：
 
